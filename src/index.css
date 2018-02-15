@@ -1,3 +1,7 @@
+@import 'bottomMenu.css';
+@import 'chessboard.css';
+@import 'chessboard-custom.css';
+
 body {
   margin: 0;
   padding: 0;

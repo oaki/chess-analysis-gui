@@ -1,0 +1,21 @@
+.bottom-menu {
+    border: 1px solid rebeccapurple;
+}
+
+.bottom-menu ul {
+    margin: 0;
+    padding: 0;
+    display: table;
+    list-style: none;
+    width: 100%;
+}
+
+.bottom-menu li a {
+    color: #b3b3b3;
+}
+
+.bottom-menu li {
+    text-align: center;
+    display: table-cell;
+    color: #b3b3b3;
+}
