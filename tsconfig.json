@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": "https://chess-analysis.com/",
     "outDir": "build/dist",
     "module": "esnext",
     "target": "es5",
