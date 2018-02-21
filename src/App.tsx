@@ -9,6 +9,7 @@ import * as faRetweet from '@fortawesome/fontawesome-free-solid/faRetweet';
 
 import * as io from 'socket.io-client';
 
+console.log('socketIoHost',config.socketIoHost);
 const socket = io(config.socketIoHost);
 
 /*
