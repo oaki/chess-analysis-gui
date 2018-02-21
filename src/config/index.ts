@@ -1,10 +1,16 @@
 const isDev = process.argv.indexOf('env=dev') !== -1;
-console.log('process',process);
+console.log('process', process);
 let config = {
-    socketIoHost: 'https://chess-analysis.com/api/'
+    socketIo: {
+        host: 'https://chess-analysis.com/',
+        path: '/api/socket.io',
+    }
 };
 if (isDev) {
-    config.socketIoHost = 'localhost:8080';
+    config.socketIo = {
+        host: 'localhost:8080',
+        path: '/socket.io',
+    }
 }
 
 

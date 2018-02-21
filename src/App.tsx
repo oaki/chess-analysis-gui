@@ -9,8 +9,9 @@ import * as faRetweet from '@fortawesome/fontawesome-free-solid/faRetweet';
 
 import * as io from 'socket.io-client';
 
-console.log('socketIoHost',config.socketIoHost);
-const socket = io(config.socketIoHost);
+console.log('socketIoHost', config.socketIo.host);
+console.log('socketIoPath', config.socketIo.path);
+const socket = io(config.socketIo.host, {path: config.socketIo.path});
 
 /*
 const ChessTools = require('chess-tools');
@@ -47,6 +48,7 @@ class App extends React.Component<any, any> {
     private board: ChessBoard = null;
     private game: Chess = null;
     private history: string[] = [];
+
     // private book: Opening;
 
     constructor(props: any) {
