@@ -9,7 +9,7 @@ import * as faRetweet from '@fortawesome/fontawesome-free-solid/faRetweet';
 
 import * as io from 'socket.io-client';
 
-const socket = io(config.host);
+const socket = io(config.socketIoHost);
 
 /*
 const ChessTools = require('chess-tools');
