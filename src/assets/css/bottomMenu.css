@@ -12,6 +12,8 @@
 
 .bottom-menu li a {
     color: #b3b3b3;
+    display: block;
+    padding: 1rem 0;
 }
 
 .bottom-menu li {
