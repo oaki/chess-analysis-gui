@@ -26,6 +26,7 @@ export default class Opening {
         // }
 
         const path = '/books/book.bin';
+        // const path = '/books/gm2001.bin';
         const response = await fetch(path);
         const buffer = await response.arrayBuffer();
         this.addBook(buffer);

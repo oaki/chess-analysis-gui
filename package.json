@@ -29,7 +29,10 @@
     "react-scripts-ts": "2.13.0",
     "redux": "^3.7.2",
     "redux-thunk": "^2.2.0",
-    "socket.io-client": "^2.0.4"
+    "redux-worker-middleware": "^1.0.0",
+    "socket.io-client": "^2.0.4",
+    "webpack-worker": "^0.0.18",
+    "worker-loader": "^1.1.1"
   },
   "devDependencies": {
     "@types/jest": "^22.1.1",
@@ -42,7 +45,7 @@
   },
   "scripts": {
     "start": "react-scripts-ts start",
-    "start:dev": "react-scripts-ts start env=dev",
+    "start:dev": "REACT_APP_SECRET_CODE=dev123 npm start",
     "build": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",
     "eject": "react-scripts-ts eject"

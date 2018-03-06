@@ -1,0 +1,35 @@
+.explorer-box {
+    max-height: 10rem;
+    overflow: auto;
+}
+
+.explorer-box table {
+    width: 100%;
+    background: #262626;
+    color: #b3b3b3;
+    font-size: .8rem;
+}
+
+.explorer-box table thead th {
+    background: #262626;
+    font-weight: 500;
+}
+
+.explorer-box table tbody td,
+.explorer-box table thead th {
+    padding: .2rem .5rem;
+}
+
+.explorer-box table tbody tr {
+    background: #363636;
+    cursor: pointer;
+
+}
+
+.explorer-box table tbody tr:nth-child(odd) {
+    background: #4b4b4b;
+}
+
+.explorer-box table tbody tr:hover{
+    background: #7c7c7c;
+}

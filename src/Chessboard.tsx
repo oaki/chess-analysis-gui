@@ -3,33 +3,47 @@ import {connect} from 'react-redux';
 import ChessBoard from 'chessboardjs';
 import Chess from 'chess.js';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
-
+import * as faRetweet from "@fortawesome/fontawesome-free-solid/faRetweet";
+import * as faAngleDoubleLeft from "@fortawesome/fontawesome-free-solid/faAngleDoubleLeft";
+import * as faAngleDoubleRight from "@fortawesome/fontawesome-free-solid/faAngleDoubleRight";
+import {addMoveToHistory, loadOpeningPosition, removeLastMoveFromHistory, setPosition, setStatus} from "./actions";
+import {store} from "./store";
 import * as $ from 'jquery';
+import {deepCopy} from "./reducers";
 
 const win: any = window;
 win.$ = $;
 
-import './assets/css/app.css';
+enum Color {
+    b = 'black',
+    w = 'white',
+}
 
+export interface IHistoryMove {
+    fen: string;
+    order: number;
+    color: number;
+    move: Color;
+    subVariant: IHistoryMove[]
+}
 
-import * as faRetweet from "@fortawesome/fontawesome-free-solid/faRetweet";
-import * as faAngleDoubleLeft from "@fortawesome/fontawesome-free-solid/faAngleDoubleLeft";
-import * as faAngleDoubleRight from "@fortawesome/fontawesome-free-solid/faAngleDoubleRight";
-import {setPosition} from "./actions";
-import {store} from "./store";
+interface IChessboardProps {
+    fen: string;
+    history: IHistoryMove[];
+}
 
-export class Chessboard extends React.Component<any, any> {
+export class Chessboard extends React.Component<IChessboardProps, any> {
 
     private board: ChessBoard = null;
     private game: Chess = null;
-    private history: string[] = [];
+    // private history: string[] = [];
 
     // private book: Opening;
 
-    constructor(props: any) {
+    constructor(props: IChessboardProps) {
 
         super(props);
-        console.log('props',props);
+        console.log('props', props);
 
         this.game = new Chess();
         this.state = {
@@ -55,6 +69,9 @@ export class Chessboard extends React.Component<any, any> {
                         <li><a href="#" onClick={this.handleRedo}> <FontAwesomeIcon icon={faAngleDoubleRight}/></a></li>
                     </ul>
                 </div>
+                <div className="fen">
+                    FEN: <input className="form-control form-control-sm" value={this.props.fen}/>
+                </div>
             </div>
 
         );
@@ -67,9 +84,10 @@ export class Chessboard extends React.Component<any, any> {
     }
 
     handleFenChange = (e: any) => {
-        this.setState({
-            fen: e.target.value
-        });
+        // this.setState({
+        //     fen: e.target.value
+        // });
+        store.dispatch(setPosition(e.target.value));
 
         //  board.position('r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R');
     }
@@ -83,13 +101,16 @@ export class Chessboard extends React.Component<any, any> {
         e.preventDefault();
         const moves = this.game.history();
         const tmp: any = new Chess();
-        const previous = moves.length - this.history.length - 1;
+        const previous = moves.length - this.props.history.length - 1;
         for (let i = 0; i < previous; i++) {
             tmp.move(moves[i]);
         }
         const previous_fen = tmp.fen();
         tmp.move(moves[previous]);
-        this.history.push(tmp.fen());
+        console.log('moves', moves);
+
+        store.dispatch(addMoveToHistory(tmp.fen()));
+        // this.history.push(tmp.fen());
         this.board.position(previous_fen);
         // return previous_fen;
         // this.game.undo();
@@ -98,7 +119,10 @@ export class Chessboard extends React.Component<any, any> {
 
     handleRedo = (e: any) => {
         e.preventDefault();
-        this.board.position(this.history.pop());
+        store.dispatch(removeLastMoveFromHistory());
+
+        const newObjOfHistory = deepCopy(this.props.history);
+        this.board.position(newObjOfHistory.pop());
     }
 
 
@@ -107,6 +131,19 @@ export class Chessboard extends React.Component<any, any> {
     }
 
     componentDidMount() {
+
+        let previousState = store.getState()['lastMove'];
+        store.subscribe(() => {
+            const last = store.getState()['lastMove'];
+            if (last && last !== previousState) {
+                previousState = last;
+                const source = last.substring(0, 2);
+                const target = last.substring(2, 4);
+
+                onDrop(source, target);
+                onSnapEnd();
+            }
+        });
 
         // do not pick up pieces if the game is over
         // only pick up pieces for the side to move
@@ -123,6 +160,9 @@ export class Chessboard extends React.Component<any, any> {
         // for castling, en passant, pawn promotion
         const onSnapEnd = () => {
             this.board.position(this.game.fen());
+            store.dispatch(setPosition(this.game.fen()));
+            store.dispatch(loadOpeningPosition(this.game.fen()));
+            console.log('emit->setNewPosition', this.game.fen());
         };
 
         const updateStatus = () => {
@@ -146,9 +186,10 @@ export class Chessboard extends React.Component<any, any> {
                 }
             }
 
-            store.dispatch(setPosition(this.game.fen()));
-            console.log('emit->setNewPosition', this.game.fen());
+
             console.log(status);
+            store.dispatch(setStatus(status));
+            console.log('Game History', this.game.history());
             // socket.emit('setNewPosition', {
             //     FEN: this.game.fen()
             // });
@@ -181,6 +222,7 @@ export class Chessboard extends React.Component<any, any> {
         };
 
         const onMoveEnd = () => {
+            // console.log('Game History', this.game.history());
             // this.board.find('.square-' + squareToHighlight)
             //     .addClass('highlight-' + colorToHighlight);
         };
@@ -197,13 +239,16 @@ export class Chessboard extends React.Component<any, any> {
 
         this.board = new ChessBoard('chessboard', cfg);
 
+        store.dispatch(loadOpeningPosition(this.game.fen()));
+
         console.log(this.board);
     }
 }
 
 function mapStateToProps(state: any) {
     return {
-        position: state.position
+        fen: state.fen,
+        history: state.history,
     }
 }
 

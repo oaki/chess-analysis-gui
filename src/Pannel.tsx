@@ -1,7 +1,12 @@
 import Opening from "./openingBook";
 import * as React from 'react';
+import {connect} from 'react-redux';
+import {SmartOpeningExplorer} from "./OpeningExplorer";
+import {store} from "./store";
+import {loadOpeningBook} from "./actions";
 
 interface IPannelProps {
+    status: string;
 }
 
 interface IEvaluation {
@@ -9,6 +14,7 @@ interface IEvaluation {
     pv: string;
     mate: string;
     nodes: string;
+
 }
 
 interface IPannelState {
@@ -18,7 +24,11 @@ interface IPannelState {
     fen?: string;
 }
 
-export class Pannel extends React.Component<IPannelProps, IPannelState> {
+const mapStateToProps = (state) => ({status: state.status});
+
+
+@connect(mapStateToProps)
+export class Pannel extends React.Component<any, IPannelState> {
 
     constructor(props: IPannelProps) {
         super(props)
@@ -29,14 +39,13 @@ export class Pannel extends React.Component<IPannelProps, IPannelState> {
 
     componentDidMount() {
 
-        this.handleLoadOpeningBook();
+        console.log('onmessage LOAD AFTER componentDidMount');
+        store.dispatch(loadOpeningBook());
+        // this.handleLoadOpeningBook();
     }
 
 
     async loadOpeningBook() {
-        this.setState({
-            loading: true
-        });
 
         const opening = new Opening();
         await opening.loadBook();
@@ -64,28 +73,21 @@ export class Pannel extends React.Component<IPannelProps, IPannelState> {
 
     render() {
         return (
-            <div className="col-md-4">
-                <div>
-                    <input type="text" onChange={this.handleFenChange}/>
-                </div>
+            <div className="col-md-12">
+
                 <div className="app__status">
 
                     {this.state.evaluation && <div className="score">{this.state.evaluation.score}</div>}
                     {this.state.evaluation && <div className="mate">{this.state.evaluation.mate}</div>}
                     {this.state.evaluation && <div className="nodes">{this.state.evaluation.nodes}</div>}
                     {this.state.evaluation && <div className="pv">{this.state.evaluation.pv}</div>}
-                    <div className="app__opening">Caro can</div>
+                    <div className="app__opening">{this.props.status}</div>
                     <div className="app__pgn">{this.state.pgn}</div>
                     <div className="app__fen">{this.state.fen}</div>
-                    <div className="app__menu">
-                        <ul>
-                            <li>1</li>
-                            <li>2</li>
-                            <li>3</li>
-                        </ul>
-                    </div>
+
                 </div>
 
+                <SmartOpeningExplorer/>
 
             </div>
         )
