@@ -1,0 +1,16 @@
+.evaluation .score {
+    display: inline-block;
+    background-color: black;
+    padding: 0 .3rem;
+    font-weight: bold;
+}
+
+.evaluation .depth {
+    font-size: .6rem;
+    padding: 0 .3rem;
+}
+
+.evaluation .pv{
+    color: #d6d6d6;
+    font-size: .8rem;
+}

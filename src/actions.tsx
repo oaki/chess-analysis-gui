@@ -1,5 +1,7 @@
 import {Move} from "./OpeningExplorer";
 import {find as findInBook} from "./services/offlineBook";
+import {Evaluation} from "./SocketIoProvider";
+import {IWorkerResponse} from "./interfaces";
 
 export const UPDATE_LOADING = 'UPDATE_LOADING';
 export const SET_POSITION = 'SET_POSITION';
@@ -10,6 +12,11 @@ export const REMOVE_LAST_MOVE_FROM_HISTORY = 'REMOVE_LAST_MOVE_FROM_HISTORY';
 export const SET_MOVE = 'SET_MOVE';
 export const SET_STATUS = 'SET_STATUS';
 export const LOAD_OPENING_BOOK = 'LOAD_OPENING_BOOK';
+export const SET_EVALUATION = 'SET_EVALUATION';
+export const SET_HISTORY = 'SET_HISTORY';
+export const FLIP_BOARD = 'FLIP_BOARD';
+export const HISTORY_UNDO = 'HISTORY_UNDO';
+export const HISTORY_REDO = 'HISTORY_REDO';
 
 
 export function setLoading(isLoading: boolean) {
@@ -23,6 +30,20 @@ export function setPosition(fen: string) {
     return {
         fen,
         type: SET_POSITION
+    };
+}
+
+export function setEvaluation(evaluation: IWorkerResponse) {
+    return {
+        evaluation,
+        type: SET_EVALUATION
+    };
+}
+
+export function setHistory(history: string[]) {
+    return {
+        history,
+        type: SET_HISTORY
     };
 }
 
@@ -53,6 +74,26 @@ export function setMove(move: string) {
     };
 }
 
+export function flipBoard() {
+    return {
+        type: FLIP_BOARD
+    };
+}
+
+export function historyUndo(hash: number) {
+    return {
+        hash,
+        type: HISTORY_UNDO
+    };
+}
+
+export function historyRedo(hash: number) {
+    return {
+        hash,
+        type: HISTORY_REDO
+    };
+}
+
 export function setError(msg: string) {
     return {
         msg,
@@ -68,6 +109,15 @@ export function setStatus(status: string) {
 }
 
 export function loadOpeningBook() {
+    return async (dispatch: (data: any) => {}, getState: any) => {
+        dispatch(setLoading(true));
+
+
+        dispatch(setLoading(false));
+    }
+}
+
+export function loadEvaluation(fen: string) {
     return async (dispatch: (data: any) => {}, getState: any) => {
         dispatch(setLoading(true));
 

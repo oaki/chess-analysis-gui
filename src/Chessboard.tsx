@@ -2,14 +2,15 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import ChessBoard from 'chessboardjs';
 import Chess from 'chess.js';
-import FontAwesomeIcon from '@fortawesome/react-fontawesome';
-import * as faRetweet from "@fortawesome/fontawesome-free-solid/faRetweet";
-import * as faAngleDoubleLeft from "@fortawesome/fontawesome-free-solid/faAngleDoubleLeft";
-import * as faAngleDoubleRight from "@fortawesome/fontawesome-free-solid/faAngleDoubleRight";
-import {addMoveToHistory, loadOpeningPosition, removeLastMoveFromHistory, setPosition, setStatus} from "./actions";
+
+import {
+    addMoveToHistory, loadEvaluation, loadOpeningPosition, removeLastMoveFromHistory, setHistory, setPosition,
+    setStatus
+} from "./actions";
 import {store} from "./store";
 import * as $ from 'jquery';
 import {deepCopy} from "./reducers";
+import {History} from "./History";
 
 const win: any = window;
 win.$ = $;
@@ -59,16 +60,7 @@ export class Chessboard extends React.Component<IChessboardProps, any> {
         return (
             <div>
                 <div id="chessboard"/>
-                <div className="bottom-menu">
-                    <ul>
-                        {/*<li>www</li>*/}
-                        {/*<li>2</li>*/}
 
-                        <li><a href="#" onClick={this.handleFlipBoard}> <FontAwesomeIcon icon={faRetweet}/></a></li>
-                        <li><a href="#" onClick={this.handleUndo}> <FontAwesomeIcon icon={faAngleDoubleLeft}/></a></li>
-                        <li><a href="#" onClick={this.handleRedo}> <FontAwesomeIcon icon={faAngleDoubleRight}/></a></li>
-                    </ul>
-                </div>
                 <div className="fen">
                     FEN: <input className="form-control form-control-sm" value={this.props.fen}/>
                 </div>
@@ -132,11 +124,39 @@ export class Chessboard extends React.Component<IChessboardProps, any> {
 
     componentDidMount() {
 
-        let previousState = store.getState()['lastMove'];
+        let previousLastMove: any = store.getState()['lastMove'];
+        let previousIsFlip: any = store.getState()['isFlip'];
+        let previousHistoryUndo: any = store.getState()['historyUndo'];
+        let previousHistoryRedo: any = store.getState()['historyRedo'];
         store.subscribe(() => {
             const last = store.getState()['lastMove'];
-            if (last && last !== previousState) {
-                previousState = last;
+            const isFlip = store.getState()['isFlip'];
+            const undo = store.getState()['historyUndo'];
+            const redo = store.getState()['historyRedo'];
+
+            if (undo !== previousHistoryUndo) {
+                previousHistoryUndo = undo;
+                console.log('MOVE UNDO');
+                this.game.undo();
+                console.log('history', this.game.history());
+                onSnapEnd();
+            }
+
+            // if (redo !== previousHistoryRedo) {
+            //     previousHistoryRedo = redo;
+            //     console.log('MOVE REDO');
+            //     this.game.redo();
+            //     onSnapEnd();
+            // }
+
+            if (isFlip !== previousIsFlip) {
+                console.log('FLIP BOARD', isFlip, previousIsFlip);
+                previousIsFlip = isFlip;
+                this.board.flip();
+            }
+
+            if (last && last !== previousLastMove) {
+                previousLastMove = last;
                 const source = last.substring(0, 2);
                 const target = last.substring(2, 4);
 
@@ -162,7 +182,11 @@ export class Chessboard extends React.Component<IChessboardProps, any> {
             this.board.position(this.game.fen());
             store.dispatch(setPosition(this.game.fen()));
             store.dispatch(loadOpeningPosition(this.game.fen()));
-            console.log('emit->setNewPosition', this.game.fen());
+            // store.dispatch(loadEvaluation(this.game.fen()));
+            // console.log('emit->setNewPosition', this.game.fen());
+            // socket.emit('setNewPosition', {
+            //     FEN: this.game.fen()
+            // });
         };
 
         const updateStatus = () => {
@@ -189,6 +213,7 @@ export class Chessboard extends React.Component<IChessboardProps, any> {
 
             console.log(status);
             store.dispatch(setStatus(status));
+            store.dispatch(setHistory(this.game.history()));
             console.log('Game History', this.game.history());
             // socket.emit('setNewPosition', {
             //     FEN: this.game.fen()

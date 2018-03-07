@@ -4,6 +4,8 @@ import {connect} from 'react-redux';
 import {SmartOpeningExplorer} from "./OpeningExplorer";
 import {store} from "./store";
 import {loadOpeningBook} from "./actions";
+import {SocketIoProvider} from "./SocketIoProvider";
+import {History} from "./History";
 
 interface IPannelProps {
     status: string;
@@ -24,10 +26,7 @@ interface IPannelState {
     fen?: string;
 }
 
-const mapStateToProps = (state) => ({status: state.status});
-
-
-@connect(mapStateToProps)
+@connect((state) => ({status: state.status}))
 export class Pannel extends React.Component<any, IPannelState> {
 
     constructor(props: IPannelProps) {
@@ -38,56 +37,58 @@ export class Pannel extends React.Component<any, IPannelState> {
     }
 
     componentDidMount() {
-
         console.log('onmessage LOAD AFTER componentDidMount');
         store.dispatch(loadOpeningBook());
-        // this.handleLoadOpeningBook();
     }
 
+    /*
 
-    async loadOpeningBook() {
+        async loadOpeningBook() {
 
-        const opening = new Opening();
-        await opening.loadBook();
+            const opening = new Opening();
+            await opening.loadBook();
 
-        return opening;
-    }
+            return opening;
+        }
 
-    handleLoadOpeningBook = () => {
-        this.setState({
-            loading: true
-        });
-
-        this.loadOpeningBook().then((book) => {
-
+        handleLoadOpeningBook = () => {
             this.setState({
-                loading: false
-            })
-        });
+                loading: true
+            });
 
-    }
+            this.loadOpeningBook().then((book) => {
 
-    handleFenChange() {
+                this.setState({
+                    loading: false
+                })
+            });
 
-    }
+        }
+
+        handleFenChange() {
+
+        }*/
 
     render() {
         return (
-            <div className="col-md-12">
+            <div>
+
+                <SmartOpeningExplorer/>
+
+
 
                 <div className="app__status">
 
-                    {this.state.evaluation && <div className="score">{this.state.evaluation.score}</div>}
-                    {this.state.evaluation && <div className="mate">{this.state.evaluation.mate}</div>}
-                    {this.state.evaluation && <div className="nodes">{this.state.evaluation.nodes}</div>}
-                    {this.state.evaluation && <div className="pv">{this.state.evaluation.pv}</div>}
-                    <div className="app__opening">{this.props.status}</div>
+                    <SocketIoProvider/>
+
                     <div className="app__pgn">{this.state.pgn}</div>
                     <div className="app__fen">{this.state.fen}</div>
+                    <div className="app__opening">{this.props.status}</div>
 
                 </div>
 
-                <SmartOpeningExplorer/>
+
+
 
             </div>
         )

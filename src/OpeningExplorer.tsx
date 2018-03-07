@@ -45,6 +45,7 @@ export class OpeningExplorer extends React.Component<IOpeningExplorerProps, IOpe
         }
         return (
             <div className="explorer-box">
+
                 <div className="data">
                     <table className="moves">
                         <thead>

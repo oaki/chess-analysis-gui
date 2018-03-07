@@ -11,6 +11,11 @@ win.$ = $;
 
 
 import {SocketIoProvider} from "./SocketIoProvider";
+import * as faRetweet from "@fortawesome/fontawesome-free-solid/faRetweet";
+import * as faAngleDoubleLeft from "@fortawesome/fontawesome-free-solid/faAngleDoubleLeft";
+import * as faAngleDoubleRight from "@fortawesome/fontawesome-free-solid/faAngleDoubleRight";
+import {Menu} from "./Menu";
+import {History} from "./History";
 
 
 class App extends React.Component<any, any> {
@@ -24,19 +29,18 @@ class App extends React.Component<any, any> {
 
                     <SmartError/>
 
-
-
                     <div className="row">
                         <div className="col-md-7">
                             <SmartChessboard/>
                         </div>
                         <div className="col-md-5">
-                            <SocketIoProvider>
-                                <Pannel />
-                            </SocketIoProvider>
-                        </div>
+                            <Pannel />
 
+                        </div>
                     </div>
+
+                    <History />
+                    <Menu/>
                 </div>
             </Provider>
         );

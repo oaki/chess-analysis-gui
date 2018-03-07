@@ -5,5 +5,7 @@
 @import './bottomMenu.css';
 @import './chessboard.css';
 @import './chessboard-custom.css';
+@import './evaluation.css';
+@import './history.css';
 @import './app.css';
 

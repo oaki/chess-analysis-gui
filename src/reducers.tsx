@@ -1,12 +1,18 @@
 import {combineReducers} from 'redux';
 
 import {
-    ADD_MOVE_TO_HISTORY, REMOVE_LAST_MOVE_FROM_HISTORY, SET_ERROR, SET_MOVE, SET_OPENING_POSITION, SET_POSITION,
+    ADD_MOVE_TO_HISTORY, FLIP_BOARD, HISTORY_REDO, HISTORY_UNDO, REMOVE_LAST_MOVE_FROM_HISTORY, SET_ERROR,
+    SET_EVALUATION,
+    SET_HISTORY, SET_MOVE,
+    SET_OPENING_POSITION,
+    SET_POSITION,
     SET_STATUS,
     UPDATE_LOADING
 } from "./actions";
 import {Move} from "./OpeningExplorer";
 import {IHistoryMove} from "./Chessboard";
+import {Evaluation} from "./SocketIoProvider";
+import {IWorkerResponse, LINE_MAP} from "./interfaces";
 
 export const loadingReducer = (isLoading: boolean = false, action: any) => {
     switch (action.type) {
@@ -67,6 +73,29 @@ export const statusReducer = (status: string = '', action: any) => {
     }
 };
 
+// const defaultEvaluation: IWorkerResponse = {
+//     [LINE_MAP.score]: '',
+//     [LINE_MAP.depth]: 0,
+//     [LINE_MAP.pv]: '',
+//     [LINE_MAP.nodes]: 0,
+//     [LINE_MAP.time]: '',
+//     [LINE_MAP.multipv]: '',
+//     [LINE_MAP.nps]: '',
+//     [LINE_MAP.tbhits]: '',
+//     [LINE_MAP.import]: '',
+// };
+export const evaluationReducer = (evaluation: IWorkerResponse | Move[] = [], action: any): IWorkerResponse | Move[] => {
+        switch (action.type) {
+            case SET_EVALUATION:
+                return action.evaluation;
+
+            default:
+                return evaluation;
+        }
+    }
+;
+/*
+
 export const historyReducer = (state: IHistoryMove[] = [], action: any) => {
     let history: IHistoryMove[];
     switch (action.type) {
@@ -84,15 +113,60 @@ export const historyReducer = (state: IHistoryMove[] = [], action: any) => {
             return state;
     }
 };
+*/
+
+
+export const historyReducer = (state: string[] = [], action: any) => {
+    switch (action.type) {
+        case SET_HISTORY:
+            return action.history;
+
+        default:
+            return state;
+    }
+};
+export const flipBoardReducer = (isFlip: boolean = false, action: any) => {
+    switch (action.type) {
+        case FLIP_BOARD:
+            return !isFlip;
+
+        default:
+            return isFlip;
+    }
+};
+
+export const historyUndoReducer = (hash: number = 0, action: any) => {
+    switch (action.type) {
+        case HISTORY_UNDO:
+            return action.hash;
+
+        default:
+            return hash;
+    }
+};
+
+export const historyRedoReducer = (hash: number = 0, action: any) => {
+    switch (action.type) {
+        case HISTORY_REDO:
+            return action.hash;
+
+        default:
+            return hash;
+    }
+};
 
 export default combineReducers({
     loading: loadingReducer,
     fen: positionReducer,
+    evaluation: evaluationReducer,
     lastMove: lastMoveReducer,
     openingMoves: openingMovesReducer,
     error: errorReducer,
     history: historyReducer,
     status: statusReducer,
+    isFlip: flipBoardReducer,
+    historyUndo: historyUndoReducer,
+    historyRedo: historyRedoReducer,
 });
 
 export function deepCopy(obj) {

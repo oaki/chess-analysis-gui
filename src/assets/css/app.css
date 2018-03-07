@@ -1,23 +1,30 @@
 html, body {
-  background-color: #2b2b2b;
+    background-color: #2b2b2b;
 }
 
 .app {
-  /*background-color: #2b2b2b;*/
+    /*background-color: #2b2b2b;*/
 }
 
-.app__header{
-  background-color: #222222;
+.app__header {
+    background-color: #222222;
 }
 
-
-.app__burger{
-  background-color: white;
-  width: 10px;
-  height: 10px;
+.app__burger {
+    background-color: white;
+    width: 10px;
+    height: 10px;
 }
 
-.app__status{
-  color: #b3b3b3;
-  font-size: .9rem;
+.app__status {
+    color: #b3b3b3;
+    font-size: .9rem;
+}
+
+.app__opening {
+    font-size: .6rem;
+}
+
+.fen {
+    display: none;
 }
