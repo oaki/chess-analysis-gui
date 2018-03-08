@@ -64,8 +64,12 @@ export class SocketIoProvider extends React.Component<any, any> {
                 console.log('browser: on_result', result.data);
 
 
-                const data = this.prepareEvaluation(result.data);
-                store.dispatch(setEvaluation(data));
+                // ignore others @todo disable others results
+                if (store.getState()['fen'] === result.data.fen) {
+                    const data = this.prepareEvaluation(result.data);
+                    store.dispatch(setEvaluation(data));
+                }
+
                 // this.handleWorkerResult(result.data);
             });
         });
