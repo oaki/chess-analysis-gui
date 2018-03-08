@@ -5,6 +5,7 @@ console.log('process', process);
 console.log('process.env.NODE_ENV', process.env.NODE_ENV );
 console.log('process.env.REACT_APP_PORT', process.env.REACT_APP_PORT );
 let config = {
+    apiHost: 'https://api.chess-analysis.com',
     socketIo: {
         host: 'https://api.chess-analysis.com',
         path: '/socket.io',

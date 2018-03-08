@@ -2,6 +2,7 @@ import {Move} from "./OpeningExplorer";
 import {find as findInBook} from "./services/offlineBook";
 import {Evaluation} from "./SocketIoProvider";
 import {IWorkerResponse} from "./interfaces";
+import config from "./config";
 
 export const UPDATE_LOADING = 'UPDATE_LOADING';
 export const SET_POSITION = 'SET_POSITION';
@@ -134,7 +135,8 @@ export function loadOpeningPosition(fen: string) {
         // const t = await findInBook(fen);
         // console.log('TTTT', t);
 
-        const url = `http://localhost:8080/opening-book?fen=${fen}`;
+
+        const url = `${config.apiHost}/opening-book?fen=${fen}`;
         const headers: RequestInit = {
             method: 'GET',
             headers: new Headers({
