@@ -1,34 +1,35 @@
-.history{
+.history {
     font-size: .8rem;
     color: white;
     background-color: #4b4b4b;
     position: absolute;
-    bottom: 2rem;
+    bottom: 2.4rem;
     left: 0;
     right: 0;
 }
-.history .move_num{
+
+.history .move_num {
     font-size: .7rem;
     color: #cecece;
 }
 
-.history .move{
+.history .move {
     padding: .6rem .6rem .6rem 0;
     display: inline-block;
 }
 
-.history__title{
+.history__title {
     background-color: #181818;
     color: white;
     padding: .6rem;
 }
 
-.history__slider{
+.history__slider {
     overflow-y: auto;
     height: 40px;
     padding: 0 15px;
 }
 
-.history__slider__holder{
+.history__slider__holder {
 
 }

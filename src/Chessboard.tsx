@@ -171,8 +171,12 @@ export class Chessboard extends React.Component<IChessboardProps, any> {
             if (this.game.game_over() === true ||
                 (this.game.turn() === 'w' && piece.search(/^b/) !== -1) ||
                 (this.game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+
                 return false;
             }
+
+
+            onSelectSquare(source);
             return true;
         };
 
@@ -182,11 +186,6 @@ export class Chessboard extends React.Component<IChessboardProps, any> {
             this.board.position(this.game.fen());
             store.dispatch(setPosition(this.game.fen()));
             store.dispatch(loadOpeningPosition(this.game.fen()));
-            // store.dispatch(loadEvaluation(this.game.fen()));
-            // console.log('emit->setNewPosition', this.game.fen());
-            // socket.emit('setNewPosition', {
-            //     FEN: this.game.fen()
-            // });
         };
 
         const updateStatus = () => {
@@ -215,15 +214,6 @@ export class Chessboard extends React.Component<IChessboardProps, any> {
             store.dispatch(setStatus(status));
             store.dispatch(setHistory(this.game.history()));
             console.log('Game History', this.game.history());
-            // socket.emit('setNewPosition', {
-            //     FEN: this.game.fen()
-            // });
-            // this.setState({
-            //     status: status,
-            //     fen: this.game.fen(),
-            //     pgn: this.game.pgn()
-            // });
-
         };
 
         const onDrop = (source, target) => {
@@ -244,6 +234,20 @@ export class Chessboard extends React.Component<IChessboardProps, any> {
 
             updateStatus();
             return true;
+        };
+
+        const removeGreySquares = function () {
+            $('#chessboard .square-grayed').removeClass('square-grayed');
+        };
+
+
+        let selectedMove;
+        const onSelectSquare = function (square) {
+            removeGreySquares();
+
+            selectedMove = square;
+
+            $('#chessboard .square-' + square).addClass('square-grayed');
         };
 
         const onMoveEnd = () => {

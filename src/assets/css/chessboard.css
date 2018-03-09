@@ -36,6 +36,12 @@
     user-select: none;
 }
 
+.square-grayed{
+    /*border:1px solid red;*/
+    opacity: .8;
+}
+
+
 /* white square */
 .white-1e1d7 {
     background-color: #f0d9b5;

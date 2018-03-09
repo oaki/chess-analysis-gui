@@ -24,23 +24,25 @@ class App extends React.Component<any, any> {
 
         return (
             <Provider store={store}>
+                <div className="app">
+                    <div className="alpha-version ">Alpha version</div>
 
-                <div className="app container">
+                    <div className="container">
+                        <SmartError/>
 
-                    <SmartError/>
+                        <div className="row">
+                            <div className="col-md-7">
+                                <SmartChessboard/>
+                            </div>
+                            <div className="col-md-5">
+                                <Pannel/>
 
-                    <div className="row">
-                        <div className="col-md-7">
-                            <SmartChessboard/>
+                            </div>
                         </div>
-                        <div className="col-md-5">
-                            <Pannel />
 
-                        </div>
+                        <History/>
+                        <Menu/>
                     </div>
-
-                    <History />
-                    <Menu/>
                 </div>
             </Provider>
         );
