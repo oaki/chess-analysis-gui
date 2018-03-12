@@ -60,12 +60,12 @@ export class SocketIoProvider extends React.Component<any, any> {
 
         socket.on('connect', () => {
             console.log(`socket connected to ${config.socketIo.host}`);
-            socket.on('on_result', (result: { data: IWorkerResponse }) => {
+            socket.on('on_result', (result: { data: IWorkerResponse, fen: string }) => {
                 console.log('browser: on_result', result.data);
 
 
                 // ignore others @todo disable others results
-                if (store.getState()['fen'] === result.data.fen) {
+                if (store.getState()['fen'] === result.fen) {
                     const data = this.prepareEvaluation(result.data);
                     store.dispatch(setEvaluation(data));
                 }

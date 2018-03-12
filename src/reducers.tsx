@@ -1,7 +1,8 @@
 import {combineReducers} from 'redux';
 
 import {
-    ADD_MOVE_TO_HISTORY, FLIP_BOARD, HISTORY_REDO, HISTORY_UNDO, REMOVE_LAST_MOVE_FROM_HISTORY, SET_ERROR,
+    ADD_MOVE_TO_HISTORY, FLIP_BOARD, HISTORY_REDO, HISTORY_UNDO, MENU_TOGGLE_OPEN, REMOVE_LAST_MOVE_FROM_HISTORY,
+    SET_ERROR,
     SET_EVALUATION,
     SET_HISTORY, SET_MOVE,
     SET_OPENING_POSITION,
@@ -155,6 +156,22 @@ export const historyRedoReducer = (hash: number = 0, action: any) => {
     }
 };
 
+interface Menu {
+    isSubMenuOpen: boolean;
+}
+
+export const menuReducer = (menu: Menu = {isSubMenuOpen: false}, action: any) => {
+    switch (action.type) {
+        case MENU_TOGGLE_OPEN:
+            const m = {...menu};
+            m.isSubMenuOpen = !m.isSubMenuOpen;
+            return m;
+
+        default:
+            return menu;
+    }
+};
+
 export default combineReducers({
     loading: loadingReducer,
     fen: positionReducer,
@@ -167,6 +184,7 @@ export default combineReducers({
     isFlip: flipBoardReducer,
     historyUndo: historyUndoReducer,
     historyRedo: historyRedoReducer,
+    menu: menuReducer,
 });
 
 export function deepCopy(obj) {

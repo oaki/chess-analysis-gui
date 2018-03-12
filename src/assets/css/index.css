@@ -1,5 +1,6 @@
-@import './bootstrap.css';
-@import './bootstrap-grid.css';
+@import 'bootstrap/bootstrap-reboot.css';
+@import 'bootstrap/bootstrap.css';
+@import 'bootstrap/bootstrap-grid.css';
 @import './chessboard.css';
 @import './chessboard-custom.css';
 @import './bottomMenu.css';

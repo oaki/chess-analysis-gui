@@ -18,8 +18,14 @@ export const SET_HISTORY = 'SET_HISTORY';
 export const FLIP_BOARD = 'FLIP_BOARD';
 export const HISTORY_UNDO = 'HISTORY_UNDO';
 export const HISTORY_REDO = 'HISTORY_REDO';
+export const MENU_TOGGLE_OPEN = 'MENU_TOGGLE_OPEN';
 
 
+export function toogleOpenMenu() {
+    return {
+        type: MENU_TOGGLE_OPEN
+    };
+}
 export function setLoading(isLoading: boolean) {
     return {
         isLoading,

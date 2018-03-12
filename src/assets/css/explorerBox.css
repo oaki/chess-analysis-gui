@@ -1,6 +1,8 @@
 .explorer-box {
     max-height: 10rem;
-    overflow: auto;
+    overflow-x: scroll;
+    -webkit-overflow-scrolling: touch;
+    overflow-scrolling: touch;
 }
 
 .explorer-box table {
