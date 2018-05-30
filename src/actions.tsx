@@ -3,6 +3,8 @@ import {find as findInBook} from "./services/offlineBook";
 import {Evaluation} from "./SocketIoProvider";
 import {IWorkerResponse} from "./interfaces";
 import config from "./config";
+import {IHistoryMove} from "./components/AwesomeChessboard";
+import {IUser} from "./reducers";
 
 export const UPDATE_LOADING = 'UPDATE_LOADING';
 export const SET_POSITION = 'SET_POSITION';
@@ -14,11 +16,15 @@ export const SET_MOVE = 'SET_MOVE';
 export const SET_STATUS = 'SET_STATUS';
 export const LOAD_OPENING_BOOK = 'LOAD_OPENING_BOOK';
 export const SET_EVALUATION = 'SET_EVALUATION';
+export const SET_HISTORY_MOVE = 'SET_HISTORY_MOVE';
 export const SET_HISTORY = 'SET_HISTORY';
+export const SET_LAST_MOVE = 'SET_LAST_MOVE';
 export const FLIP_BOARD = 'FLIP_BOARD';
 export const HISTORY_UNDO = 'HISTORY_UNDO';
 export const HISTORY_REDO = 'HISTORY_REDO';
 export const MENU_TOGGLE_OPEN = 'MENU_TOGGLE_OPEN';
+export const USER_SIGN_IN = 'USER_SIGN_IN';
+export const SET_USER = 'SET_USER';
 
 
 export function toogleOpenMenu() {
@@ -26,6 +32,7 @@ export function toogleOpenMenu() {
         type: MENU_TOGGLE_OPEN
     };
 }
+
 export function setLoading(isLoading: boolean) {
     return {
         isLoading,
@@ -47,10 +54,24 @@ export function setEvaluation(evaluation: IWorkerResponse) {
     };
 }
 
-export function setHistory(history: string[]) {
+export function setHistoryMove(payload: IHistoryMove) {
     return {
-        history,
+        payload,
+        type: SET_HISTORY_MOVE
+    };
+}
+
+export function setHistory(payload: any) {
+    return {
+        payload,
         type: SET_HISTORY
+    };
+}
+
+export function lastMoveId(uuid: string) {
+    return {
+        uuid,
+        type: SET_LAST_MOVE
     };
 }
 
@@ -115,6 +136,13 @@ export function setStatus(status: string) {
     };
 }
 
+export function setUser(user: IUser) {
+    return {
+        payload: user,
+        type: USER_SIGN_IN
+    };
+}
+
 export function loadOpeningBook() {
     return async (dispatch: (data: any) => {}, getState: any) => {
         dispatch(setLoading(true));
@@ -127,12 +155,42 @@ export function loadOpeningBook() {
 export function loadEvaluation(fen: string) {
     return async (dispatch: (data: any) => {}, getState: any) => {
         dispatch(setLoading(true));
-
-
         dispatch(setLoading(false));
     }
 }
 
+export function verifyUser(token: string) {
+    return async (dispatch: (data: any) => {}) => {
+        dispatch(setLoading(true));
+
+        const url = `${config.apiHost}/verify-user`;
+        const headers: RequestInit = {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            })
+        };
+
+        try {
+            const response = await fetch(url, headers);
+            if (response.ok) {
+                const user: IUser = await response.json();
+                console.log(user);
+                dispatch(setUser(user));
+            } else {
+                dispatch(setOpeningPosition([]));
+            }
+
+        } catch (e) {
+            dispatch(setError('opening book failed'));
+            console.log(e);
+        }
+
+        dispatch(setLoading(false));
+    }
+
+}
 
 export function loadOpeningPosition(fen: string) {
     return async (dispatch: (data: any) => {}) => {

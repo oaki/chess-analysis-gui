@@ -4,13 +4,13 @@ import ChessBoard from 'chessboardjs';
 import Chess from 'chess.js';
 
 import {
-    addMoveToHistory, loadEvaluation, loadOpeningPosition, removeLastMoveFromHistory, setHistory, setPosition,
+    addMoveToHistory, loadEvaluation, loadOpeningPosition, removeLastMoveFromHistory, setHistoryMove, setPosition,
     setStatus
 } from "./actions";
 import {store} from "./store";
 import * as $ from 'jquery';
 import {deepCopy} from "./reducers";
-import {History} from "./History";
+import {History} from "./components/History";
 
 const win: any = window;
 win.$ = $;
@@ -212,7 +212,7 @@ export class Chessboard extends React.Component<IChessboardProps, any> {
 
             console.log(status);
             store.dispatch(setStatus(status));
-            store.dispatch(setHistory(this.game.history()));
+            store.dispatch(setHistoryMove(this.game.history()));
             console.log('Game History', this.game.history());
         };
 

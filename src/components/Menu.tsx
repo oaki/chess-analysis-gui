@@ -6,8 +6,14 @@ import * as faRetweet from "@fortawesome/fontawesome-free-solid/faRetweet";
 import * as faAngleDoubleLeft from "@fortawesome/fontawesome-free-solid/faAngleDoubleLeft";
 import * as faAngleDoubleRight from "@fortawesome/fontawesome-free-solid/faAngleDoubleRight";
 import * as faBars from "@fortawesome/fontawesome-free-solid/faBars";
-import {store} from "./store";
-import {flipBoard, historyRedo, historyUndo, toogleOpenMenu} from "./actions";
+import {store} from "../store";
+import {flipBoard, historyRedo, historyUndo, lastMoveId, setPosition, toogleOpenMenu} from "../actions";
+import {
+    getHistoryChildren, getHistoryNextMove, getHistoryParents,
+    getHistoryPreviousMove
+} from "../libs/chessboardUtils";
+import {AwesomeChessboard} from "./AwesomeChessboard";
+import {SessionManagerService} from "../services/sessionManager";
 
 @connect((state) => ({isSubMenuOpen: state.menu.isSubMenuOpen}))
 export class Menu extends React.Component<any, any> {
@@ -17,11 +23,27 @@ export class Menu extends React.Component<any, any> {
     }
 
     handleUndo() {
-        store.dispatch(historyUndo(Math.random()));
+
+        const moves = getHistoryParents(store.getState()['lastMoveId']);
+        const previousMove = getHistoryPreviousMove();
+        console.log('moves', moves);
+        console.log('hanfleHistory', previousMove);
+        if (previousMove) {
+            store.dispatch(setPosition(previousMove.fen));
+            store.dispatch(lastMoveId(previousMove.uuid));
+        } else {
+            store.dispatch(setPosition(AwesomeChessboard.FIRST_POSITION));
+            store.dispatch(lastMoveId(''));
+        }
     }
 
     handleRedo() {
-        store.dispatch(historyRedo(Math.random()));
+
+        const nextMove = getHistoryNextMove();
+        if (nextMove) {
+            store.dispatch(setPosition(nextMove.fen));
+            store.dispatch(lastMoveId(nextMove.uuid));
+        }
     }
 
     handleToggleSubMenu() {
@@ -29,8 +51,15 @@ export class Menu extends React.Component<any, any> {
         store.dispatch(toogleOpenMenu());
     }
 
+    handleLogout() {
+        console.log('handleLogout');
+        SessionManagerService.removeUser();
+
+        location.reload();
+    }
+
     render() {
-        console.log('this.props.isSubMenuOpen',this.props.isSubMenuOpen);
+        console.log('this.props.isSubMenuOpen', this.props.isSubMenuOpen);
         return (
             <div className="bottom-menu">
                 {this.renderSubmenu()}
@@ -49,7 +78,7 @@ export class Menu extends React.Component<any, any> {
     }
 
     renderSubmenu() {
-        console.log('this.props.isSubMenuOpen',this.props.isSubMenuOpen);
+        console.log('this.props.isSubMenuOpen', this.props.isSubMenuOpen);
         if (this.props.isSubMenuOpen) {
             return (
                 <div className="position-relative">
@@ -57,8 +86,11 @@ export class Menu extends React.Component<any, any> {
                         <li className="sub-menu__line">
                             <button type="button" className="btn btn-link">New game</button>
                         </li>
-                        <li className="">
+                        <li className="sub-menu__line">
                             <button type="button" className="btn btn-link">About</button>
+                        </li>
+                        <li className="">
+                            <button onClick={this.handleLogout} type="button" className="btn btn-link">Logout</button>
                         </li>
                     </ul>
                 </div>

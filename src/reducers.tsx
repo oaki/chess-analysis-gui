@@ -3,17 +3,18 @@ import {combineReducers} from 'redux';
 import {
     ADD_MOVE_TO_HISTORY, FLIP_BOARD, HISTORY_REDO, HISTORY_UNDO, MENU_TOGGLE_OPEN, REMOVE_LAST_MOVE_FROM_HISTORY,
     SET_ERROR,
-    SET_EVALUATION,
-    SET_HISTORY, SET_MOVE,
+    SET_EVALUATION, SET_HISTORY,
+    SET_HISTORY_MOVE, SET_LAST_MOVE, SET_MOVE,
     SET_OPENING_POSITION,
     SET_POSITION,
     SET_STATUS,
-    UPDATE_LOADING
+    UPDATE_LOADING, USER_SIGN_IN
 } from "./actions";
 import {Move} from "./OpeningExplorer";
-import {IHistoryMove} from "./Chessboard";
+import {IHistoryMove} from "./components/AwesomeChessboard";
 import {Evaluation} from "./SocketIoProvider";
-import {IWorkerResponse, LINE_MAP} from "./interfaces";
+import {IWorkerResponse, LINE_MAP, IAction} from "./interfaces";
+import {SessionManagerService} from "./services/sessionManager";
 
 export const loadingReducer = (isLoading: boolean = false, action: any) => {
     switch (action.type) {
@@ -55,15 +56,7 @@ export const openingMovesReducer = (moves: Move[] = [], action: any) => {
             return moves;
     }
 };
-export const lastMoveReducer = (move: string = '', action: any) => {
-    switch (action.type) {
-        case SET_MOVE:
-            return action.move;
 
-        default:
-            return move;
-    }
-};
 export const statusReducer = (status: string = '', action: any) => {
     switch (action.type) {
         case SET_STATUS:
@@ -95,6 +88,7 @@ export const evaluationReducer = (evaluation: IWorkerResponse | Move[] = [], act
         }
     }
 ;
+
 /*
 
 export const historyReducer = (state: IHistoryMove[] = [], action: any) => {
@@ -116,16 +110,43 @@ export const historyReducer = (state: IHistoryMove[] = [], action: any) => {
 };
 */
 
+interface IHistoryMoveCollection {
+    [key: string]: IHistoryMove;
+}
 
-export const historyReducer = (state: string[] = [], action: any) => {
+
+export const historyReducer = (state: IHistoryMoveCollection = {}, action: IAction<IHistoryMove | any>) => {
     switch (action.type) {
+        case SET_HISTORY_MOVE:
+            console.log('state', state);
+            console.log('action', action);
+
+            const newState = {...state};
+            newState[action.payload.uuid] = action.payload;
+            return newState;
+
         case SET_HISTORY:
-            return action.history;
+            return action.payload;
 
         default:
             return state;
     }
 };
+
+export const lastMoveReducer = (state: string = '', action: any) => {
+    switch (action.type) {
+        case SET_LAST_MOVE:
+            console.log('state', state);
+            console.log('action', action);
+
+
+            return action.uuid;
+
+        default:
+            return state;
+    }
+};
+
 export const flipBoardReducer = (isFlip: boolean = false, action: any) => {
     switch (action.type) {
         case FLIP_BOARD:
@@ -136,25 +157,6 @@ export const flipBoardReducer = (isFlip: boolean = false, action: any) => {
     }
 };
 
-export const historyUndoReducer = (hash: number = 0, action: any) => {
-    switch (action.type) {
-        case HISTORY_UNDO:
-            return action.hash;
-
-        default:
-            return hash;
-    }
-};
-
-export const historyRedoReducer = (hash: number = 0, action: any) => {
-    switch (action.type) {
-        case HISTORY_REDO:
-            return action.hash;
-
-        default:
-            return hash;
-    }
-};
 
 interface Menu {
     isSubMenuOpen: boolean;
@@ -172,18 +174,41 @@ export const menuReducer = (menu: Menu = {isSubMenuOpen: false}, action: any) =>
     }
 };
 
+export interface IUser {
+    isLoggedIn: boolean;
+    email: string;
+    name: string;
+    img: string;
+    googleToken: string;
+    token: string;
+    last_game_id: number;
+}
+
+export const userReducer = (user: IUser = SessionManagerService.getUser(), action: IAction<IUser>) => {
+    switch (action.type) {
+        case USER_SIGN_IN:
+            console.log('old state', user, 'new state', action.payload);
+            return {...user, ...action.payload};
+
+        default:
+            return user;
+    }
+};
+
+
 export default combineReducers({
     loading: loadingReducer,
+    user: userReducer,
     fen: positionReducer,
     evaluation: evaluationReducer,
-    lastMove: lastMoveReducer,
     openingMoves: openingMovesReducer,
     error: errorReducer,
     history: historyReducer,
     status: statusReducer,
     isFlip: flipBoardReducer,
-    historyUndo: historyUndoReducer,
-    historyRedo: historyRedoReducer,
+    // historyUndo: historyUndoReducer,
+    // historyRedo: historyRedoReducer,
+    lastMoveId: lastMoveReducer,
     menu: menuReducer,
 });
 

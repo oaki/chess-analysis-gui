@@ -1,22 +1,41 @@
-const isDev = process.argv.indexOf('env=dev') !== -1;
+// require('dotenv').config({path: './../.env'});
 
-console.log('isDev', isDev);
-console.log('process', process);
-console.log('process.env.NODE_ENV', process.env.NODE_ENV );
-console.log('process.env.REACT_APP_PORT', process.env.REACT_APP_PORT );
-let config = {
-    apiHost: 'https://api.chess-analysis.com',
+
+// let config = {
+//     apiHost: 'https://api.chess-analysis.com',
+//     socketIo: {
+//         host: 'https://api.chess-analysis.com',
+//         path: '/socket.io',
+//     }
+// // };
+// if (process.env.NODE_ENV === 'development') {
+//     config.socketIo = {
+//         host: 'localhost:8080',
+//         path: '/socket.io',
+//     }
+// }
+const env: any = process.env;
+console.log('env',env);
+const config: IConfig = {
+    apiHost: env.REACT_APP_HOST,
     socketIo: {
-        host: 'https://api.chess-analysis.com',
-        path: '/socket.io',
+        host: env.REACT_APP_SOCKET_IO_HOST,
+        path: env.REACT_APP_SOCKET_IO_PATH,
+    },
+    google: {
+        clientId: env.REACT_APP_GOOGLECLIENTID
     }
 };
-if (process.env.NODE_ENV === 'development') {
-    config.socketIo = {
-        host: 'localhost:8080',
-        path: '/socket.io',
+
+interface IConfig {
+    apiHost: string;
+    socketIo: {
+        host: string;
+        path: string;
+    };
+    google: {
+        clientId: string;
     }
 }
-
 
 export default config;

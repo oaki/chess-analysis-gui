@@ -39,3 +39,8 @@ export interface IEvaluation {
     [LINE_MAP.tbhits]?: string;
     [LINE_MAP.import]?: number;
 }
+
+export type IAction<TPayload> = {
+    type: string;
+    payload: TPayload;
+}

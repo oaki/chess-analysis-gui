@@ -6,10 +6,11 @@ import {store} from "./store";
 import {connect} from "react-redux";
 import {setError, setEvaluation} from "./actions";
 import {IWorkerResponse, LINE_MAP} from "./interfaces";
+import {SocketManagerService} from "./services/socketManager";
 
 // console.log('socketIoHost', config.socketIo.host);
 // console.log('socketIoPath', config.socketIo.path);
-const socket = io(config.socketIo.host, {path: config.socketIo.path});
+
 
 export interface Evaluation {
     score: string;
@@ -45,48 +46,10 @@ export class SocketIoProvider extends React.Component<any, any> {
 
     componentDidUpdate(prevProps) {
         if (prevProps.fen !== this.props.fen) {
-            socket.emit('setNewPosition', {
+            SocketManagerService.emit('setNewPosition', {
                 FEN: this.props.fen
             });
         }
-    }
-
-
-    componentDidMount() {
-
-        socket.on('connect_timeout', (timeout) => {
-            store.dispatch(setError('Socket connection timeout'));
-        });
-
-        socket.on('connect', () => {
-            console.log(`socket connected to ${config.socketIo.host}`);
-            socket.on('on_result', (result: { data: IWorkerResponse, fen: string }) => {
-                console.log('browser: on_result', result.data);
-
-
-                // ignore others @todo disable others results
-                if (store.getState()['fen'] === result.fen) {
-                    const data = this.prepareEvaluation(result.data);
-                    store.dispatch(setEvaluation(data));
-                }
-
-                // this.handleWorkerResult(result.data);
-            });
-        });
-    }
-
-    private prepareEvaluation(data: IWorkerResponse) {
-        if (!data[LINE_MAP.pv]) {
-            return data;
-        }
-
-        const newData = {...data};
-        const arr = newData[LINE_MAP.pv].match(/.{1,4}/g);
-        if (arr && arr.length) {
-            newData[LINE_MAP.pv] = arr.join(' ');
-        }
-
-        return newData;
     }
 
     getScore() {

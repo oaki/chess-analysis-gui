@@ -1,73 +1,89 @@
-import * as React from 'react';
+// import * as React from 'react';
 import {Provider} from 'react-redux';
-import {Pannel} from "./Pannel";
+// import {Pannel} from "./Pannel";
 import {store} from "./store";
-import {SmartChessboard} from './Chessboard';
-import * as $ from 'jquery';
-import {connect} from 'react-redux';
-
-const win: any = window;
-win.$ = $;
+// import {SmartChessboard} from './Chessboard';
+// import {GoogleLogin} from 'react-google-login';
+// import {Router, Route, Switch} from 'react-router'
+// import {BrowserRouter} from 'react-router-dom'
+//
+// import * as $ from 'jquery';
+// import {connect} from 'react-redux';
+//
+// const win: any = window;
+// win.$ = $;
 
 
 import {SocketIoProvider} from "./SocketIoProvider";
 import * as faRetweet from "@fortawesome/fontawesome-free-solid/faRetweet";
 import * as faAngleDoubleLeft from "@fortawesome/fontawesome-free-solid/faAngleDoubleLeft";
 import * as faAngleDoubleRight from "@fortawesome/fontawesome-free-solid/faAngleDoubleRight";
-import {Menu} from "./Menu";
-import {History} from "./History";
+import {Menu} from "./components/Menu";
+import {History} from "./components/History";
+import {AwesomeChessboard, SmartAwesomeChessboard} from "./components/AwesomeChessboard";
+import SignInPage from "./layouts/signInPage";
+import {ChessboardPage} from "./layouts/chessboard";
+// import {PrivateRoute} from "./libs/privateRoute";
+//
+// const Public = () => <h3>Public</h3>;
+// const Protected = () => <h3>Protected</h3>;
 
 
-class App extends React.Component<any, any> {
+// class App extends React.Component<any, any> {
+//
+//     render() {
+//
+//         return (
+//             <Provider store={store}>
+//                 <BrowserRouter>
+//                     <div className="app">
+//
+//
+//
+//                         <Route path="/public" component={Public} />
+//
+//                         <PrivateRoute path="/" component={ChessboardPage}/>
+//
+//                         <Route path="/auth/sign-in" component={SignInPage}/>
+//
+//                     </div>
+//                 </BrowserRouter>
+//             </Provider>
+//         );
+//     }
+// }
+
+
+import * as React from "react";
+import {
+    BrowserRouter as Router,
+    Route,
+    Link,
+    Redirect,
+    withRouter
+} from "react-router-dom";
+import {PrivateRoute} from "./libs/privateRoute";
+import {HomePage} from "./layouts/homePage";
+
+
+export class App extends React.Component<any, any> {
 
     render() {
-
         return (
+
             <Provider store={store}>
-                <div className="app">
-                    <div className="alpha-version ">Alpha version</div>
-
-                    <div className="container">
-                        <SmartError/>
-
-                        <div className="row">
-                            <div className="col-md-7">
-                                <SmartChessboard/>
-                            </div>
-                            <div className="col-md-5">
-                                <Pannel/>
-
-                            </div>
-                        </div>
-
-                        <History/>
-                        <Menu/>
+                <Router>
+                    <div className="app">
+                        <PrivateRoute path="/play" component={ChessboardPage}/>
+                        <Route path="/auth/sign-in" component={SignInPage}/>
+                        <Route exact={true} path="/" component={HomePage}/>
                     </div>
-                </div>
+                </Router>
             </Provider>
-        );
-    }
-}
 
-
-class Error extends React.PureComponent<any, any> {
-    render() {
-        if (this.props.msg === '') {
-            return null;
-        }
-        return (
-            <div className="alert alert-danger">
-                {this.props.msg}
-            </div>
         )
     }
 }
 
-function mapStateToProps(state) {
-    return {
-        msg: state.error
-    }
-}
 
-export const SmartError = connect(mapStateToProps)(Error);
 export default App;

@@ -2,10 +2,6 @@
     font-size: .8rem;
     color: white;
     background-color: #4b4b4b;
-    position: absolute;
-    bottom: 2.4rem;
-    left: 0;
-    right: 0;
 }
 
 .history .move_num {
@@ -14,8 +10,21 @@
 }
 
 .history .move {
-    padding: .6rem .6rem .6rem 0;
+    padding: .1rem .6rem .1rem 0;
     display: inline-block;
+}
+
+.history .subline .move{
+    font-size: .7rem;
+    color: rgba(170, 165, 170, 0.99);
+}
+
+.history .subline{
+    padding-left: 1rem;
+}
+
+.history .move__active {
+    color: red;
 }
 
 .history__title {
@@ -25,8 +34,8 @@
 }
 
 .history__slider {
-    overflow-y: scroll;
-    height: 40px;
+    /*overflow-y: scroll;*/
+    /*height: 40px;*/
     padding: 0 15px;
     -webkit-overflow-scrolling: touch;
     overflow-scrolling: touch;

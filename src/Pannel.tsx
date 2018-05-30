@@ -5,7 +5,7 @@ import {SmartOpeningExplorer} from "./OpeningExplorer";
 import {store} from "./store";
 import {loadOpeningBook} from "./actions";
 import {SocketIoProvider} from "./SocketIoProvider";
-import {History} from "./History";
+import {History} from "./components/History";
 
 interface IPannelProps {
     status: string;
