@@ -13,7 +13,6 @@ export enum LINE_MAP {
 }
 
 export interface IWorkerResponse extends IEvaluation {
-    userId: string,
     fen: string
 }
 

@@ -1,19 +1,18 @@
 import {combineReducers} from 'redux';
 
 import {
-    ADD_MOVE_TO_HISTORY, FLIP_BOARD, HISTORY_REDO, HISTORY_UNDO, MENU_TOGGLE_OPEN, REMOVE_LAST_MOVE_FROM_HISTORY,
+    FLIP_BOARD, MENU_TOGGLE_OPEN,
     SET_ERROR,
     SET_EVALUATION, SET_HISTORY,
-    SET_HISTORY_MOVE, SET_LAST_MOVE, SET_MOVE,
+    SET_HISTORY_MOVE, SET_LAST_MOVE,
     SET_OPENING_POSITION,
     SET_POSITION,
-    SET_STATUS,
+    SET_STATUS, SET_WORKER_LIST,
     UPDATE_LOADING, USER_SIGN_IN
 } from "./actions";
-import {Move} from "./OpeningExplorer";
+import {Move} from "./components/OpeningExplorer";
 import {IHistoryMove} from "./components/AwesomeChessboard";
-import {Evaluation} from "./SocketIoProvider";
-import {IWorkerResponse, LINE_MAP, IAction} from "./interfaces";
+import {IWorkerResponse, IAction} from "./interfaces";
 import {SessionManagerService} from "./services/sessionManager";
 
 export const loadingReducer = (isLoading: boolean = false, action: any) => {
@@ -88,27 +87,6 @@ export const evaluationReducer = (evaluation: IWorkerResponse | Move[] = [], act
         }
     }
 ;
-
-/*
-
-export const historyReducer = (state: IHistoryMove[] = [], action: any) => {
-    let history: IHistoryMove[];
-    switch (action.type) {
-        case ADD_MOVE_TO_HISTORY:
-            history = deepCopy(state);
-            history.push(action.fen);
-            return history;
-
-        case REMOVE_LAST_MOVE_FROM_HISTORY:
-            history = deepCopy(state);
-            history.pop();
-            return history;
-
-        default:
-            return state;
-    }
-};
-*/
 
 interface IHistoryMoveCollection {
     [key: string]: IHistoryMove;
@@ -195,6 +173,23 @@ export const userReducer = (user: IUser = SessionManagerService.getUser(), actio
     }
 };
 
+export interface IWorker {
+    name: string;
+    uuid: string;
+    user_id: number;
+    id: number;
+}
+
+export const workesReducer = (workerList: IWorker[] = [], action: IAction<IWorker[]>) => {
+    switch (action.type) {
+        case SET_WORKER_LIST:
+            return [...action.payload];
+
+        default:
+            return workerList;
+    }
+};
+
 
 export default combineReducers({
     loading: loadingReducer,
@@ -206,10 +201,9 @@ export default combineReducers({
     history: historyReducer,
     status: statusReducer,
     isFlip: flipBoardReducer,
-    // historyUndo: historyUndoReducer,
-    // historyRedo: historyRedoReducer,
     lastMoveId: lastMoveReducer,
     menu: menuReducer,
+    workers: workesReducer,
 });
 
 export function deepCopy(obj) {

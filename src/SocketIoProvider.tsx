@@ -46,6 +46,7 @@ export class SocketIoProvider extends React.Component<any, any> {
 
     componentDidUpdate(prevProps) {
         if (prevProps.fen !== this.props.fen) {
+            console.log('setNewPosition');
             SocketManagerService.emit('setNewPosition', {
                 FEN: this.props.fen
             });

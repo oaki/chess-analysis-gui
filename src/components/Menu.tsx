@@ -1,21 +1,22 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
-
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import * as faRetweet from "@fortawesome/fontawesome-free-solid/faRetweet";
 import * as faAngleDoubleLeft from "@fortawesome/fontawesome-free-solid/faAngleDoubleLeft";
 import * as faAngleDoubleRight from "@fortawesome/fontawesome-free-solid/faAngleDoubleRight";
 import * as faBars from "@fortawesome/fontawesome-free-solid/faBars";
 import {store} from "../store";
-import {flipBoard, historyRedo, historyUndo, lastMoveId, setPosition, toogleOpenMenu} from "../actions";
+import {addNewGame, flipBoard, lastMoveId, setPosition, toogleOpenMenu} from "../actions";
 import {
-    getHistoryChildren, getHistoryNextMove, getHistoryParents,
+    getHistoryNextMove, getHistoryParents,
     getHistoryPreviousMove
 } from "../libs/chessboardUtils";
-import {AwesomeChessboard} from "./AwesomeChessboard";
+import {SmartAwesomeChessboard} from "./AwesomeChessboard";
 import {SessionManagerService} from "../services/sessionManager";
 
-@connect((state) => ({isSubMenuOpen: state.menu.isSubMenuOpen}))
+@connect((state) => ({
+    isSubMenuOpen: state.menu.isSubMenuOpen
+}))
 export class Menu extends React.Component<any, any> {
 
     handleFlipBoard() {
@@ -32,7 +33,7 @@ export class Menu extends React.Component<any, any> {
             store.dispatch(setPosition(previousMove.fen));
             store.dispatch(lastMoveId(previousMove.uuid));
         } else {
-            store.dispatch(setPosition(AwesomeChessboard.FIRST_POSITION));
+            store.dispatch(setPosition(SmartAwesomeChessboard.FIRST_POSITION));
             store.dispatch(lastMoveId(''));
         }
     }
@@ -58,6 +59,11 @@ export class Menu extends React.Component<any, any> {
         location.reload();
     }
 
+    handleNewGame() {
+        console.log('handleNewGame');
+        store.dispatch(addNewGame());
+    }
+
     render() {
         console.log('this.props.isSubMenuOpen', this.props.isSubMenuOpen);
         return (
@@ -65,9 +71,6 @@ export class Menu extends React.Component<any, any> {
                 {this.renderSubmenu()}
 
                 <ul className="main">
-                    {/*<li>www</li>*/}
-                    {/*<li>2</li>*/}
-
                     <li><a href="#" onClick={this.handleToggleSubMenu}> <FontAwesomeIcon icon={faBars}/></a></li>
                     <li><a href="#" onClick={this.handleFlipBoard}> <FontAwesomeIcon icon={faRetweet}/></a></li>
                     <li><a href="#" onClick={this.handleUndo}> <FontAwesomeIcon icon={faAngleDoubleLeft}/></a></li>
@@ -84,10 +87,13 @@ export class Menu extends React.Component<any, any> {
                 <div className="position-relative">
                     <ul className="sub-menu">
                         <li className="sub-menu__line">
-                            <button type="button" className="btn btn-link">New game</button>
+                            <button onClick={this.handleNewGame} type="button" className="btn btn-link">New game</button>
                         </li>
                         <li className="sub-menu__line">
                             <button type="button" className="btn btn-link">About</button>
+                        </li>
+                        <li className="sub-menu__line">
+                            <a href="/user/engines" type="button" className="btn btn-link">My chess engines</a>
                         </li>
                         <li className="">
                             <button onClick={this.handleLogout} type="button" className="btn btn-link">Logout</button>

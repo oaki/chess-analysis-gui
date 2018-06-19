@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import {connect} from 'react-redux';
 import {IHistoryMove} from "./AwesomeChessboard";
 import {getHistory, getHistoryLine, getHistoryMove} from "../libs/chessboardUtils";
-import {lastMoveId, setPosition} from "../actions";
+import {lastMoveId, loadOpeningPosition, setMove, setPosition} from "../actions";
 import {store} from "../store";
 import {filter} from "lodash";
 
@@ -40,8 +40,8 @@ export class History extends React.Component<any, any> {
         const uuid = e.currentTarget.dataset.uuid;
         const move = getHistoryMove(uuid);
         if (move) {
-            store.dispatch(setPosition(move.fen));
-            store.dispatch(lastMoveId(move.uuid));
+            store.dispatch(setMove(move.notation.substring(0, 2), move.notation.substring(2, 4), move.uuid));
+            store.dispatch(loadOpeningPosition(move.fen));
         }
     }
 
@@ -54,7 +54,6 @@ export class History extends React.Component<any, any> {
             return a.isMain | b.isMain;
         });
 
-        console.log('moves', moves);
 
         return moves.map((move: IHistoryMove, index) => {
             if (index > 0) {

@@ -5,8 +5,6 @@ import {store} from "../store";
 
 export const PrivateRoute = ({component: Component, ...rest}) => {
 
-    const state = store.getState();
-    console.log('state', state);
     const {isLoggedIn, token, googleToken} = store.getState()['user'];
     const renderComponent = (props) => {
 

@@ -1,11 +1,9 @@
-import Opening from "./openingBook";
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {SmartOpeningExplorer} from "./OpeningExplorer";
-import {store} from "./store";
-import {loadOpeningBook} from "./actions";
-import {SocketIoProvider} from "./SocketIoProvider";
-import {History} from "./components/History";
+import {store} from "../store";
+import {loadOpeningBook} from "../actions";
+import {SocketIoProvider} from "../SocketIoProvider";
 
 interface IPannelProps {
     status: string;
@@ -72,10 +70,7 @@ export class Pannel extends React.Component<any, IPannelState> {
     render() {
         return (
             <div>
-
                 <SmartOpeningExplorer/>
-
-
 
                 <div className="app__status">
 

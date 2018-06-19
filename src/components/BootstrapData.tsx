@@ -15,15 +15,19 @@ export default class BootstrapData extends React.Component<any, any> {
     }
 
     renderAlert() {
-        return <div className="alert alert-warning" role="alert">
-            <strong>Error!</strong> {this.state.errorMsg}
-        </div>
+        return (
+            <div className="alert alert-warning" role="alert" key="alert">
+                <strong>Error!</strong> {this.state.errorMsg}
+            </div>
+        )
     }
 
     renderProgress() {
-        return (<div className="progress">
-            <div className="progress-bar bg-info" style={{width: `${this.state.progressBarWidth}%`}}/>
-        </div>)
+        return (
+            <div className="progress" key="progress">
+                <div className="progress-bar bg-info" style={{width: `${this.state.progressBarWidth}%`}}/>
+            </div>
+        )
     }
 
     render() {
@@ -41,7 +45,7 @@ export default class BootstrapData extends React.Component<any, any> {
 
         components.push(this.props.children);
 
-        return components;
+            return components;
     }
 
     initSockets(token: string) {

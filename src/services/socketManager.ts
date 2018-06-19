@@ -10,22 +10,31 @@ export default class SocketManager {
     private signInToken;
 
     constructor(private config: SocketIoConfig, private store) {
+        console.log('store', store);
     }
 
     setSignInToken(token: string) {
         this.signInToken = token;
     }
 
-    handleResult(result: { data: IWorkerResponse, fen: string }) {
-        console.log('browser: on_result', result.data);
+    handleResult = (result: string) => {
+        console.log('handleResult->', result);
+        const arr = JSON.parse(result);
+        // for now we are expecting only one result, no more
 
 
         // ignore others @todo disable others results
-        if (this.store.getState()['fen'] === result.fen) {
-            const data = this.prepareEvaluation(result.data);
+        if (arr[0] && this.store.getState()['fen'] === arr[0].fen) {
+            const data = this.prepareEvaluation(arr[0]);
             this.store.dispatch(setEvaluation(data));
         }
     }
+
+    // handleOpeningMoves = (result: { data: IWorkerResponse, fen: string }) => {
+    //     console.log('handleOpeningMoves->', result);
+    //
+    //     this.store.dispatch(setOpeningMoves(result.data));
+    // }
 
     private prepareEvaluation(data: IWorkerResponse) {
         if (!data[LINE_MAP.pv]) {
@@ -48,16 +57,22 @@ export default class SocketManager {
             query: {
                 token: this.signInToken,
                 type: 'user'
-            }
+            },
+            reconnection: true,
+            reconnectionDelay: 1000,
+            reconnectionDelayMax: 5000,
+            reconnectionAttempts: 99999
         });
 
         this.socket.on('connect', () => {
             console.log(`socket connected to ${this.config.socketIo.host}`);
-            /**
-             * Interface
-             */
-            this.socket.on('on_result', this.handleResult);
         });
+
+        /**
+         * Interface
+         */
+        this.socket.on('workerEvaluation', this.handleResult);
+        // this.socket.on('openingMoves', this.handleOpeningMoves);
 
         this.socket.on('disconnect', () => {
             store.dispatch(setError('Socket disconnect'));
