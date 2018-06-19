@@ -24,9 +24,10 @@ export default class SocketManager {
 
 
         // ignore others @todo disable others results
-        if (arr[0] && this.store.getState()['fen'] === arr[0].fen) {
-            const data = this.prepareEvaluation(arr[0]);
-            this.store.dispatch(setEvaluation(data));
+        const fen = this.store.getState()['fen'];
+        const results = arr.filter((data) => data.fen === fen).map((data) => this.prepareEvaluation(data));
+        if (results) {
+            this.store.dispatch(setEvaluation(results));
         }
     }
 
@@ -42,10 +43,10 @@ export default class SocketManager {
         }
 
         const newData = {...data};
-        const arr = newData[LINE_MAP.pv].match(/.{1,4}/g);
-        if (arr && arr.length) {
-            newData[LINE_MAP.pv] = arr.join(' ');
-        }
+        // const arr = newData[LINE_MAP.pv].match(/.{1,4}/g);
+        // if (arr && arr.length) {
+        //     newData[LINE_MAP.pv] = arr.join(' ');
+        // }
 
         return newData;
     }

@@ -3,9 +3,10 @@ import * as ReactDOM from 'react-dom';
 import {connect} from 'react-redux';
 import {IHistoryMove} from "./AwesomeChessboard";
 import {getHistory, getHistoryLine, getHistoryMove} from "../libs/chessboardUtils";
-import {lastMoveId, loadOpeningPosition, setMove, setPosition} from "../actions";
+import {lastMoveId, setEvaluation, setOpeningPosition, setPosition} from "../actions";
 import {store} from "../store";
 import {filter} from "lodash";
+import {batchActions} from "redux-batched-actions";
 
 const classNames = require('classnames');
 
@@ -35,13 +36,16 @@ export class History extends React.Component<any, any> {
     }
 
     handleMoveClick(e) {
-        // e.preventDefault();
-        console.log('eeee', e);
+        e.preventDefault();
         const uuid = e.currentTarget.dataset.uuid;
         const move = getHistoryMove(uuid);
         if (move) {
-            store.dispatch(setMove(move.notation.substring(0, 2), move.notation.substring(2, 4), move.uuid));
-            store.dispatch(loadOpeningPosition(move.fen));
+            store.dispatch(batchActions([
+                lastMoveId(move.uuid),
+                setPosition(move.fen),
+                setEvaluation([]),
+                setOpeningPosition([])
+            ]));
         }
     }
 

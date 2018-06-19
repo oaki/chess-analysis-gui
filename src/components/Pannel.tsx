@@ -39,33 +39,6 @@ export class Pannel extends React.Component<any, IPannelState> {
         store.dispatch(loadOpeningBook());
     }
 
-    /*
-
-        async loadOpeningBook() {
-
-            const opening = new Opening();
-            await opening.loadBook();
-
-            return opening;
-        }
-
-        handleLoadOpeningBook = () => {
-            this.setState({
-                loading: true
-            });
-
-            this.loadOpeningBook().then((book) => {
-
-                this.setState({
-                    loading: false
-                })
-            });
-
-        }
-
-        handleFenChange() {
-
-        }*/
 
     render() {
         return (

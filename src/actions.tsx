@@ -6,6 +6,7 @@ import {IUser} from "./reducers";
 import {batchActions} from 'redux-batched-actions';
 import * as Chess from 'chess.js';
 import {getHistoryChildren, getHistoryParents, getLastMove} from "./libs/chessboardUtils";
+import {store} from "./store";
 
 export const UPDATE_LOADING = 'UPDATE_LOADING';
 export const SET_POSITION = 'SET_POSITION';
@@ -49,7 +50,7 @@ export function setPosition(fen: string) {
     };
 }
 
-export function setEvaluation(evaluation: IWorkerResponse) {
+export function setEvaluation(evaluation: IWorkerResponse[]) {
     return {
         evaluation,
         type: SET_EVALUATION
@@ -104,7 +105,7 @@ export function removeLastMoveFromHistory() {
     };
 }
 
-export function setMove(from:string, to: string, uuid: string) {
+export function setMove(from: string, to: string, uuid: string) {
 
     const chess = new Chess();
     const moves: IHistoryMove[] = getHistoryParents(getLastMove());
@@ -118,9 +119,23 @@ export function setMove(from:string, to: string, uuid: string) {
     const parentId = getLastMove();
     const child = getHistoryChildren(parentId);
 
+    //check if move exist in children
+    // if yes just move there and do not add new move
+    const childMove = child.find((move)=>move.fen === fen);
+    if(childMove){
+        return batchActions([
+            lastMoveId(childMove.uuid),
+            setPosition(childMove.fen),
+            setEvaluation([]),
+            setOpeningPosition([])
+        ]);
+    }
+
     return batchActions([
         lastMoveId(uuid),
         setPosition(fen),
+        setOpeningPosition([]),
+        setEvaluation([]),
         setHistoryMove({
             parentId: getLastMove(),
             isMain: !child,
@@ -128,7 +143,9 @@ export function setMove(from:string, to: string, uuid: string) {
             fen,
             notation: `${from}${to}`,
             shortNotation: `${lastMove.san}`,
-        })
+        }),
+
+
     ]);
 }
 

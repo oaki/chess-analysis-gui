@@ -1,11 +1,8 @@
-///<reference path="actions.tsx"/>
 import * as React from "react";
-import * as io from 'socket.io-client';
-import config from "./config";
-import {store} from "./store";
+
 import {connect} from "react-redux";
-import {setError, setEvaluation} from "./actions";
-import {IWorkerResponse, LINE_MAP} from "./interfaces";
+
+import {IEvaluation, IWorkerResponse, LINE_MAP} from "./interfaces";
 import {SocketManagerService} from "./services/socketManager";
 
 // console.log('socketIoHost', config.socketIo.host);
@@ -20,7 +17,7 @@ export interface Evaluation {
 }
 
 interface SocketIoProviderProps {
-    evaluation: Evaluation
+    evaluation: Evaluation[]
 }
 
 
@@ -28,20 +25,24 @@ interface SocketIoProviderProps {
 export class SocketIoProvider extends React.Component<any, any> {
 
 
+    renderLine(evaluation:IEvaluation) {
+        return (
+            <div className="evaluation" key={evaluation[LINE_MAP.pv]}>
+                {evaluation && <span className="score">{this.getScore(evaluation)}</span>}
+                {evaluation && <span className="depth">depth: {evaluation[LINE_MAP.depth]}</span>}
+                {/*{this.props.evaluation && <span className="nodes">{this.getNodes()}</span>}*/}
+                {evaluation && <span className="pv">{evaluation[LINE_MAP.pv]}</span>}
+            </div>
+        )
+    }
+
     render() {
 
-        if (!this.props.evaluation || !this.props.evaluation[LINE_MAP.pv]) {
+        if (this.props.evaluation.length === 0) {
             return null
         }
         console.log('this.props.evaluation', this.props.evaluation);
-        return (
-            <div className="evaluation">
-                {this.props.evaluation && <span className="score">{this.getScore()}</span>}
-                {this.props.evaluation && <span className="depth">depth: {this.props.evaluation[LINE_MAP.depth]}</span>}
-                {/*{this.props.evaluation && <span className="nodes">{this.getNodes()}</span>}*/}
-                {this.props.evaluation && <span className="pv">{this.props.evaluation[LINE_MAP.pv]}</span>}
-            </div>
-        );
+        return this.props.evaluation.map((evaluation) => this.renderLine(evaluation));
     }
 
     componentDidUpdate(prevProps) {
@@ -53,8 +54,8 @@ export class SocketIoProvider extends React.Component<any, any> {
         }
     }
 
-    getScore() {
-        const score = this.props.evaluation[LINE_MAP.score];
+    getScore(evaluation:IEvaluation) {
+        const score = evaluation[LINE_MAP.score];
         if (Number(score) >= 0) {
             return `+${score}`;
         }

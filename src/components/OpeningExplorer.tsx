@@ -2,10 +2,16 @@ import * as React from "react";
 import {connect} from 'react-redux';
 import '../assets/css/explorerBox.css';
 import {loadOpeningPosition, setMove} from "../actions";
-
 import guid from "../libs/uuid";
+import {store} from "../store";
 
 export class OpeningExplorer extends React.Component<IOpeningExplorerProps, IOpeningExplorerState> {
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.fen !== this.props.fen) {
+            store.dispatch(loadOpeningPosition(this.props.fen));
+        }
+    }
 
     handleClick = (e) => {
         e.preventDefault();
@@ -55,7 +61,8 @@ export class OpeningExplorer extends React.Component<IOpeningExplorerProps, IOpe
 
 function mapStateToProps(state: any) {
     return {
-        moves: state.openingMoves || []
+        moves: state.openingMoves || [],
+        fen: state.fen
     }
 }
 
@@ -63,9 +70,7 @@ function mapDispatchToProps(dispatch: (data: any) => {}) {
     return {
         handleMove(move: string, fen: string) {
             console.log('handleMove', fen, move);
-
             dispatch(setMove(move.substring(0, 2), move.substring(2, 4), guid()));
-            dispatch(loadOpeningPosition(fen));
         }
     };
 }
@@ -78,6 +83,7 @@ export interface Move {
 
 export interface IOpeningExplorerProps {
     moves: Move[],
+    fen: string,
     handleMove: (move: string, fen: string) => {}
 }
 

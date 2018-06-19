@@ -125,7 +125,7 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
 
             const uuid = guid();
 
-            store.dispatch(setMove(orig, dest, uuid));
+            store.dispatch(setMove( orig, dest, uuid));
 
         };
     }
