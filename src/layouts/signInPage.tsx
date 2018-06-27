@@ -76,13 +76,24 @@ class SignInPage extends React.Component<ISignInPageProps, any> {
             return <Redirect to={from}/>;
         }
 
+        const style = {
+            textAlign: 'center',
+            marginTop: '2rem'
+        }
         return (
-            <div>
-                <p>You must log in to view the page at {from.pathname}</p>
+            <div className="page-log-in container" style={style}>
+                <h2>
+                    Log in
+                </h2>
+
+                <p>
+                    Welcome to the 2018 edition of Chess analysis. It's a strongest chess engine on mobile. Let'a try if you can WIN.
+                    Featuring a faster and smoother user interface along with a stronger state of the art artificial intelligence engine.
+                </p>
 
                 <GoogleLogin
                     clientId={config.google.clientId}
-                    buttonText="Sign In with google"
+                    buttonText="Google"
                     onSuccess={this.handleOnSuccess}
                     onFailure={this.handleOnFailure}
                 />

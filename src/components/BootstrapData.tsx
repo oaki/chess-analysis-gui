@@ -24,8 +24,8 @@ export default class BootstrapData extends React.Component<any, any> {
 
     renderProgress() {
         return (
-            <div className="progress" key="progress">
-                <div className="progress-bar bg-info" style={{width: `${this.state.progressBarWidth}%`}}/>
+            <div className="c-progress-bar" key="progress">
+                <div className="progress-bar" style={{width: `${this.state.progressBarWidth}%`}}/>
             </div>
         )
     }
@@ -45,7 +45,7 @@ export default class BootstrapData extends React.Component<any, any> {
 
         components.push(this.props.children);
 
-            return components;
+        return components;
     }
 
     initSockets(token: string) {
@@ -64,6 +64,7 @@ export default class BootstrapData extends React.Component<any, any> {
             if (err && err.statusCode === 403) {
                 SessionManagerService.removeUser();
             }
+            location.href = '/auth/sign-in';
             throw err;
         }
 

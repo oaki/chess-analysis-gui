@@ -22,11 +22,11 @@ export class App extends React.Component<{}, {}> {
             <Provider store={store}>
                 <Router>
                     <div className="app">
-                        <PrivateRoute path="/play" component={ChessboardPage}/>
+                        <PrivateRoute exact={true} path="/" component={ChessboardPage}/>
                         <PrivateRoute path="/user/engines" component={EnginesPageSmart}/>
 
                         <Route path="/auth/sign-in" component={SignInPage}/>
-                        <Route exact={true} path="/" component={HomePage}/>
+
                     </div>
                 </Router>
             </Provider>
