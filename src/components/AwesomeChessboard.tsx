@@ -5,6 +5,8 @@ import {Chessground} from 'chessground';
 import * as Chess from 'chess.js';
 
 import {
+    IOnMove,
+    setHowIsOnMove,
     setMove, setPosition,
     setStatus
 } from "../actions";
@@ -16,10 +18,12 @@ import {
 } from "../libs/chessboardUtils";
 import guid from "../libs/uuid";
 import {ApiManagerService} from "../services/apiManager";
+import {OnMoveIndication} from "./onMoveIndication";
 
 
 @connect((state) => ({
     fen: state.fen,
+    onMove: state.onMove,
     history: state.history,
     isFlip: state.isFlip,
     lastMoveId: state.lastMoveId
@@ -43,7 +47,9 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
 
     render() {
         return (
-            <div className="brown">
+            <div className="brown pos-r">
+                <OnMoveIndication onMove={this.props.onMove} isFlip={this.props.isFlip}/>
+
                 <div id="awesome-chessboard" className="is2d"/>
 
                 <div className="fen">
@@ -51,12 +57,6 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
                 </div>
             </div>
         );
-    }
-
-    handleWorkerResult(data) {
-        this.setState({
-            evaluation: data
-        })
     }
 
     handleFenChange = (e: any) => {
@@ -104,20 +104,22 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
     private updateStatus(chess) {
         const moveColor = chess.turn() === 'b' ? 'Black' : 'White';
 
+        status = '';
         // checkmate?
         if (chess.in_checkmate() === true) {
             status = 'Game over, ' + moveColor + ' is in checkmate.';
         } else if (chess.in_draw() === true) { // draw?
             status = 'Game over, drawn position';
         } else { // game still on
-            status = moveColor + ' to move';
+            // status = moveColor + ' to move';
             // check?
             if (chess.in_check() === true) {
-                status += ', ' + moveColor + ' is in check';
+                status += moveColor + ' is in check';
             }
         }
 
         store.dispatch(setStatus(status));
+        store.dispatch(setHowIsOnMove(chess.turn() === 'b' ? IOnMove.BLACK : IOnMove.WHITE));
     }
 
     private playOtherSide(cg: Api) {
@@ -125,7 +127,7 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
 
             const uuid = guid();
 
-            store.dispatch(setMove( orig, dest, uuid));
+            store.dispatch(setMove(orig, dest, uuid));
 
         };
     }
@@ -166,12 +168,6 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
         }, 30000);
 
     }
-}
-
-
-enum Color {
-    b = 'black',
-    w = 'white',
 }
 
 export interface IHistoryMove {

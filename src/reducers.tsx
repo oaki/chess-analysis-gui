@@ -1,7 +1,7 @@
 import {combineReducers} from 'redux';
 
 import {
-    FLIP_BOARD, MENU_TOGGLE_OPEN,
+    FLIP_BOARD, IOnMove, MENU_TOGGLE_OPEN, ON_MOVE,
     SET_ERROR,
     SET_EVALUATION, SET_HISTORY,
     SET_HISTORY_MOVE, SET_LAST_MOVE,
@@ -178,6 +178,7 @@ export interface IWorker {
     uuid: string;
     user_id: number;
     id: number;
+    ready: boolean;
 }
 
 export const workesReducer = (workerList: IWorker[] = [], action: IAction<IWorker[]>) => {
@@ -187,6 +188,16 @@ export const workesReducer = (workerList: IWorker[] = [], action: IAction<IWorke
 
         default:
             return workerList;
+    }
+};
+
+export const onMoveReducer = (onMove: IOnMove = IOnMove.WHITE, action: IAction<IOnMove>) => {
+    switch (action.type) {
+        case ON_MOVE:
+            return action.payload;
+
+        default:
+            return onMove;
     }
 };
 
@@ -204,6 +215,7 @@ export default combineReducers({
     lastMoveId: lastMoveReducer,
     menu: menuReducer,
     workers: workesReducer,
+    onMove: onMoveReducer,
 });
 
 export function deepCopy(obj) {

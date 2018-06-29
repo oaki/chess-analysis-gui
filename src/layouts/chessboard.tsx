@@ -31,7 +31,7 @@ export class ChessboardPage extends React.Component<any, any> {
                     </div>
 
                     <History/>
-                    <Menu/>
+                    <Menu showMainMenu={true} showFlip={true} showUndo={true} showRedo={true}/>
                 </div>
             </BootstrapData>
         );

@@ -2,7 +2,7 @@ import * as React from "react";
 import GoogleLogin from "react-google-login";
 import config from "./../config/";
 import {Redirect, Route, RouteComponentProps, RouteProps} from "react-router-dom"
-import {setHistory, setHistoryMove, setUser} from "../actions";
+import {setHistory, setUser} from "../actions";
 import {connect} from 'react-redux';
 import {IUser} from "../reducers";
 import {SessionManagerService} from "../services/sessionManager";

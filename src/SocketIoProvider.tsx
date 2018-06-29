@@ -2,12 +2,8 @@ import * as React from "react";
 
 import {connect} from "react-redux";
 
-import {IEvaluation, IWorkerResponse, LINE_MAP} from "./interfaces";
+import {IEvaluation, LINE_MAP} from "./interfaces";
 import {SocketManagerService} from "./services/socketManager";
-
-// console.log('socketIoHost', config.socketIo.host);
-// console.log('socketIoPath', config.socketIo.path);
-
 
 export interface Evaluation {
     score: string;

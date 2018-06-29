@@ -8,6 +8,13 @@ import {store} from "../store";
 import {IWorker} from "../reducers";
 import {SmartError} from "../components/error";
 
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import * as faPlus from "@fortawesome/fontawesome-free-solid/faPlus";
+import * as faTrash from "@fortawesome/fontawesome-free-solid/faTrash";
+import {faMicrophoneSlash, faSignal} from "@fortawesome/fontawesome-free-solid";
+import {Menu} from "../components/Menu";
+
+
 @connect((state) => ({
     workers: state.workers
 }))
@@ -26,10 +33,15 @@ export class EnginesPageSmart extends React.Component<any, any> {
         return this.props.workers.map((worker: IWorker, index: number) => {
             return (
                 <tr key={index}>
+                    <td>
+                        {worker.ready && <span className="c-green"><FontAwesomeIcon icon={faSignal}/></span>}
+                        {!worker.ready && <span><FontAwesomeIcon icon={faMicrophoneSlash}/></span>}
+                    </td>
                     <td>{worker.name}</td>
                     <td>{worker.uuid}</td>
                     <td>
-                        <button className="btn btn-danger" data-id={worker.id} onClick={this.handleDelete}>Remove
+                        <button className="btn btn-danger" data-id={worker.id} onClick={this.handleDelete}>
+                            <FontAwesomeIcon icon={faTrash}/>
                         </button>
                     </td>
                 </tr>
@@ -72,30 +84,32 @@ export class EnginesPageSmart extends React.Component<any, any> {
                 <div className="row">
                     <div className="col-md-12">
                         <SmartError/>
-                        <table className="table">
+                        <table className="table fs-xs">
                             <thead>
                             <tr>
-                                <th>Name</th>
+                                <th colSpan={2}>Name</th>
                                 <th>Uuid</th>
                                 <th/>
                             </tr>
                             </thead>
                             <tbody>
                             <tr>
-                                <td>
+                                <td colSpan={2}>
                                     <input className="form-control" onChange={this.handleNewName} type="text" value={this.state.name}/>
                                 </td>
                                 <td>
                                     <input className="form-control" onChange={this.handleNewUuid} type="text" value={this.state.uuid}/>
                                 </td>
                                 <td>
-                                    <button className="btn btn-success" onClick={this.handleSubmit}>Add</button>
+                                    <button className="btn btn-success" onClick={this.handleSubmit}><FontAwesomeIcon icon={faPlus}/></button>
                                 </td>
                             </tr>
                             {this.renderRows()}
                             </tbody>
                         </table>
                     </div>
+
+                    <Menu showMainMenu={true}/>
                 </div>
             </div>
         );

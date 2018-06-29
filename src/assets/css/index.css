@@ -1,9 +1,10 @@
 @import 'bootstrap/bootstrap-reboot.css';
 @import 'bootstrap/bootstrap.css';
 @import 'bootstrap/bootstrap-grid.css';
+@import './criticalCss.css';
+@import './colors.css';
+@import './onMoveIndicator.css';
 @import './awesomeBoard.css';
-@import './chessboard.css';
-@import './chessboard-custom.css';
 @import './bottomMenu.css';
 
 @import './evaluation.css';

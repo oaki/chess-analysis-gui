@@ -2,37 +2,42 @@ import {Move} from "./components/OpeningExplorer";
 import {IWorkerResponse} from "./interfaces";
 import config from "./config";
 import {IHistoryMove} from "./components/AwesomeChessboard";
-import {IUser} from "./reducers";
+import {IUser, IWorker} from "./reducers";
 import {batchActions} from 'redux-batched-actions';
 import * as Chess from 'chess.js';
 import {getHistoryChildren, getHistoryParents, getLastMove} from "./libs/chessboardUtils";
-import {store} from "./store";
+import {worker} from "cluster";
 
 export const UPDATE_LOADING = 'UPDATE_LOADING';
 export const SET_POSITION = 'SET_POSITION';
 export const SET_OPENING_POSITION = 'SET_OPENING_POSITION';
 export const SET_WORKER_LIST = 'SET_WORKER_LIST';
 export const SET_ERROR = 'SET_ERROR';
-export const ADD_MOVE_TO_HISTORY = 'ADD_MOVE_TO_HISTORY';
-export const REMOVE_LAST_MOVE_FROM_HISTORY = 'REMOVE_LAST_MOVE_FROM_HISTORY';
-export const SET_MOVE = 'SET_MOVE';
 export const SET_STATUS = 'SET_STATUS';
-export const LOAD_OPENING_BOOK = 'LOAD_OPENING_BOOK';
 export const SET_EVALUATION = 'SET_EVALUATION';
 export const SET_HISTORY_MOVE = 'SET_HISTORY_MOVE';
 export const SET_HISTORY = 'SET_HISTORY';
 export const SET_LAST_MOVE = 'SET_LAST_MOVE';
 export const FLIP_BOARD = 'FLIP_BOARD';
-export const HISTORY_UNDO = 'HISTORY_UNDO';
-export const HISTORY_REDO = 'HISTORY_REDO';
 export const MENU_TOGGLE_OPEN = 'MENU_TOGGLE_OPEN';
 export const USER_SIGN_IN = 'USER_SIGN_IN';
-export const SET_USER = 'SET_USER';
+export const ON_MOVE = 'ON_MOVE';
 
+export enum IOnMove {
+    BLACK,
+    WHITE,
+}
 
 export function toogleOpenMenu() {
     return {
         type: MENU_TOGGLE_OPEN
+    };
+}
+
+export function setHowIsOnMove(onMove: IOnMove) {
+    return {
+        payload: onMove,
+        type: ON_MOVE
     };
 }
 
@@ -92,18 +97,6 @@ export function setWorkerList(workerList: any[]) {
     };
 }
 
-export function addMoveToHistory(fen: string) {
-    return {
-        fen,
-        type: ADD_MOVE_TO_HISTORY
-    };
-}
-
-export function removeLastMoveFromHistory() {
-    return {
-        type: REMOVE_LAST_MOVE_FROM_HISTORY
-    };
-}
 
 export function setMove(from: string, to: string, uuid: string) {
 
@@ -121,8 +114,8 @@ export function setMove(from: string, to: string, uuid: string) {
 
     //check if move exist in children
     // if yes just move there and do not add new move
-    const childMove = child.find((move)=>move.fen === fen);
-    if(childMove){
+    const childMove = child.find((move) => move.fen === fen);
+    if (childMove) {
         return batchActions([
             lastMoveId(childMove.uuid),
             setPosition(childMove.fen),
@@ -152,20 +145,6 @@ export function setMove(from: string, to: string, uuid: string) {
 export function flipBoard() {
     return {
         type: FLIP_BOARD
-    };
-}
-
-export function historyUndo(hash: number) {
-    return {
-        hash,
-        type: HISTORY_UNDO
-    };
-}
-
-export function historyRedo(hash: number) {
-    return {
-        hash,
-        type: HISTORY_REDO
     };
 }
 
@@ -199,54 +178,10 @@ export function loadOpeningBook() {
     }
 }
 
-export function loadEvaluation(fen: string) {
-    return async (dispatch: (data: any) => {}, getState: any) => {
-        dispatch(setLoading(true));
-        dispatch(setLoading(false));
-    }
-}
-
-export function verifyUser(token: string) {
-    return async (dispatch: (data: any) => {}) => {
-        dispatch(setLoading(true));
-
-        const url = `${config.apiHost}/verify-user`;
-        const headers: RequestInit = {
-            method: 'GET',
-            headers: new Headers({
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            })
-        };
-
-        try {
-            const response = await fetch(url, headers);
-            if (response.ok) {
-                const user: IUser = await response.json();
-                console.log(user);
-                dispatch(setUser(user));
-            } else {
-                dispatch(setOpeningPosition([]));
-            }
-
-        } catch (e) {
-            dispatch(setError('opening book failed'));
-            console.log(e);
-        }
-
-        dispatch(setLoading(false));
-    }
-
-}
-
 export function loadOpeningPosition(fen: string) {
     return async (dispatch: (data: any) => {}) => {
         console.log('loadOpeningPosition', fen);
         dispatch(setLoading(true));
-
-        // const t = await findInBook(fen);
-        // console.log('TTTT', t);
-
 
         const url = `${config.apiHost}/opening-book?fen=${fen}`;
         const headers: RequestInit = {
@@ -301,6 +236,7 @@ export function loadEngines() {
             const workerList: any = await response.json();
             console.log(workerList);
             dispatch(setWorkerList(workerList));
+            dispatch(checkWorkers(workerList));
 
         } catch (e) {
             dispatch(setError('opening book failed'));
@@ -311,6 +247,42 @@ export function loadEngines() {
         dispatch(setLoading(false));
     }
 
+}
+
+export function checkWorkers(workerList: IWorker[]) {
+    return async (dispatch: (data: any) => {}, getState: any) => {
+        dispatch(setLoading(true));
+
+
+        const token = getState()['user']['token'];
+        const params = workerList.map((worker:IWorker)=>worker.uuid).map((uuid:string)=>`uuids=${uuid}`).join('&');
+
+        const url = `${config.apiHost}/user/workers/ready?${params}`;
+        const options: RequestInit = {
+            method: 'GET',
+            headers: new Headers({
+                'Authorization': `Bearer ${token}`,
+            })
+        };
+
+        try {
+            const response = await fetch(url, options);
+            if (!response.ok) {
+                throw new Error('Loading failed');
+            }
+
+            const json: any = await response.json();
+            console.log(json);
+            
+
+        } catch (e) {
+            dispatch(setError('Fetch error'));
+            dispatch(setLoading(false));
+            console.log(e);
+        }
+
+        dispatch(setLoading(false));
+    }
 }
 
 export function addWorker(props: any) {
@@ -413,9 +385,9 @@ export function addNewGame() {
             }
 
             const game: any = await response.json();
-            console.log(game);
 
             dispatch(setUser({...user, last_game_id: game.id}));
+            location.href = '/';
 
         } catch (e) {
             dispatch(setError('Adding a new game failed.'));

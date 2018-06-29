@@ -27,8 +27,7 @@ export class Menu extends React.Component<any, any> {
 
         const moves = getHistoryParents(store.getState()['lastMoveId']);
         const previousMove = getHistoryPreviousMove();
-        console.log('moves', moves);
-        console.log('hanfleHistory', previousMove);
+
         if (previousMove) {
             store.dispatch(setPosition(previousMove.fen));
             store.dispatch(lastMoveId(previousMove.uuid));
@@ -48,19 +47,15 @@ export class Menu extends React.Component<any, any> {
     }
 
     handleToggleSubMenu() {
-        console.log('handleToggleSubMenu');
         store.dispatch(toogleOpenMenu());
     }
 
     handleLogout() {
-        console.log('handleLogout');
         SessionManagerService.removeUser();
-
         location.reload();
     }
 
     handleNewGame() {
-        console.log('handleNewGame');
         store.dispatch(addNewGame());
     }
 
@@ -71,10 +66,10 @@ export class Menu extends React.Component<any, any> {
                 {this.renderSubmenu()}
 
                 <ul className="main">
-                    <li><a href="#" onClick={this.handleToggleSubMenu}> <FontAwesomeIcon icon={faBars}/></a></li>
-                    <li><a href="#" onClick={this.handleFlipBoard}> <FontAwesomeIcon icon={faRetweet}/></a></li>
-                    <li><a href="#" onClick={this.handleUndo}> <FontAwesomeIcon icon={faAngleDoubleLeft}/></a></li>
-                    <li><a href="#" onClick={this.handleRedo}> <FontAwesomeIcon icon={faAngleDoubleRight}/></a></li>
+                    {this.props.showMainMenu && <li><a href="#" onClick={this.handleToggleSubMenu}> <FontAwesomeIcon icon={faBars}/></a></li>}
+                    {this.props.showFlip && <li><a href="#" onClick={this.handleFlipBoard}> <FontAwesomeIcon icon={faRetweet}/></a></li>}
+                    {this.props.showUndo && <li><a href="#" onClick={this.handleUndo}> <FontAwesomeIcon icon={faAngleDoubleLeft}/></a></li>}
+                    {this.props.showRedo && <li><a href="#" onClick={this.handleRedo}> <FontAwesomeIcon icon={faAngleDoubleRight}/></a></li>}
                 </ul>
             </div>
         )
@@ -90,7 +85,7 @@ export class Menu extends React.Component<any, any> {
                             <button onClick={this.handleNewGame} type="button" className="btn btn-link">New game</button>
                         </li>
                         <li className="sub-menu__line">
-                            <button type="button" className="btn btn-link">About</button>
+                            <a href="/user/history" type="button" className="btn btn-link">History</a>
                         </li>
                         <li className="sub-menu__line">
                             <a href="/user/engines" type="button" className="btn btn-link">My chess engines</a>

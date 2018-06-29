@@ -3,8 +3,7 @@ import {SessionManagerService} from "../services/sessionManager";
 import {store} from "../store";
 import {setHistory, setUser} from "../actions";
 import {ApiManagerService} from "../services/apiManager";
-import SocketManager, {SocketManagerService} from "../services/socketManager";
-import config from "../config";
+import {SocketManagerService} from "../services/socketManager";
 import {ConnectionError} from "../libs/errors/connectionError";
 
 export default class BootstrapData extends React.Component<any, any> {

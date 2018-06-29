@@ -11,8 +11,8 @@ import {
     withRouter
 } from "react-router-dom";
 import {PrivateRoute} from "./libs/privateRoute";
-import {HomePage} from "./layouts/homePage";
 import {EnginesPageSmart} from "./layouts/enginesPage";
+import {HistoryPage} from "./layouts/historyPage";
 
 export class App extends React.Component<{}, {}> {
 
@@ -24,6 +24,7 @@ export class App extends React.Component<{}, {}> {
                     <div className="app">
                         <PrivateRoute exact={true} path="/" component={ChessboardPage}/>
                         <PrivateRoute path="/user/engines" component={EnginesPageSmart}/>
+                        <PrivateRoute path="/user/history" component={HistoryPage}/>
 
                         <Route path="/auth/sign-in" component={SignInPage}/>
 
