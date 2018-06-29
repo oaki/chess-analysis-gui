@@ -236,7 +236,11 @@ export function loadEngines() {
             const workerList: any = await response.json();
             console.log(workerList);
             dispatch(setWorkerList(workerList));
-            dispatch(checkWorkers(workerList));
+
+            if (workerList.length > 0) {
+                dispatch(checkWorkers(workerList));
+            }
+
 
         } catch (e) {
             dispatch(setError('opening book failed'));
@@ -255,7 +259,7 @@ export function checkWorkers(workerList: IWorker[]) {
 
 
         const token = getState()['user']['token'];
-        const params = workerList.map((worker:IWorker)=>worker.uuid).map((uuid:string)=>`uuids=${uuid}`).join('&');
+        const params = workerList.map((worker: IWorker) => worker.uuid).map((uuid: string) => `uuids=${uuid}`).join('&');
 
         const url = `${config.apiHost}/user/workers/ready?${params}`;
         const options: RequestInit = {
@@ -273,7 +277,7 @@ export function checkWorkers(workerList: IWorker[]) {
 
             const json: any = await response.json();
             console.log(json);
-            
+
 
         } catch (e) {
             dispatch(setError('Fetch error'));

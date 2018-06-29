@@ -18,7 +18,7 @@ export default class SocketManager {
     }
 
     handleResult = (result: string) => {
-        console.log('handleResult->', result);
+        // console.log('handleResult->', result);
         const arr = JSON.parse(result);
         // for now we are expecting only one result, no more
 
@@ -26,7 +26,7 @@ export default class SocketManager {
         // ignore others @todo disable others results
         const fen = this.store.getState()['fen'];
         const results = arr.filter((data) => data.fen === fen).map((data) => this.prepareEvaluation(data));
-        if (results) {
+        if (results && results.length > 0) {
             this.store.dispatch(setEvaluation(results));
         }
     }

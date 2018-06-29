@@ -2,6 +2,9 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {store} from "../store";
 import {Chessground} from 'chessground';
+
+const throttle = require('lodash/throttle');
+
 import * as Chess from 'chess.js';
 
 import {
@@ -132,6 +135,29 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
         };
     }
 
+    registerSavingHistory() {
+        // auto saving for history
+        let previousLength: number = 0;
+
+        const saveHistory = throttle(() => {
+            const history = store.getState()['history'];
+            const user = store.getState()['user'];
+            ApiManagerService.saveGame(history, user);
+        }, 1000);
+
+        function handleHistoryChange() {
+
+            let currentLength = Object.keys(store.getState()['history']).length;
+
+            if (previousLength !== currentLength) {
+                saveHistory();
+            }
+            previousLength = currentLength;
+        }
+
+        store.subscribe(handleHistoryChange);
+    }
+
     componentDidMount() {
         const el: any = document.getElementById('awesome-chessboard');
         this.board = Chessground(el, {
@@ -154,20 +180,10 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
             }
         });
 
-        // auto saving for history
-
-        let gameState;
-
-        setInterval(() => {
-            const history = store.getState()['history'];
-            console.log('history', history);
-            const user = store.getState()['user'];
-            if (gameState !== history) {
-                ApiManagerService.saveGame(history, user);
-            }
-        }, 30000);
-
+        this.registerSavingHistory();
     }
+
+
 }
 
 export interface IHistoryMove {

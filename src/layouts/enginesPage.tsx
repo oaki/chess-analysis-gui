@@ -40,7 +40,7 @@ export class EnginesPageSmart extends React.Component<any, any> {
                     <td>{worker.name}</td>
                     <td>{worker.uuid}</td>
                     <td>
-                        <button className="btn btn-danger" data-id={worker.id} onClick={this.handleDelete}>
+                        <button key={`button_key_${index}`} className="btn btn-danger" data-id={worker.id} onClick={this.handleDelete}>
                             <FontAwesomeIcon icon={faTrash}/>
                         </button>
                     </td>
@@ -65,16 +65,16 @@ export class EnginesPageSmart extends React.Component<any, any> {
     handleDelete = (e) => {
 
         store.dispatch(deleteWorker({
-            id: e.target.dataset.id
+            id: e.currentTarget.dataset.id
         }));
     }
 
     handleNewName = (e) => {
-        this.setState({name: e.target.value});
+        this.setState({name: e.currentTarget.value});
     }
 
     handleNewUuid = (e) => {
-        this.setState({uuid: e.target.value});
+        this.setState({uuid: e.currentTarget.value});
     }
 
     render() {
