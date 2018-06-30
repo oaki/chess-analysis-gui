@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
+import {Link, withRouter} from 'react-router-dom';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import * as faRetweet from "@fortawesome/fontawesome-free-solid/faRetweet";
 import * as faAngleDoubleLeft from "@fortawesome/fontawesome-free-solid/faAngleDoubleLeft";
@@ -50,13 +51,16 @@ export class Menu extends React.Component<any, any> {
         store.dispatch(toogleOpenMenu());
     }
 
-    handleLogout() {
+    handleLogout = () => {
         SessionManagerService.removeUser();
-        location.reload();
+        this.props.history.push('/user/sign-in');
     }
 
-    handleNewGame() {
-        store.dispatch(addNewGame());
+    handleNewGame = () => {
+        const props = this.props;
+        store.dispatch(addNewGame(() => {
+            props.history.push('/');
+        }));
     }
 
     render() {
@@ -66,32 +70,41 @@ export class Menu extends React.Component<any, any> {
                 {this.renderSubmenu()}
 
                 <ul className="main">
-                    {this.props.showMainMenu && <li><a href="#" onClick={this.handleToggleSubMenu}> <FontAwesomeIcon icon={faBars}/></a></li>}
-                    {this.props.showFlip && <li><a href="#" onClick={this.handleFlipBoard}> <FontAwesomeIcon icon={faRetweet}/></a></li>}
-                    {this.props.showUndo && <li><a href="#" onClick={this.handleUndo}> <FontAwesomeIcon icon={faAngleDoubleLeft}/></a></li>}
-                    {this.props.showRedo && <li><a href="#" onClick={this.handleRedo}> <FontAwesomeIcon icon={faAngleDoubleRight}/></a></li>}
+                    {this.props.showMainMenu &&
+                    <li><a href="#" onClick={this.handleToggleSubMenu}> <FontAwesomeIcon icon={faBars}/></a></li>}
+                    {this.props.showFlip &&
+                    <li><a href="#" onClick={this.handleFlipBoard}> <FontAwesomeIcon icon={faRetweet}/></a></li>}
+                    {this.props.showUndo &&
+                    <li><a href="#" onClick={this.handleUndo}> <FontAwesomeIcon icon={faAngleDoubleLeft}/></a></li>}
+                    {this.props.showRedo &&
+                    <li><a href="#" onClick={this.handleRedo}> <FontAwesomeIcon icon={faAngleDoubleRight}/></a></li>}
                 </ul>
             </div>
         )
     }
 
+    handleBeforeGoToList = () => {
+        console.log('handleBeforeGoToList');
+        store.dispatch(toogleOpenMenu());
+    }
+
     renderSubmenu() {
-        console.log('this.props.isSubMenuOpen', this.props.isSubMenuOpen);
+
         if (this.props.isSubMenuOpen) {
             return (
                 <div className="position-relative">
                     <ul className="sub-menu">
                         <li className="sub-menu__line">
-                            <button onClick={this.handleNewGame} type="button" className="btn btn-link">New game</button>
+                            <a href="#" onClick={this.handleNewGame}>New game</a>
                         </li>
                         <li className="sub-menu__line">
-                            <a href="/user/history" type="button" className="btn btn-link">History</a>
+                            <Link to="/user/history" onClick={this.handleBeforeGoToList}>History</Link>
                         </li>
                         <li className="sub-menu__line">
-                            <a href="/user/engines" type="button" className="btn btn-link">My chess engines</a>
+                            <Link to="/user/engines" onClick={this.handleBeforeGoToList}>My chess engines</Link>
                         </li>
                         <li className="">
-                            <button onClick={this.handleLogout} type="button" className="btn btn-link">Logout</button>
+                            <a onClick={this.handleLogout} href="#">Logout</a>
                         </li>
                     </ul>
                 </div>
@@ -100,3 +113,5 @@ export class Menu extends React.Component<any, any> {
         }
     }
 }
+
+export const MenuWithRouter = withRouter(Menu);

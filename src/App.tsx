@@ -4,7 +4,7 @@ import {store} from "./store";
 import SignInPage from "./layouts/signInPage";
 import {ChessboardPage} from "./layouts/chessboard";
 import {
-    BrowserRouter as Router,
+    BrowserRouter,
     Route,
     Link,
     Redirect,
@@ -20,7 +20,7 @@ export class App extends React.Component<{}, {}> {
         return (
 
             <Provider store={store}>
-                <Router>
+                <BrowserRouter>
                     <div className="app">
                         <PrivateRoute exact={true} path="/" component={ChessboardPage}/>
                         <PrivateRoute path="/user/engines" component={EnginesPageSmart}/>
@@ -29,7 +29,7 @@ export class App extends React.Component<{}, {}> {
                         <Route path="/auth/sign-in" component={SignInPage}/>
 
                     </div>
-                </Router>
+                </BrowserRouter>
             </Provider>
 
         )

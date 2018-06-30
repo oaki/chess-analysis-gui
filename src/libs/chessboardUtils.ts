@@ -48,7 +48,7 @@ export function getHistoryChildren(id: string = ''): IHistoryMove[] {
 
 export function getHistoryNextMove(id: string = ''): IHistoryMove {
     const children: IHistoryMove[] = getHistoryChildren();
-    const move = find(getHistoryChildren(), (move) => move.isMain);
+    const move = getHistoryChildren()[0];
     if (move) {
         return move;
     }
@@ -64,9 +64,8 @@ export function getHistoryTree() {
 
 export function getHistoryLine2(parentId: string = '', buffer: IHistoryMove[]) {
     const children: IHistoryMove[] = getHistoryChildren();
-    
-}
 
+}
 
 
 export function getHistoryParents(uuid: string): IHistoryMove[] {
@@ -88,8 +87,7 @@ export function getHistoryParents(uuid: string): IHistoryMove[] {
     return output;
 }
 
-export function getHistoryLine() {
-    const history: any = getHistory();
+export function getHistoryLine(history: IHistoryMove[]) {
     const output: any = [];
     let parentId = '';
     let counter = 0;
@@ -107,4 +105,8 @@ export function getHistoryLine() {
     }
 
     return output;
+}
+
+export function getMainLine(history) {
+
 }

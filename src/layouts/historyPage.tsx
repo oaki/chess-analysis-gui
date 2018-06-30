@@ -4,18 +4,21 @@ import {Pannel} from "../components/Pannel";
 import {Router, Route, Switch} from 'react-router'
 import {BrowserRouter} from 'react-router-dom'
 import {connect} from 'react-redux';
-import {Menu} from "../components/Menu";
+import {Menu, MenuWithRouter} from "../components/Menu";
 import {History} from "../components/History";
 import {SmartAwesomeChessboard} from "../components/AwesomeChessboard";
 import BootstrapData from "../components/BootstrapData";
 import {SmartError} from "../components/error";
-import {checkWorkers, loadEngines, setError, setLoading, setUser, setWorkerList} from "../actions";
+import {checkWorkers, loadEngines, setError, setHistory, setLoading, setUser, setWorkerList} from "../actions";
 import {store} from "../store";
 import config from "../config";
 import {Header} from "../components/Header";
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import * as faBars from "@fortawesome/fontawesome-free-solid/faBars";
+import {faArrowRight} from "@fortawesome/fontawesome-free-solid";
+import {HistoryList, setHistoryGameList} from "../components/historyList/historyList";
 
-
-export class HistoryPage extends React.Component<any, any> {
+export class HistoryPage extends React.PureComponent<any, undefined> {
 
     render() {
 
@@ -24,22 +27,16 @@ export class HistoryPage extends React.Component<any, any> {
                 <div className="row">
                     <div className="col-md-12">
                         <Header title="History"/>
-                        <table className="table">
-                            <thead>
-                            <tr>
-                                <th>page</th>
-                            </tr>
 
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td>sss</td>
-                            </tr>
-                            </tbody>
-                        </table>
+                        <div className="row bg-mine-shaft1">
+                            <div className="col-md-12">
+                                <HistoryList list={[]} history={this.props.history}/>
+                            </div>
+                        </div>
+
                     </div>
 
-                    <Menu showMainMenu={true}/>
+                    <MenuWithRouter showMainMenu={true}/>
                 </div>
             </div>
         );
@@ -74,7 +71,7 @@ export function loadHistoryGames() {
 
             const games: any = await response.json();
             console.log(games);
-            // dispatch(setWorkerList(workerList));
+            dispatch(setHistoryGameList(games));
             // dispatch(checkWorkers(workerList));
 
         } catch (e) {

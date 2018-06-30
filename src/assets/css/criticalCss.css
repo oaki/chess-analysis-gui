@@ -172,6 +172,10 @@
     overflow-y: auto
 }
 
+.ox-a {
+    overflow-x: auto
+}
+
 .oy-v {
     overflow-y: visible
 }
@@ -205,39 +209,39 @@
 }
 
 .fs-1 {
-    font-size: 3.6rem
-}
-
-.fs-2 {
-    font-size: 3.2rem
-}
-
-.fs-3 {
-    font-size: 2.4rem
-}
-
-.fs-4 {
     font-size: 1.8rem
 }
 
-.fs-base {
+.fs-2 {
     font-size: 1.6rem
 }
 
-.fs-5 {
-    font-size: 1.5rem
-}
-
-.fs-6 {
+.fs-3 {
     font-size: 1.4rem
 }
 
-.fs-sm {
+.fs-4 {
     font-size: 1.2rem
 }
 
-.fs-xs {
+.fs-base {
     font-size: 1rem
+}
+
+.fs-5 {
+    font-size: 0.9rem
+}
+
+.fs-6 {
+    font-size: 0.8rem
+}
+
+.fs-sm {
+    font-size: 0.7rem
+}
+
+.fs-xs {
+    font-size: 0.6rem
 }
 
 @media screen and (min-width: 768px) {
@@ -465,23 +469,23 @@
 }
 
 .m-sm {
-    margin: 1.2rem
+    margin: .8rem
 }
 
 .m-md {
-    margin: 2.4rem
+    margin: 1rem
 }
 
 .m-lg {
-    margin: 3.6rem
+    margin: 1.2rem
 }
 
 .m-xl {
-    margin: 5.4rem
+    margin: 1.4rem
 }
 
 .m-xxl {
-    margin: 7.2rem
+    margin: 2rem
 }
 
 .m-t-0 {
@@ -493,23 +497,23 @@
 }
 
 .m-t-sm {
-    margin-top: 1.2rem
+    margin-top: .8rem
 }
 
 .m-t-md {
-    margin-top: 2.4rem
+    margin-top: 1rem
 }
 
 .m-t-lg {
-    margin-top: 3.6rem
+    margin-top: 1.2rem
 }
 
 .m-t-xl {
-    margin-top: 5.4rem
+    margin-top: 1.4rem
 }
 
 .m-t-xxl {
-    margin-top: 7.2rem
+    margin-top: 2rem
 }
 
 .m-r-0 {
@@ -521,23 +525,23 @@
 }
 
 .m-r-sm {
-    margin-right: 1.2rem
+    margin-right: .8rem
 }
 
 .m-r-md {
-    margin-right: 2.4rem
+    margin-right: 1rem
 }
 
 .m-r-lg {
-    margin-right: 3.6rem
+    margin-right: 1.2rem
 }
 
 .m-r-xl {
-    margin-right: 5.4rem
+    margin-right: 1.4rem
 }
 
 .m-r-xxl {
-    margin-right: 7.2rem
+    margin-right: 2rem
 }
 
 .m-b-0 {
@@ -549,23 +553,23 @@
 }
 
 .m-b-sm {
-    margin-bottom: 1.2rem
+    margin-bottom: .8rem
 }
 
 .m-b-md {
-    margin-bottom: 2.4rem
+    margin-bottom: 1rem
 }
 
 .m-b-lg {
-    margin-bottom: 3.6rem
+    margin-bottom: 1.2rem
 }
 
 .m-b-xl {
-    margin-bottom: 5.4rem
+    margin-bottom: 1.4rem
 }
 
 .m-b-xxl {
-    margin-bottom: 7.2rem
+    margin-bottom: 2rem
 }
 
 .m-l-0 {
@@ -577,23 +581,23 @@
 }
 
 .m-l-sm {
-    margin-left: 1.2rem
+    margin-left: .8rem
 }
 
 .m-l-md {
-    margin-left: 2.4rem
+    margin-left: 1rem
 }
 
 .m-l-lg {
-    margin-left: 3.6rem
+    margin-left: 1.2rem
 }
 
 .m-l-xl {
-    margin-left: 5.4rem
+    margin-left: 1.4rem
 }
 
 .m-l-xxl {
-    margin-left: 7.2rem
+    margin-left: 2rem
 }
 
 @media screen and (min-width: 992px) {
@@ -606,23 +610,23 @@
     }
 
     .md-m-sm {
-        margin: 1.2rem
+        margin: .8rem
     }
 
     .md-m-md {
-        margin: 2.4rem
+        margin: 1rem
     }
 
     .md-m-lg {
-        margin: 3.6rem
+        margin: 1.2rem
     }
 
     .md-m-xl {
-        margin: 5.4rem
+        margin: 1.4rem
     }
 
     .md-m-xxl {
-        margin: 7.2rem
+        margin: 2rem
     }
 
     .md-m-t-0 {
@@ -634,23 +638,23 @@
     }
 
     .md-m-t-sm {
-        margin-top: 1.2rem
+        margin-top: .8rem
     }
 
     .md-m-t-md {
-        margin-top: 2.4rem
+        margin-top: 1rem
     }
 
     .md-m-t-lg {
-        margin-top: 3.6rem
+        margin-top: 1.2rem
     }
 
     .md-m-t-xl {
-        margin-top: 5.4rem
+        margin-top: 1.4rem
     }
 
     .md-m-t-xxl {
-        margin-top: 7.2rem
+        margin-top: 2rem
     }
 
     .md-m-r-0 {
@@ -662,23 +666,23 @@
     }
 
     .md-m-r-sm {
-        margin-right: 1.2rem
+        margin-right: .8rem
     }
 
     .md-m-r-md {
-        margin-right: 2.4rem
+        margin-right: 1rem
     }
 
     .md-m-r-lg {
-        margin-right: 3.6rem
+        margin-right: 1.2rem
     }
 
     .md-m-r-xl {
-        margin-right: 5.4rem
+        margin-right: 1.4rem
     }
 
     .md-m-r-xxl {
-        margin-right: 7.2rem
+        margin-right: 2rem
     }
 
     .md-m-b-0 {
@@ -690,23 +694,23 @@
     }
 
     .md-m-b-sm {
-        margin-bottom: 1.2rem
+        margin-bottom: .8rem
     }
 
     .md-m-b-md {
-        margin-bottom: 2.4rem
+        margin-bottom: 1rem
     }
 
     .md-m-b-lg {
-        margin-bottom: 3.6rem
+        margin-bottom: 1.2rem
     }
 
     .md-m-b-xl {
-        margin-bottom: 5.4rem
+        margin-bottom: 1.4rem
     }
 
     .md-m-b-xxl {
-        margin-bottom: 7.2rem
+        margin-bottom: 2rem
     }
 
     .md-m-l-0 {
@@ -718,23 +722,23 @@
     }
 
     .md-m-l-sm {
-        margin-left: 1.2rem
+        margin-left: .8rem
     }
 
     .md-m-l-md {
-        margin-left: 2.4rem
+        margin-left: 1rem
     }
 
     .md-m-l-lg {
-        margin-left: 3.6rem
+        margin-left: 1.2rem
     }
 
     .md-m-l-xl {
-        margin-left: 5.4rem
+        margin-left: 1.4rem
     }
 
     .md-m-l-xxl {
-        margin-left: 7.2rem
+        margin-left: 2rem
     }
 }
 
@@ -747,27 +751,27 @@
 }
 
 .p-sm {
-    padding: 1.2rem
+    padding: .8rem
 }
 
 .p-md {
-    padding: 2.4rem
+    padding: 1rem
 }
 
 .p-lg {
-    padding: 3.6rem
+    padding: 1.2rem
 }
 
 .p-xl {
-    padding: 5.4rem
+    padding: 1.4rem
 }
 
 .p-xxl {
-    padding: 7.2rem
+    padding: 2rem
 }
 
 .p-xxxl {
-    padding: 10.8rem
+    padding: 3rem
 }
 
 .p-t-0 {
@@ -779,27 +783,27 @@
 }
 
 .p-t-sm {
-    padding-top: 1.2rem
+    padding-top: .8rem
 }
 
 .p-t-md {
-    padding-top: 2.4rem
+    padding-top: 1rem
 }
 
 .p-t-lg {
-    padding-top: 3.6rem
+    padding-top: 1.2rem
 }
 
 .p-t-xl {
-    padding-top: 5.4rem
+    padding-top: 1.4rem
 }
 
 .p-t-xxl {
-    padding-top: 7.2rem
+    padding-top: 2rem
 }
 
 .p-t-xxxl {
-    padding-top: 10.8rem
+    padding-top: 3rem
 }
 
 .p-r-0 {
@@ -811,27 +815,27 @@
 }
 
 .p-r-sm {
-    padding-right: 1.2rem
+    padding-right: .8rem
 }
 
 .p-r-md {
-    padding-right: 2.4rem
+    padding-right: 1rem
 }
 
 .p-r-lg {
-    padding-right: 3.6rem
+    padding-right: 1.2rem
 }
 
 .p-r-xl {
-    padding-right: 5.4rem
+    padding-right: 1.4rem
 }
 
 .p-r-xxl {
-    padding-right: 7.2rem
+    padding-right: 2rem
 }
 
 .p-r-xxxl {
-    padding-right: 10.8rem
+    padding-right: 3rem
 }
 
 .p-b-0 {
@@ -843,27 +847,27 @@
 }
 
 .p-b-sm {
-    padding-bottom: 1.2rem
+    padding-bottom: .8rem
 }
 
 .p-b-md {
-    padding-bottom: 2.4rem
+    padding-bottom: 1rem
 }
 
 .p-b-lg {
-    padding-bottom: 3.6rem
+    padding-bottom: 1.2rem
 }
 
 .p-b-xl {
-    padding-bottom: 5.4rem
+    padding-bottom: 1.4rem
 }
 
 .p-b-xxl {
-    padding-bottom: 7.2rem
+    padding-bottom: 2rem
 }
 
 .p-b-xxxl {
-    padding-bottom: 10.8rem
+    padding-bottom: 3rem
 }
 
 .p-l-0 {
@@ -875,27 +879,26 @@
 }
 
 .p-l-sm {
-    padding-left: 1.2rem
+    padding-left: .8rem
 }
 
 .p-l-md {
-    padding-left: 2.4rem
+    padding-left: 1rem
 }
 
 .p-l-lg {
-    padding-left: 3.6rem
+    padding-left: 1.2rem
 }
 
 .p-l-xl {
-    padding-left: 5.4rem
+    padding-left: 1.4rem
 }
-
 .p-l-xxl {
-    padding-left: 7.2rem
+    padding-left: 2rem
 }
 
 .p-l-xxxl {
-    padding-left: 10.8rem
+    padding-left: 3rem
 }
 
 @media screen and (min-width: 768px) {
@@ -904,27 +907,27 @@
     }
 
     .sm-p-sm {
-        padding: 1.2rem
+        padding: .8rem
     }
 
     .sm-p-md {
-        padding: 2.4rem
+        padding: 1rem
     }
 
     .sm-p-lg {
-        padding: 3.6rem
+        padding: 1.2rem
     }
 
     .sm-p-xl {
-        padding: 5.4rem
+        padding: 1.4rem
     }
 
     .sm-p-xxl {
-        padding: 7.2rem
+        padding: 2rem
     }
 
     .sm-p-xxxl {
-        padding: 10.8rem
+        padding: 3rem
     }
 
     .sm-p-t-0 {
@@ -932,27 +935,27 @@
     }
 
     .sm-p-t-sm {
-        padding-top: 1.2rem
+        padding-top: .8rem
     }
 
     .sm-p-t-md {
-        padding-top: 2.4rem
+        padding-top: 1rem
     }
 
     .sm-p-t-lg {
-        padding-top: 3.6rem
+        padding-top: 1.2rem
     }
 
     .sm-p-t-xl {
-        padding-top: 5.4rem
+        padding-top: 1.4rem
     }
 
     .sm-p-t-xxl {
-        padding-top: 7.2rem
+        padding-top: 2rem
     }
 
     .sm-p-t-xxxl {
-        padding-top: 10.8rem
+        padding-top: 3rem
     }
 
     .sm-p-r-0 {
@@ -960,27 +963,27 @@
     }
 
     .sm-p-r-sm {
-        padding-right: 1.2rem
+        padding-right: .8rem
     }
 
     .sm-p-r-md {
-        padding-right: 2.4rem
+        padding-right: 1rem
     }
 
     .sm-p-r-lg {
-        padding-right: 3.6rem
+        padding-right: 1.2rem
     }
 
     .sm-p-r-xl {
-        padding-right: 5.4rem
+        padding-right: 1.4rem
     }
 
     .sm-p-r-xxl {
-        padding-right: 7.2rem
+        padding-right: 2rem
     }
 
     .sm-p-r-xxxl {
-        padding-right: 10.8rem
+        padding-right: 3rem
     }
 
     .sm-p-b-0 {
@@ -988,27 +991,27 @@
     }
 
     .sm-p-b-sm {
-        padding-bottom: 1.2rem
+        padding-bottom: .8rem
     }
 
     .sm-p-b-md {
-        padding-bottom: 2.4rem
+        padding-bottom: 1rem
     }
 
     .sm-p-b-lg {
-        padding-bottom: 3.6rem
+        padding-bottom: 1.2rem
     }
 
     .sm-p-b-xl {
-        padding-bottom: 5.4rem
+        padding-bottom: 1.4rem
     }
 
     .sm-p-b-xxl {
-        padding-bottom: 7.2rem
+        padding-bottom: 2rem
     }
 
     .sm-p-b-xxxl {
-        padding-bottom: 10.8rem
+        padding-bottom: 3rem
     }
 
     .sm-p-l-0 {
@@ -1016,27 +1019,27 @@
     }
 
     .sm-p-l-sm {
-        padding-left: 1.2rem
+        padding-left: .8rem
     }
 
     .sm-p-l-md {
-        padding-left: 2.4rem
+        padding-left: 1rem
     }
 
     .sm-p-l-lg {
-        padding-left: 3.6rem
+        padding-left: 1.2rem
     }
 
     .sm-p-l-xl {
-        padding-left: 5.4rem
+        padding-left: 1.4rem
     }
 
     .sm-p-l-xxl {
-        padding-left: 7.2rem
+        padding-left: 2rem
     }
 
     .sm-p-l-xxxl {
-        padding-left: 10.8rem
+        padding-left: 3rem
     }
 }
 
@@ -1108,4 +1111,8 @@
 
 .h-full {
     height: 100%
+}
+
+.cur-p{
+    cursor: pointer;
 }

@@ -9,7 +9,7 @@ import * as Chess from 'chess.js';
 
 import {
     IOnMove,
-    setHowIsOnMove,
+    setWhoIsOnMove,
     setMove, setPosition,
     setStatus
 } from "../actions";
@@ -122,7 +122,7 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
         }
 
         store.dispatch(setStatus(status));
-        store.dispatch(setHowIsOnMove(chess.turn() === 'b' ? IOnMove.BLACK : IOnMove.WHITE));
+        store.dispatch(setWhoIsOnMove(chess.turn() === 'b' ? IOnMove.BLACK : IOnMove.WHITE));
     }
 
     private playOtherSide(cg: Api) {
@@ -192,7 +192,6 @@ export interface IHistoryMove {
     fen: string;
     notation: string;
     shortNotation: string;
-    isMain: boolean;
 }
 
 interface IChessboardProps {

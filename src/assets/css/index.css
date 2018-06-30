@@ -1,8 +1,9 @@
 @import 'bootstrap/bootstrap-reboot.css';
-@import 'bootstrap/bootstrap.css';
+/*@import 'bootstrap/bootstrap.css';*/
 @import 'bootstrap/bootstrap-grid.css';
 @import './criticalCss.css';
 @import './colors.css';
+@import './btn.css';
 @import './onMoveIndicator.css';
 @import './awesomeBoard.css';
 @import './bottomMenu.css';
@@ -12,5 +13,6 @@
 @import './page.css';
 @import './pageSingIn.css';
 @import './progressBar.css';
+@import 'list.css';
 @import './app.css';
 

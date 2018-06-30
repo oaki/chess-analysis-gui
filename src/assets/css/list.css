@@ -1,0 +1,11 @@
+.list__bottom-line{
+    border-bottom: 1px solid #4b4b4b;
+}
+
+.list__moves::-webkit-scrollbar {
+    display: none;
+}
+
+.list__viewport{
+    width: 100rem;
+}

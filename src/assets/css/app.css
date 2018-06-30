@@ -5,10 +5,11 @@ html, body {
     color: #b2b2b2;
 }
 
-#root{
+#root {
     height: 100%;
     width: 100%;
 }
+
 .app {
     /*background-color: #2b2b2b;*/
     height: 100%;
@@ -43,5 +44,38 @@ html, body {
     color: #fff;
     font-size: .8rem;
     text-align: center;
-    padding: .4rem ;
+    padding: .4rem;
+}
+
+a {
+    color: #007bff;
+    transition: color 0.125s ease;
+}
+
+a:hover {
+    color: #4fa7ff;
+    text-decoration: none;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+}
+
+input {
+    display: block;
+    width: 100%;
+    padding: .2rem .4rem;
+    font-size: .8rem;
+    line-height: 1.5;
+    color: #7b7b7b;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .2rem;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+table{
+    width: 100%;
 }

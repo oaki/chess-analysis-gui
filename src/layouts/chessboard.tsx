@@ -4,7 +4,7 @@ import {Pannel} from "../components/Pannel";
 import {Router, Route, Switch} from 'react-router'
 import {BrowserRouter} from 'react-router-dom'
 import {connect} from 'react-redux';
-import {Menu} from "../components/Menu";
+import {Menu, MenuWithRouter} from "../components/Menu";
 import {History} from "../components/History";
 import {SmartAwesomeChessboard} from "../components/AwesomeChessboard";
 import BootstrapData from "../components/BootstrapData";
@@ -31,7 +31,7 @@ export class ChessboardPage extends React.Component<any, any> {
                     </div>
 
                     <History/>
-                    <Menu showMainMenu={true} showFlip={true} showUndo={true} showRedo={true}/>
+                    <MenuWithRouter showMainMenu={true} showFlip={true} showUndo={true} showRedo={true}/>
                 </div>
             </BootstrapData>
         );

@@ -28,14 +28,12 @@
 }
 
 .history__title {
-    background-color: #181818;
     color: white;
     padding: .6rem;
 }
 
 .history__slider {
-    /*overflow-y: scroll;*/
-    /*height: 40px;*/
+
     padding: 0 15px;
     -webkit-overflow-scrolling: touch;
     overflow-scrolling: touch;

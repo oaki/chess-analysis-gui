@@ -4,8 +4,16 @@ export const TOKEN_BASE_NAME = 'chess-analysis__token';
 export const TOKEN_USER_NAME = `${TOKEN_BASE_NAME}__user`;
 
 class SessionManager {
+    private storage;
+
+    constructor(storage = null){
+        if(storage === null){
+            this.storage = localStorage;
+        }
+    }
+
     getUser(): IUser {
-        const value = sessionStorage.getItem(TOKEN_USER_NAME);
+        const value = this.storage.getItem(TOKEN_USER_NAME);
         if (!value) {
             return {
                 name: '',
@@ -22,11 +30,11 @@ class SessionManager {
     }
 
     setUser(user: IUser) {
-        sessionStorage.setItem(TOKEN_USER_NAME, JSON.stringify(user));
+        this.storage.setItem(TOKEN_USER_NAME, JSON.stringify(user));
     }
 
     removeUser() {
-        sessionStorage.removeItem(TOKEN_USER_NAME);
+        this.storage.removeItem(TOKEN_USER_NAME);
     }
 }
 

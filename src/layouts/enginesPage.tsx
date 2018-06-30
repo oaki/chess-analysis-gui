@@ -12,7 +12,8 @@ import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import * as faPlus from "@fortawesome/fontawesome-free-solid/faPlus";
 import * as faTrash from "@fortawesome/fontawesome-free-solid/faTrash";
 import {faMicrophoneSlash, faSignal} from "@fortawesome/fontawesome-free-solid";
-import {Menu} from "../components/Menu";
+import {Menu, MenuWithRouter} from "../components/Menu";
+import {Header} from "../components/Header";
 
 
 @connect((state) => ({
@@ -29,24 +30,29 @@ export class EnginesPageSmart extends React.Component<any, any> {
         }
     }
 
+
+    renderButton = (index, worker) => {
+        return (
+            <button className="btn btn-danger f-r" data-id={worker.id} onClick={this.handleDelete}>
+                <FontAwesomeIcon icon={faTrash}/>
+            </button>
+        )
+    }
+
     renderRows() {
-        return this.props.workers.map((worker: IWorker, index: number) => {
-            return (
-                <tr key={index}>
-                    <td>
-                        {worker.ready && <span className="c-green"><FontAwesomeIcon icon={faSignal}/></span>}
-                        {!worker.ready && <span><FontAwesomeIcon icon={faMicrophoneSlash}/></span>}
-                    </td>
-                    <td>{worker.name}</td>
-                    <td>{worker.uuid}</td>
-                    <td>
-                        <button key={`button_key_${index}`} className="btn btn-danger" data-id={worker.id} onClick={this.handleDelete}>
-                            <FontAwesomeIcon icon={faTrash}/>
-                        </button>
-                    </td>
-                </tr>
-            );
-        })
+        return this.props.workers.map((worker: IWorker, index: number) => (
+            <li key={index} className="d-b p-t-md p-b-md list__bottom-line">
+                {this.renderButton(index, worker)}
+                <div className="f-l">
+                    {worker.ready && <span className="c-green"><FontAwesomeIcon icon={faSignal}/></span>}
+                    {!worker.ready && <span><FontAwesomeIcon icon={faMicrophoneSlash}/></span>}
+                </div>
+                <div className="p-l-xxl">
+                    <div className="fs-5">{worker.name}</div>
+                    <div className="fs-xs">{worker.uuid}</div>
+                </div>
+            </li>
+        ));
     }
 
     handleSubmit = (e) => {
@@ -83,7 +89,10 @@ export class EnginesPageSmart extends React.Component<any, any> {
             <div className="container">
                 <div className="row">
                     <div className="col-md-12">
+                        <Header title="Your chess engines"/>
                         <SmartError/>
+
+
                         <table className="table fs-xs">
                             <thead>
                             <tr>
@@ -95,21 +104,26 @@ export class EnginesPageSmart extends React.Component<any, any> {
                             <tbody>
                             <tr>
                                 <td colSpan={2}>
-                                    <input className="form-control" onChange={this.handleNewName} type="text" value={this.state.name}/>
+                                    <input onChange={this.handleNewName} type="text" value={this.state.name}/>
                                 </td>
                                 <td>
-                                    <input className="form-control" onChange={this.handleNewUuid} type="text" value={this.state.uuid}/>
+                                    <input onChange={this.handleNewUuid} type="text" value={this.state.uuid}/>
                                 </td>
                                 <td>
-                                    <button className="btn btn-success" onClick={this.handleSubmit}><FontAwesomeIcon icon={faPlus}/></button>
+                                    <button className="btn btn-success" onClick={this.handleSubmit}>
+                                        <FontAwesomeIcon icon={faPlus}/></button>
                                 </td>
                             </tr>
-                            {this.renderRows()}
+
                             </tbody>
                         </table>
+
+                        <ul>
+                            {this.renderRows()}
+                        </ul>
                     </div>
 
-                    <Menu showMainMenu={true}/>
+                    <MenuWithRouter showMainMenu={true}/>
                 </div>
             </div>
         );
@@ -119,3 +133,5 @@ export class EnginesPageSmart extends React.Component<any, any> {
         store.dispatch(loadEngines());
     }
 }
+
+

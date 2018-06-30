@@ -50,8 +50,8 @@ export class History extends React.Component<any, any> {
     }
 
 
-    renderMoves(counter = 0, parentId = '') {
-        const history: any = getHistory();
+    renderMoves(history, counter = 0, parentId = '') {
+
         const moves = filter(history, (move) => {
             return move.parentId === parentId;
         }).sort((a, b) => {
@@ -83,7 +83,7 @@ export class History extends React.Component<any, any> {
                 <span onClick={this.handleMoveClick} className={className} key={index} data-uuid={move.uuid}>
                     {move.shortNotation}
                 </span>),
-            this.renderMoves(counter + 1, move.uuid)
+            this.renderMoves(getHistory(), counter + 1, move.uuid)
         ]
     }
 
@@ -96,12 +96,12 @@ export class History extends React.Component<any, any> {
         };
         return (
             <div className="history">
-                <div className="history__title">
+                <div className="history__title bg-mine-shaft2">
                     History
                 </div>
                 <div className="history__slider">
                     <div className="history__slider__holder" style={style}>
-                        {this.renderMoves()}
+                        {this.renderMoves(getHistory())}
                     </div>
                 </div>
             </div>

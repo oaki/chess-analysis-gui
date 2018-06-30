@@ -34,7 +34,7 @@ export function toogleOpenMenu() {
     };
 }
 
-export function setHowIsOnMove(onMove: IOnMove) {
+export function setWhoIsOnMove(onMove: IOnMove) {
     return {
         payload: onMove,
         type: ON_MOVE
@@ -98,6 +98,7 @@ export function setWorkerList(workerList: any[]) {
 }
 
 
+
 export function setMove(from: string, to: string, uuid: string) {
 
     const chess = new Chess();
@@ -131,7 +132,6 @@ export function setMove(from: string, to: string, uuid: string) {
         setEvaluation([]),
         setHistoryMove({
             parentId: getLastMove(),
-            isMain: !child,
             uuid,
             fen,
             notation: `${from}${to}`,
@@ -366,7 +366,7 @@ export function deleteWorker(props: any) {
 }
 
 
-export function addNewGame() {
+export function addNewGame(callback) {
     return async (dispatch: (data: any) => {}, getState: any) => {
 
         const user = getState()['user'];
@@ -391,7 +391,7 @@ export function addNewGame() {
             const game: any = await response.json();
 
             dispatch(setUser({...user, last_game_id: game.id}));
-            location.href = '/';
+            callback();
 
         } catch (e) {
             dispatch(setError('Adding a new game failed.'));

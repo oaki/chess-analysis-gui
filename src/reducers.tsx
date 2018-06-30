@@ -14,6 +14,7 @@ import {Move} from "./components/OpeningExplorer";
 import {IHistoryMove} from "./components/AwesomeChessboard";
 import {IWorkerResponse, IAction} from "./interfaces";
 import {SessionManagerService} from "./services/sessionManager";
+import {historyListReducer} from "./components/historyList/historyList";
 
 export const loadingReducer = (isLoading: boolean = false, action: any) => {
     switch (action.type) {
@@ -216,6 +217,7 @@ export default combineReducers({
     menu: menuReducer,
     workers: workesReducer,
     onMove: onMoveReducer,
+    historyList: historyListReducer,
 });
 
 export function deepCopy(obj) {
