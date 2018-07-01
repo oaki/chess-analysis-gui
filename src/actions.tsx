@@ -3,25 +3,24 @@ import {IWorkerResponse} from "./interfaces";
 import config from "./config";
 import {IHistoryMove} from "./components/AwesomeChessboard";
 import {IUser, IWorker} from "./reducers";
-import {batchActions} from 'redux-batched-actions';
-import * as Chess from 'chess.js';
+import {batchActions} from "redux-batched-actions";
+import * as Chess from "chess.js";
 import {getHistoryChildren, getHistoryParents, getLastMove} from "./libs/chessboardUtils";
-import {worker} from "cluster";
 
-export const UPDATE_LOADING = 'UPDATE_LOADING';
-export const SET_POSITION = 'SET_POSITION';
-export const SET_OPENING_POSITION = 'SET_OPENING_POSITION';
-export const SET_WORKER_LIST = 'SET_WORKER_LIST';
-export const SET_ERROR = 'SET_ERROR';
-export const SET_STATUS = 'SET_STATUS';
-export const SET_EVALUATION = 'SET_EVALUATION';
-export const SET_HISTORY_MOVE = 'SET_HISTORY_MOVE';
-export const SET_HISTORY = 'SET_HISTORY';
-export const SET_LAST_MOVE = 'SET_LAST_MOVE';
-export const FLIP_BOARD = 'FLIP_BOARD';
-export const MENU_TOGGLE_OPEN = 'MENU_TOGGLE_OPEN';
-export const USER_SIGN_IN = 'USER_SIGN_IN';
-export const ON_MOVE = 'ON_MOVE';
+export const UPDATE_LOADING = "UPDATE_LOADING";
+export const SET_POSITION = "SET_POSITION";
+export const SET_OPENING_POSITION = "SET_OPENING_POSITION";
+export const SET_WORKER_LIST = "SET_WORKER_LIST";
+export const SET_ERROR = "SET_ERROR";
+export const SET_STATUS = "SET_STATUS";
+export const SET_EVALUATION = "SET_EVALUATION";
+export const SET_HISTORY_MOVE = "SET_HISTORY_MOVE";
+export const SET_HISTORY = "SET_HISTORY";
+export const SET_LAST_MOVE = "SET_LAST_MOVE";
+export const FLIP_BOARD = "FLIP_BOARD";
+export const MENU_TOGGLE_OPEN = "MENU_TOGGLE_OPEN";
+export const USER_SIGN_IN = "USER_SIGN_IN";
+export const ON_MOVE = "ON_MOVE";
 
 export enum IOnMove {
     BLACK,
@@ -98,8 +97,7 @@ export function setWorkerList(workerList: any[]) {
 }
 
 
-
-export function setMove(from: string, to: string, uuid: string) {
+export function setMove(from: string, to: string, uuid: string, promotion: string = "q") {
 
     const chess = new Chess();
     const moves: IHistoryMove[] = getHistoryParents(getLastMove());
@@ -108,7 +106,7 @@ export function setMove(from: string, to: string, uuid: string) {
         chess.move({from: move.notation.substring(0, 2), to: move.notation.substring(2, 4)});
     }
 
-    const lastMove: any = chess.move({from: from, to: to});
+    const lastMove: any = chess.move({from, to, promotion});
     const fen: string = chess.fen();
     const parentId = getLastMove();
     const child = getHistoryChildren(parentId);
@@ -180,14 +178,14 @@ export function loadOpeningBook() {
 
 export function loadOpeningPosition(fen: string) {
     return async (dispatch: (data: any) => {}) => {
-        console.log('loadOpeningPosition', fen);
+        console.log("loadOpeningPosition", fen);
         dispatch(setLoading(true));
 
         const url = `${config.apiHost}/opening-book?fen=${fen}`;
         const headers: RequestInit = {
-            method: 'GET',
+            method: "GET",
             headers: new Headers({
-                'Content-Type': 'application/json'
+                "Content-Type": "application/json"
             })
         };
 
@@ -202,7 +200,7 @@ export function loadOpeningPosition(fen: string) {
             }
 
         } catch (e) {
-            dispatch(setError('opening book failed'));
+            dispatch(setError("opening book failed"));
             console.log(e);
         }
 
@@ -214,23 +212,23 @@ export function loadOpeningPosition(fen: string) {
 
 export function loadEngines() {
     return async (dispatch: (data: any) => {}, getState: any) => {
-        console.log('data', getState());
-        const token = getState()['user']['token'];
+        console.log("data", getState());
+        const token = getState()["user"]["token"];
         dispatch(setLoading(true));
 
         const url = `${config.apiHost}/user/workers?offset=${Number(0)}&limit=${Number(10)}`;
         const headers: RequestInit = {
-            method: 'GET',
+            method: "GET",
             headers: new Headers({
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
             }),
         };
 
         try {
             const response = await fetch(url, headers);
             if (!response.ok) {
-                throw new Error('Loading failed');
+                throw new Error("Loading failed");
             }
 
             const workerList: any = await response.json();
@@ -243,7 +241,7 @@ export function loadEngines() {
 
 
         } catch (e) {
-            dispatch(setError('opening book failed'));
+            dispatch(setError("opening book failed"));
             dispatch(setLoading(false));
             console.log(e);
         }
@@ -258,21 +256,21 @@ export function checkWorkers(workerList: IWorker[]) {
         dispatch(setLoading(true));
 
 
-        const token = getState()['user']['token'];
-        const params = workerList.map((worker: IWorker) => worker.uuid).map((uuid: string) => `uuids=${uuid}`).join('&');
+        const token = getState()["user"]["token"];
+        const params = workerList.map((worker: IWorker) => worker.uuid).map((uuid: string) => `uuids=${uuid}`).join("&");
 
         const url = `${config.apiHost}/user/workers/ready?${params}`;
         const options: RequestInit = {
-            method: 'GET',
+            method: "GET",
             headers: new Headers({
-                'Authorization': `Bearer ${token}`,
+                "Authorization": `Bearer ${token}`,
             })
         };
 
         try {
             const response = await fetch(url, options);
             if (!response.ok) {
-                throw new Error('Loading failed');
+                throw new Error("Loading failed");
             }
 
             const json: any = await response.json();
@@ -280,7 +278,7 @@ export function checkWorkers(workerList: IWorker[]) {
 
 
         } catch (e) {
-            dispatch(setError('Fetch error'));
+            dispatch(setError("Fetch error"));
             dispatch(setLoading(false));
             console.log(e);
         }
@@ -292,18 +290,18 @@ export function checkWorkers(workerList: IWorker[]) {
 export function addWorker(props: any) {
     return async (dispatch: (data: any) => {}, getState: any) => {
 
-        const token = getState()['user']['token'];
+        const token = getState()["user"]["token"];
         dispatch(setLoading(true));
 
         const url = `${config.apiHost}/user/workers`;
         const formData = new FormData();
-        formData.append('name', props.name);
-        formData.append('uuid', props.uuid);
+        formData.append("name", props.name);
+        formData.append("uuid", props.uuid);
 
         const options: RequestInit = {
-            method: 'POST',
+            method: "POST",
             headers: new Headers({
-                'Authorization': `Bearer ${token}`,
+                "Authorization": `Bearer ${token}`,
             }),
             body: formData
         };
@@ -311,7 +309,7 @@ export function addWorker(props: any) {
         try {
             const response = await fetch(url, options);
             if (!response.ok) {
-                throw new Error('Loading failed');
+                throw new Error("Loading failed");
             }
 
             const json: any = await response.json();
@@ -319,7 +317,7 @@ export function addWorker(props: any) {
             dispatch(loadEngines());
 
         } catch (e) {
-            dispatch(setError('Update error'));
+            dispatch(setError("Update error"));
             dispatch(setLoading(false));
             console.log(e);
         }
@@ -332,22 +330,22 @@ export function addWorker(props: any) {
 export function deleteWorker(props: any) {
     return async (dispatch: (data: any) => {}, getState: any) => {
 
-        const token = getState()['user']['token'];
+        const token = getState()["user"]["token"];
         dispatch(setLoading(true));
 
         const url = `${config.apiHost}/user/workers/${Number(props.id)}`;
         const headers: RequestInit = {
-            method: 'DELETE',
+            method: "DELETE",
             headers: new Headers({
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
             })
         };
 
         try {
             const response = await fetch(url, headers);
             if (!response.ok) {
-                throw new Error('Loading failed');
+                throw new Error("Loading failed");
             }
 
             const json: any = await response.json();
@@ -355,7 +353,7 @@ export function deleteWorker(props: any) {
             dispatch(loadEngines());
 
         } catch (e) {
-            dispatch(setError('opening book failed'));
+            dispatch(setError("opening book failed"));
             dispatch(setLoading(false));
             console.log(e);
         }
@@ -369,32 +367,32 @@ export function deleteWorker(props: any) {
 export function addNewGame(callback) {
     return async (dispatch: (data: any) => {}, getState: any) => {
 
-        const user = getState()['user'];
+        const user = getState()["user"];
         const token = user.token;
         dispatch(setLoading(true));
 
         const url = `${config.apiHost}/user/history`;
         const headers: RequestInit = {
-            method: 'POST',
+            method: "POST",
             headers: new Headers({
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
             })
         };
 
         try {
             const response = await fetch(url, headers);
             if (!response.ok) {
-                throw new Error('Loading failed');
+                throw new Error("Loading failed");
             }
 
             const game: any = await response.json();
 
             dispatch(setUser({...user, last_game_id: game.id}));
-            callback();
+            callback(game.id);
 
         } catch (e) {
-            dispatch(setError('Adding a new game failed.'));
+            dispatch(setError("Adding a new game failed."));
             dispatch(setLoading(false));
             console.log(e);
         }

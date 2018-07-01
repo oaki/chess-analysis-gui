@@ -1,20 +1,16 @@
-import config from "../config";
-import {setError, setEvaluation} from "../actions";
-
 import * as io from "socket.io-client";
-import {store} from "../store";
+import {setError, setEvaluation} from "../actions";
+import {ISyzygy, setSyzygyEvaluation} from "../components/syzygyExplorer";
+import config from "../config";
 import {IWorkerResponse, LINE_MAP} from "../interfaces";
+import {store} from "../store";
 
 export default class SocketManager {
     private socket;
     private signInToken;
 
     constructor(private config: SocketIoConfig, private store) {
-        console.log('store', store);
-    }
-
-    setSignInToken(token: string) {
-        this.signInToken = token;
+        console.log("store", store);
     }
 
     handleResult = (result: string) => {
@@ -24,11 +20,21 @@ export default class SocketManager {
 
 
         // ignore others @todo disable others results
-        const fen = this.store.getState()['fen'];
+        const fen = this.store.getState()["fen"];
         const results = arr.filter((data) => data.fen === fen).map((data) => this.prepareEvaluation(data));
         if (results && results.length > 0) {
             this.store.dispatch(setEvaluation(results));
         }
+    }
+
+    handleSyzygyResult = (result: ISyzygy) => {
+        console.log("handleSyzygyResult", result);
+        this.store.dispatch(setSyzygyEvaluation(result))
+    }
+
+
+    setSignInToken(token: string) {
+        this.signInToken = token;
     }
 
     // handleOpeningMoves = (result: { data: IWorkerResponse, fen: string }) => {
@@ -36,6 +42,47 @@ export default class SocketManager {
     //
     //     this.store.dispatch(setOpeningMoves(result.data));
     // }
+
+    connect() {
+        console.log("this.signInToken", this.signInToken);
+        this.socket = io(this.config.socketIo.host, {
+            path: config.socketIo.path,
+            query: {
+                token: this.signInToken,
+                type: "user"
+            },
+            reconnection: true,
+            reconnectionDelay: 1000,
+            reconnectionDelayMax: 5000,
+            reconnectionAttempts: 99999
+        });
+
+        this.socket.on("connect", () => {
+            console.log(`socket connected to ${this.config.socketIo.host}`);
+        });
+
+        /**
+         * Interface
+         */
+        this.socket.on("workerEvaluation", this.handleResult);
+        this.socket.on("syzygyEvaluation", this.handleSyzygyResult);
+        // this.socket.on('openingMoves', this.handleOpeningMoves);
+
+        this.socket.on("disconnect", () => {
+            store.dispatch(setError("Socket disconnect"));
+            console.log(`socket disconnect`);
+        });
+
+        this.socket.on("connect_timeout", (timeout) => {
+            store.dispatch(setError("Socket connection timeout"));
+        });
+    }
+
+    emit(name: string, props: any) {
+        if (this.socket) {
+            this.socket.emit(name, props);
+        }
+    }
 
     private prepareEvaluation(data: IWorkerResponse) {
         if (!data[LINE_MAP.pv]) {
@@ -49,46 +96,6 @@ export default class SocketManager {
         // }
 
         return newData;
-    }
-
-    connect() {
-        console.log('this.signInToken', this.signInToken);
-        this.socket = io(this.config.socketIo.host, {
-            path: config.socketIo.path,
-            query: {
-                token: this.signInToken,
-                type: 'user'
-            },
-            reconnection: true,
-            reconnectionDelay: 1000,
-            reconnectionDelayMax: 5000,
-            reconnectionAttempts: 99999
-        });
-
-        this.socket.on('connect', () => {
-            console.log(`socket connected to ${this.config.socketIo.host}`);
-        });
-
-        /**
-         * Interface
-         */
-        this.socket.on('workerEvaluation', this.handleResult);
-        // this.socket.on('openingMoves', this.handleOpeningMoves);
-
-        this.socket.on('disconnect', () => {
-            store.dispatch(setError('Socket disconnect'));
-            console.log(`socket disconnect`);
-        });
-
-        this.socket.on('connect_timeout', (timeout) => {
-            store.dispatch(setError('Socket connection timeout'));
-        });
-    }
-
-    emit(name: string, props: any) {
-        if (this.socket) {
-            this.socket.emit(name, props);
-        }
     }
 
 

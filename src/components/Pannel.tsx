@@ -1,9 +1,10 @@
-import * as React from 'react';
-import {connect} from 'react-redux';
+import * as React from "react";
+import {connect} from "react-redux";
 import {SmartOpeningExplorer} from "./OpeningExplorer";
 import {store} from "../store";
 import {loadOpeningBook} from "../actions";
 import {SocketIoProvider} from "../SocketIoProvider";
+import {SyzygyExplorerSmart} from "./syzygyExplorer";
 
 interface IPannelProps {
     status: string;
@@ -35,7 +36,7 @@ export class Pannel extends React.Component<any, IPannelState> {
     }
 
     componentDidMount() {
-        console.log('onmessage LOAD AFTER componentDidMount');
+        console.log("onmessage LOAD AFTER componentDidMount");
         store.dispatch(loadOpeningBook());
     }
 
@@ -44,6 +45,7 @@ export class Pannel extends React.Component<any, IPannelState> {
         return (
             <div>
                 <SmartOpeningExplorer/>
+                <SyzygyExplorerSmart/>
 
                 <div className="app__status">
 
@@ -54,8 +56,6 @@ export class Pannel extends React.Component<any, IPannelState> {
                     <div className="app__opening">{this.props.status}</div>
 
                 </div>
-
-
 
 
             </div>

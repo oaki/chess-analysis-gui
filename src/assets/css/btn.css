@@ -1,4 +1,4 @@
-.btn{
+.btn {
     display: inline-block;
     font-weight: 400;
     text-align: center;
@@ -15,17 +15,23 @@
     color: #7b7b7b;
     border-radius: .2rem;
     cursor: pointer;
-    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
 }
 
-.btn-success{
+.btn-success {
     color: #fff;
     background-color: #6dce69;
     border-color: #6dce69;
 }
 
-.btn-danger{
+.btn-danger {
     color: #fff;
     background-color: #dc3545;
     border-color: #dc3545;
+}
+
+.btn-syzygy {
+    border-radius: .5rem;
+    padding: 0 .2rem;
+    margin: .2rem 0 .2rem .3rem;
 }

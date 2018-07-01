@@ -1,10 +1,9 @@
-import * as React from 'react';
-import {Provider} from 'react-redux';
+import * as React from "react";
+import {connect, Provider} from "react-redux";
 import {Pannel} from "../components/Pannel";
-import {Router, Route, Switch} from 'react-router'
-import {BrowserRouter} from 'react-router-dom'
-import {connect} from 'react-redux';
-import {Menu, MenuWithRouter} from "../components/Menu";
+import {Route, Router, Switch} from "react-router"
+import {BrowserRouter} from "react-router-dom"
+import {MenuWithRouter} from "../components/Menu";
 import {History} from "../components/History";
 import {SmartAwesomeChessboard} from "../components/AwesomeChessboard";
 import BootstrapData from "../components/BootstrapData";
@@ -15,6 +14,16 @@ export class ChessboardPage extends React.Component<any, any> {
 
     render() {
 
+        // calculate height for
+        const availHeight = screen.availHeight;
+        const availWidth = screen.availWidth;
+        const chessboarcWidth = availWidth - 30/* padding:15*/;
+        const chessboarcHeight = chessboarcWidth;
+        const height = availHeight - 40 /* bottom menu height */ - chessboarcHeight;
+
+        console.log({
+            availHeight, availWidth, chessboarcWidth, chessboarcHeight, height
+        });
         return (
             <BootstrapData>
                 <div className="container">
@@ -26,11 +35,14 @@ export class ChessboardPage extends React.Component<any, any> {
                             <SmartAwesomeChessboard key="1"/>
                         </div>
                         <div className="col-md-5">
-                            <Pannel/>
+                            <div className="ox-a" style={{height}}>
+                                <Pannel/>
+                                <History/>
+                            </div>
                         </div>
                     </div>
 
-                    <History/>
+
                     <MenuWithRouter showMainMenu={true} showFlip={true} showUndo={true} showRedo={true}/>
                 </div>
             </BootstrapData>

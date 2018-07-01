@@ -96,9 +96,7 @@ export class History extends React.Component<any, any> {
         };
         return (
             <div className="history">
-                <div className="history__title bg-mine-shaft2">
-                    History
-                </div>
+
                 <div className="history__slider">
                     <div className="history__slider__holder" style={style}>
                         {this.renderMoves(getHistory())}

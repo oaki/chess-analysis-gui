@@ -1,17 +1,14 @@
-import * as React from 'react';
-import {connect} from 'react-redux';
-import {Link, withRouter} from 'react-router-dom';
-import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import * as React from "react";
+import {connect} from "react-redux";
+import {Link, withRouter} from "react-router-dom";
+import FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import * as faRetweet from "@fortawesome/fontawesome-free-solid/faRetweet";
 import * as faAngleDoubleLeft from "@fortawesome/fontawesome-free-solid/faAngleDoubleLeft";
 import * as faAngleDoubleRight from "@fortawesome/fontawesome-free-solid/faAngleDoubleRight";
 import * as faBars from "@fortawesome/fontawesome-free-solid/faBars";
 import {store} from "../store";
 import {addNewGame, flipBoard, lastMoveId, setPosition, toogleOpenMenu} from "../actions";
-import {
-    getHistoryNextMove, getHistoryParents,
-    getHistoryPreviousMove
-} from "../libs/chessboardUtils";
+import {getHistoryNextMove, getHistoryParents, getHistoryPreviousMove} from "../libs/chessboardUtils";
 import {SmartAwesomeChessboard} from "./AwesomeChessboard";
 import {SessionManagerService} from "../services/sessionManager";
 
@@ -26,7 +23,7 @@ export class Menu extends React.Component<any, any> {
 
     handleUndo() {
 
-        const moves = getHistoryParents(store.getState()['lastMoveId']);
+        const moves = getHistoryParents(store.getState()["lastMoveId"]);
         const previousMove = getHistoryPreviousMove();
 
         if (previousMove) {
@@ -34,7 +31,7 @@ export class Menu extends React.Component<any, any> {
             store.dispatch(lastMoveId(previousMove.uuid));
         } else {
             store.dispatch(setPosition(SmartAwesomeChessboard.FIRST_POSITION));
-            store.dispatch(lastMoveId(''));
+            store.dispatch(lastMoveId(""));
         }
     }
 
@@ -53,18 +50,19 @@ export class Menu extends React.Component<any, any> {
 
     handleLogout = () => {
         SessionManagerService.removeUser();
-        this.props.history.push('/user/sign-in');
+        this.props.history.push("/auth/sign-in");
     }
 
     handleNewGame = () => {
         const props = this.props;
-        store.dispatch(addNewGame(() => {
-            props.history.push('/');
+        store.dispatch(addNewGame((id) => {
+            // props.history.push(`/#game_${id}`);
+            window.location.href = "/";
         }));
     }
 
     render() {
-        console.log('this.props.isSubMenuOpen', this.props.isSubMenuOpen);
+        console.log("this.props.isSubMenuOpen", this.props.isSubMenuOpen);
         return (
             <div className="bottom-menu">
                 {this.renderSubmenu()}
@@ -84,7 +82,7 @@ export class Menu extends React.Component<any, any> {
     }
 
     handleBeforeGoToList = () => {
-        console.log('handleBeforeGoToList');
+        console.log("handleBeforeGoToList");
         store.dispatch(toogleOpenMenu());
     }
 

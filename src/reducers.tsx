@@ -1,20 +1,28 @@
 import {combineReducers} from 'redux';
 
 import {
-    FLIP_BOARD, IOnMove, MENU_TOGGLE_OPEN, ON_MOVE,
+    FLIP_BOARD,
+    IOnMove,
+    MENU_TOGGLE_OPEN,
+    ON_MOVE,
     SET_ERROR,
-    SET_EVALUATION, SET_HISTORY,
-    SET_HISTORY_MOVE, SET_LAST_MOVE,
+    SET_EVALUATION,
+    SET_HISTORY,
+    SET_HISTORY_MOVE,
+    SET_LAST_MOVE,
     SET_OPENING_POSITION,
     SET_POSITION,
-    SET_STATUS, SET_WORKER_LIST,
-    UPDATE_LOADING, USER_SIGN_IN
+    SET_STATUS,
+    SET_WORKER_LIST,
+    UPDATE_LOADING,
+    USER_SIGN_IN
 } from "./actions";
-import {Move} from "./components/OpeningExplorer";
 import {IHistoryMove} from "./components/AwesomeChessboard";
-import {IWorkerResponse, IAction} from "./interfaces";
-import {SessionManagerService} from "./services/sessionManager";
 import {historyListReducer} from "./components/historyList/historyList";
+import {Move} from "./components/OpeningExplorer";
+import {syzygyReducer} from "./components/syzygyExplorer";
+import {IAction, IWorkerResponse} from "./interfaces";
+import {SessionManagerService} from "./services/sessionManager";
 
 export const loadingReducer = (isLoading: boolean = false, action: any) => {
     switch (action.type) {
@@ -218,6 +226,7 @@ export default combineReducers({
     workers: workesReducer,
     onMove: onMoveReducer,
     historyList: historyListReducer,
+    syzygy: syzygyReducer,
 });
 
 export function deepCopy(obj) {
