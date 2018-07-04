@@ -83,14 +83,14 @@ function mapDispatchToProps(dispatch: (data: any) => {}) {
 
             const promotion = move.length > 4 && move.substring(4, 5) || "q";
 
-            dispatch(setMove(move.substring(0, 2), move.substring(2, 4), promotion, guid()));
+            dispatch(setMove(move.substring(0, 2), move.substring(2, 4), guid(), promotion));
         }
     };
 }
 
 export const SET_SYZYGY_EVALUATION = "SET_SYZYGY_EVALUATION";
 
-export function setSyzygyEvaluation(syzygy: ISyzygy) {
+export function setSyzygyEvaluation(syzygy: ISyzygy | null) {
     return {
         payload: syzygy,
         type: SET_SYZYGY_EVALUATION

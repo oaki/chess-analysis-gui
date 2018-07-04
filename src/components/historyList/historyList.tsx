@@ -1,21 +1,19 @@
-import * as React from 'react';
-import {connect} from 'react-redux';
-import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import * as React from "react";
+import {connect} from "react-redux";
+import FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import {faArrowRight} from "@fortawesome/fontawesome-free-solid";
 import {IAction} from "../../interfaces";
 import {IHistoryMove} from "../AwesomeChessboard";
-import * as moment from 'moment';
+import * as moment from "moment";
 import {getHistoryLine} from "../../libs/chessboardUtils";
 import {batchActions} from "redux-batched-actions";
-import { withRouter } from 'react-router';
+import {withRouter} from "react-router";
 
-import {
-    lastMoveId, setEvaluation, setHistory, setOpeningPosition, setPosition,
-    setUser
-} from "../../actions";
+import {lastMoveId, setEvaluation, setHistory, setOpeningPosition, setPosition, setUser} from "../../actions";
 import {store} from "../../store";
 import {SessionManagerService} from "../../services/sessionManager";
-import {Link} from 'react-router-dom'
+import {Link} from "react-router-dom"
+import {setSyzygyEvaluation} from "../syzygyExplorer";
 
 
 @connect((state) => ({historyList: state.historyList}))
@@ -28,30 +26,31 @@ export class HistoryList extends React.Component<any, any> {
             return Number(item.id) === id;
         });
 
-        console.log('historyGameResponse', historyGameResponse);
+        console.log("historyGameResponse", historyGameResponse);
 
         if (historyGameResponse) {
-            const user = store.getState()['user'];
+            const user = store.getState()["user"];
 
             SessionManagerService.setUser({...user, last_game_id: historyGameResponse.id});
 
             store.dispatch(batchActions([
                 setUser(user),
                 setHistory(historyGameResponse.moves),
-                lastMoveId(''),
-                setPosition(''),
+                lastMoveId(""),
+                setPosition(""),
                 setOpeningPosition([]),
                 setEvaluation([]),
+                setSyzygyEvaluation(null),
             ]));
 
         }
 
-        this.props.history.push('/');
+        this.props.history.push("/");
 
     }
 
     private formatDate(date: string) {
-        return moment(date).format('D.M.Y');
+        return moment(date).format("D.M.Y");
     }
 
     private showMoveNumber(index: number) {
@@ -78,7 +77,7 @@ export class HistoryList extends React.Component<any, any> {
     }
 
     renderItem() {
-        const className = 'd-b p-md cur-p list__bottom-line';
+        const className = "d-b p-md cur-p list__bottom-line";
         return this.props.historyList.map((historyGame: IHistoryGameResponse, index) => (
             <li key={index} className={className} onClick={this.handleLoadGame} data-id={historyGame.id}>
                 <span className="c-white f-r"><FontAwesomeIcon icon={faArrowRight}/></span>
@@ -105,7 +104,7 @@ export class HistoryList extends React.Component<any, any> {
 }
 
 
-export const SET_HISTORY_GAME_LIST = 'SET_HISTORY_GAME_LIST';
+export const SET_HISTORY_GAME_LIST = "SET_HISTORY_GAME_LIST";
 
 export function setHistoryGameList(games: any[]) {
     return {

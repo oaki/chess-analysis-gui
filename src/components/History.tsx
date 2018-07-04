@@ -1,14 +1,14 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import {connect} from 'react-redux';
+import * as React from "react";
+import {connect} from "react-redux";
 import {IHistoryMove} from "./AwesomeChessboard";
-import {getHistory, getHistoryLine, getHistoryMove} from "../libs/chessboardUtils";
+import {getHistory, getHistoryMove} from "../libs/chessboardUtils";
 import {lastMoveId, setEvaluation, setOpeningPosition, setPosition} from "../actions";
 import {store} from "../store";
 import {filter} from "lodash";
 import {batchActions} from "redux-batched-actions";
+import {setSyzygyEvaluation} from "./syzygyExplorer";
 
-const classNames = require('classnames');
+const classNames = require("classnames");
 
 interface IHistoryProps {
     history: string[];
@@ -44,13 +44,14 @@ export class History extends React.Component<any, any> {
                 lastMoveId(move.uuid),
                 setPosition(move.fen),
                 setEvaluation([]),
+                setSyzygyEvaluation(null),
                 setOpeningPosition([])
             ]));
         }
     }
 
 
-    renderMoves(history, counter = 0, parentId = '') {
+    renderMoves(history, counter = 0, parentId = "") {
 
         const moves = filter(history, (move) => {
             return move.parentId === parentId;
@@ -73,7 +74,7 @@ export class History extends React.Component<any, any> {
     }
 
     renderLine(counter, move, index) {
-        let className = classNames('move', {
+        let className = classNames("move", {
             move__active: move.uuid === this.props.lastMoveId
         });
 
@@ -89,16 +90,16 @@ export class History extends React.Component<any, any> {
 
     render() {
 
-        const count = this.props.history.length;
-        const sliderWidth = count * 35 + Math.round(count / 2) * 20;
-        const style = {
-            width: `${sliderWidth}px`
-        };
+        // const count = this.props.history.length;
+        // const sliderWidth = count * 35 + Math.round(count / 2) * 20;
+        // const style = {
+        //     width: `${sliderWidth}px`
+        // };
         return (
             <div className="history">
 
                 <div className="history__slider">
-                    <div className="history__slider__holder" style={style}>
+                    <div className="history__slider__holder">
                         {this.renderMoves(getHistory())}
                     </div>
                 </div>
@@ -109,11 +110,11 @@ export class History extends React.Component<any, any> {
     componentDidUpdate() {
         const num = this.getMoveNumber();
         // const node = ReactDOM.findDOMNode(this).getElementsByClassName('history__slider__holder')[0];
-        const els: NodeListOf<Element> = ReactDOM.findDOMNode(this).getElementsByClassName(`move`);
-
-        if (els.length) {
-            els[els.length - 1].scrollIntoView();
-        }
+        // const els: NodeListOf<Element> = ReactDOM.findDOMNode(this).getElementsByClassName(`move`);
+        //
+        // if (els.length) {
+        //     els[els.length - 1].scrollIntoView();
+        // }
         // node.scrollLeft = elem.scrollHeight;
 
         // console.log('node.scrollLeft',node.scrollLeft);

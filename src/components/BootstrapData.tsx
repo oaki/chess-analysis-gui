@@ -55,10 +55,14 @@ export default class BootstrapData extends React.Component<any, any> {
     async loadApp() {
 
         const user = SessionManagerService.getUser();
-        let token = '';
+        console.log('SessionManagerService.getUser()', user);
+
         try {
-            const res = await ApiManagerService.getSignUser(user);
-            token = res.token;
+            if(!user || user.token ===''){
+                const res = await ApiManagerService.getSignUser(user);
+                console.log('ApiManagerService.getSignUser(user);', res);
+                user.token = res.token;
+            }
         } catch (err) {
             if (err && err.statusCode === 403) {
                 SessionManagerService.removeUser();
@@ -70,16 +74,16 @@ export default class BootstrapData extends React.Component<any, any> {
 
         try {
 
-            const lastGame = await ApiManagerService.getLastGame(token);
+            const lastGame = await ApiManagerService.getLastGame(user.token);
 
             if (!lastGame) {
                 throw new ConnectionError('Can not load games');
             }
 
-            user.token = token;
+
             user.last_game_id = lastGame.id;
 
-            this.initSockets(token);
+            this.initSockets(user.token);
 
             SessionManagerService.setUser(user);
             store.dispatch(setUser(user));

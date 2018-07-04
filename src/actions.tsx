@@ -6,6 +6,7 @@ import {IUser, IWorker} from "./reducers";
 import {batchActions} from "redux-batched-actions";
 import * as Chess from "chess.js";
 import {getHistoryChildren, getHistoryParents, getLastMove} from "./libs/chessboardUtils";
+import {setSyzygyEvaluation} from "./components/syzygyExplorer";
 
 export const UPDATE_LOADING = "UPDATE_LOADING";
 export const SET_POSITION = "SET_POSITION";
@@ -128,6 +129,7 @@ export function setMove(from: string, to: string, uuid: string, promotion: strin
         setPosition(fen),
         setOpeningPosition([]),
         setEvaluation([]),
+        setSyzygyEvaluation(null),
         setHistoryMove({
             parentId: getLastMove(),
             uuid,

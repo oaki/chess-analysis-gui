@@ -15,8 +15,8 @@ export class ChessboardPage extends React.Component<any, any> {
     render() {
 
         // calculate height for
-        const availHeight = screen.availHeight;
-        const availWidth = screen.availWidth;
+        const availHeight = window.innerHeight;
+        const availWidth = window.innerWidth;
         const chessboarcWidth = availWidth - 30/* padding:15*/;
         const chessboarcHeight = chessboarcWidth;
         const height = availHeight - 40 /* bottom menu height */ - chessboarcHeight;

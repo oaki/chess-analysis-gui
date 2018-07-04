@@ -1,6 +1,5 @@
 import config from "../config";
 import {IUser} from "../reducers";
-import {FetchError} from "../libs/errors/fetchError";
 
 class ApiManager {
     constructor(private apiHost: string) {
@@ -12,8 +11,9 @@ class ApiManager {
             headers: new Headers({
                 Authorization: `Bearer ${token}`
             })
-        }
-        return await this.fetch('/user/history:last', fetchData);
+        };
+
+        return await this.fetch("/user/history:last", fetchData);
     }
 
     async saveGame(moves: any, user: IUser) {
@@ -21,7 +21,7 @@ class ApiManager {
             headers: new Headers({
                 Authorization: `Bearer ${user.token}`
             }),
-            method: 'PUT',
+            method: "PUT",
             body: JSON.stringify({moves: moves})
         };
 
@@ -32,7 +32,7 @@ class ApiManager {
 
         const fetchData = {
             headers: new Headers(),
-            method: 'POST',
+            method: "POST",
             // mode: 'no-cors',
             body: JSON.stringify({
                 jwt_token: user.googleToken,
@@ -40,14 +40,16 @@ class ApiManager {
             }),
         };
 
-        return await this.fetch('/auth/register', fetchData);
+        return await this.fetch("/auth/register", fetchData);
     }
 
     async fetch(path, data) {
         try {
-            const response = await fetch(`${this.apiHost}${path}`, data);
+            const url: string = `${this.apiHost}${path}`;
+            console.log("fetch", {url, data});
+            const response = await fetch(url, data);
             if (!response.ok) {
-                console.log('response', response);
+                console.log("response", response);
                 if (response.status === 403) {
                     throw await response.json();
                 }

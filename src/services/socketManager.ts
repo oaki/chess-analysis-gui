@@ -14,7 +14,7 @@ export default class SocketManager {
     }
 
     handleResult = (result: string) => {
-        // console.log('handleResult->', result);
+        console.log('handleResult->', result);
         const arr = JSON.parse(result);
         // for now we are expecting only one result, no more
 
