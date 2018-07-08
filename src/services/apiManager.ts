@@ -16,6 +16,15 @@ class ApiManager {
         return await this.fetch("/user/history:last", fetchData);
     }
 
+    async getGame(token, id: number) {
+        const fetchData = {
+            headers: new Headers({
+                Authorization: `Bearer ${token}`
+            })
+        };
+        return await this.fetch(`/user/history/${Number(id)}`, fetchData);
+    }
+
     async saveGame(moves: any, user: IUser) {
         const fetchData = {
             headers: new Headers({

@@ -9,7 +9,7 @@ import {ConnectionError} from "../libs/errors/connectionError";
 export default class BootstrapData extends React.Component<any, any> {
     state = {
         isLoaded: false,
-        errorMsg: '',
+        errorMsg: "",
         progressBarWidth: 10
     }
 
@@ -54,44 +54,50 @@ export default class BootstrapData extends React.Component<any, any> {
 
     async loadApp() {
 
-        const user = SessionManagerService.getUser();
-        console.log('SessionManagerService.getUser()', user);
+        const user: any = SessionManagerService.getUser();
+
+        console.log("SessionManagerService.getUser()", user);
 
         try {
-            if(!user || user.token ===''){
+            if (!user || user.token === "") {
                 const res = await ApiManagerService.getSignUser(user);
-                console.log('ApiManagerService.getSignUser(user);', res);
+                console.log("ApiManagerService.getSignUser(user);", res);
                 user.token = res.token;
             }
         } catch (err) {
             if (err && err.statusCode === 403) {
                 SessionManagerService.removeUser();
             }
-            location.href = '/auth/sign-in';
+            location.href = "/auth/sign-in";
             throw err;
         }
 
 
         try {
 
-            const lastGame = await ApiManagerService.getLastGame(user.token);
+            if (!user.last_game_id) {
+                const lastGame = await ApiManagerService.getLastGame(user.token);
 
-            if (!lastGame) {
-                throw new ConnectionError('Can not load games');
+                if (!lastGame) {
+                    throw new ConnectionError("Can not load games");
+                }
+
+                user.last_game_id = lastGame.id;
+                store.dispatch(setHistory(JSON.parse(lastGame.moves)));
+            } else if (Object.keys(store.getState()["history"]).length === 0) {
+                const game = await ApiManagerService.getGame(user.token, user.last_game_id);
+                store.dispatch(setHistory(game.moves));
             }
-
-
-            user.last_game_id = lastGame.id;
 
             this.initSockets(user.token);
 
             SessionManagerService.setUser(user);
             store.dispatch(setUser(user));
-            store.dispatch(setHistory(JSON.parse(lastGame.moves)));
+
 
         } catch (err) {
             console.log(err, err instanceof Error);
-            let msg = 'We can not load application but we are working on it.';
+            let msg = "We can not load application but we are working on it.";
             if (err instanceof Error) {
                 msg = err.message;
             }

@@ -3,7 +3,7 @@ import {connect} from "react-redux";
 import {SmartOpeningExplorer} from "./OpeningExplorer";
 import {store} from "../store";
 import {loadOpeningBook} from "../actions";
-import {SocketIoProvider} from "../SocketIoProvider";
+import {Evaluation} from "./evaluation";
 import {SyzygyExplorerSmart} from "./syzygyExplorer";
 
 interface IPannelProps {
@@ -49,7 +49,7 @@ export class Pannel extends React.Component<any, IPannelState> {
 
                 <div className="app__status">
 
-                    <SocketIoProvider/>
+                    <Evaluation/>
 
                     <div className="app__pgn">{this.state.pgn}</div>
                     <div className="app__fen">{this.state.fen}</div>

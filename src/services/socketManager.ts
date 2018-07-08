@@ -5,16 +5,23 @@ import config from "../config";
 import {IWorkerResponse, LINE_MAP} from "../interfaces";
 import {store} from "../store";
 
+const throttle = require("lodash/throttle");
+const debounce = require("lodash/debounce");
+
 export default class SocketManager {
     private socket;
     private signInToken;
+    private dispatchResults;
 
     constructor(private config: SocketIoConfig, private store) {
         console.log("store", store);
+        this.dispatchResults = throttle((results) => {
+            this.store.dispatch(setEvaluation(results));
+        }, 1000)
     }
 
     handleResult = (result: string) => {
-        console.log('handleResult->', result);
+        console.log("handleResult->", result);
         const arr = JSON.parse(result);
         // for now we are expecting only one result, no more
 
@@ -23,7 +30,7 @@ export default class SocketManager {
         const fen = this.store.getState()["fen"];
         const results = arr.filter((data) => data.fen === fen).map((data) => this.prepareEvaluation(data));
         if (results && results.length > 0) {
-            this.store.dispatch(setEvaluation(results));
+            this.dispatchResults(results);
         }
     }
 

@@ -1,16 +1,37 @@
+.evaluation {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+}
+
 .evaluation .score {
-    display: inline-block;
     background-color: black;
     padding: 0 .3rem;
     font-weight: bold;
+    height: 1.3rem;
 }
 
 .evaluation .depth {
     font-size: .6rem;
-    padding: 0 .3rem;
+    padding: .3rem .3rem;
+    min-width: 3.8rem;
 }
 
-.evaluation .pv{
+.evaluation .pv-holder {
     color: #d6d6d6;
-    font-size: .8rem;
+    font-size: .6rem;
+    padding-top: .4rem;
+    flex-wrap: nowrap;
+    display: flex;
+    margin-left: .4rem;
+    height: 1.3rem;
+}
+
+.evaluation .pv-holder__move{
+    padding-right: .3rem;
+    white-space: nowrap;
+}
+.evaluation .c-pv {
+    height: 1.3rem;
+    overflow-y: auto;
 }

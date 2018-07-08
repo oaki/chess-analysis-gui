@@ -7,6 +7,7 @@ import {batchActions} from "redux-batched-actions";
 import * as Chess from "chess.js";
 import {getHistoryChildren, getHistoryParents, getLastMove} from "./libs/chessboardUtils";
 import {setSyzygyEvaluation} from "./components/syzygyExplorer";
+import {SessionManagerService} from "./services/sessionManager";
 
 export const UPDATE_LOADING = "UPDATE_LOADING";
 export const SET_POSITION = "SET_POSITION";
@@ -390,6 +391,8 @@ export function addNewGame(callback) {
 
             const game: any = await response.json();
 
+            const newUser = {...user, last_game_id: game.id};
+            SessionManagerService.setUser(newUser);
             dispatch(setUser({...user, last_game_id: game.id}));
             callback(game.id);
 

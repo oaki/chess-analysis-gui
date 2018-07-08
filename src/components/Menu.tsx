@@ -7,10 +7,19 @@ import * as faAngleDoubleLeft from "@fortawesome/fontawesome-free-solid/faAngleD
 import * as faAngleDoubleRight from "@fortawesome/fontawesome-free-solid/faAngleDoubleRight";
 import * as faBars from "@fortawesome/fontawesome-free-solid/faBars";
 import {store} from "../store";
-import {addNewGame, flipBoard, lastMoveId, setPosition, toogleOpenMenu} from "../actions";
+import {
+    addNewGame,
+    flipBoard,
+    lastMoveId,
+    setEvaluation,
+    setOpeningPosition,
+    setPosition,
+    toogleOpenMenu
+} from "../actions";
 import {getHistoryNextMove, getHistoryParents, getHistoryPreviousMove} from "../libs/chessboardUtils";
 import {SmartAwesomeChessboard} from "./AwesomeChessboard";
 import {SessionManagerService} from "../services/sessionManager";
+import {batchActions} from "redux-batched-actions";
 
 @connect((state) => ({
     isSubMenuOpen: state.menu.isSubMenuOpen
@@ -27,11 +36,19 @@ export class Menu extends React.Component<any, any> {
         const previousMove = getHistoryPreviousMove();
 
         if (previousMove) {
-            store.dispatch(setPosition(previousMove.fen));
-            store.dispatch(lastMoveId(previousMove.uuid));
+            store.dispatch(batchActions([
+                lastMoveId(previousMove.uuid),
+                setPosition(previousMove.fen),
+                setOpeningPosition([]),
+                setEvaluation([]),
+            ]));
         } else {
-            store.dispatch(setPosition(SmartAwesomeChessboard.FIRST_POSITION));
-            store.dispatch(lastMoveId(""));
+            store.dispatch(batchActions([
+                lastMoveId(""),
+                setPosition(SmartAwesomeChessboard.FIRST_POSITION),
+                setOpeningPosition([]),
+                setEvaluation([]),
+            ]));
         }
     }
 
@@ -39,8 +56,12 @@ export class Menu extends React.Component<any, any> {
 
         const nextMove = getHistoryNextMove();
         if (nextMove) {
-            store.dispatch(setPosition(nextMove.fen));
-            store.dispatch(lastMoveId(nextMove.uuid));
+            store.dispatch(batchActions([
+                lastMoveId(nextMove.uuid),
+                setPosition(nextMove.fen),
+                setOpeningPosition([]),
+                setEvaluation([]),
+            ]));
         }
     }
 
