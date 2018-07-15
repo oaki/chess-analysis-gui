@@ -1,27 +1,19 @@
-import * as React from 'react';
-import {connect} from 'react-redux';
-import {store} from "../store";
-import {Chessground} from 'chessground';
+import * as React from "react";
+import {connect} from "react-redux";
+import {store} from "../../store";
+import {Chessground} from "chessground";
+import * as Chess from "chess.js";
 
-const throttle = require('lodash/throttle');
-
-import * as Chess from 'chess.js';
-
-import {
-    IOnMove,
-    setWhoIsOnMove,
-    setMove, setPosition,
-    setStatus
-} from "../actions";
+import {IOnMove, setMove, setPosition, setStatus, setWhoIsOnMove} from "../../actions";
 
 import {Api} from "chessground/api";
-import {
-    getHistoryMove, toColor,
-    toDests
-} from "../libs/chessboardUtils";
-import guid from "../libs/uuid";
-import {ApiManagerService} from "../services/apiManager";
+import {getHistoryMove, toColor, toDests} from "../../libs/chessboardUtils";
+import guid from "../../libs/uuid";
+import {ApiManagerService} from "../../services/apiManager";
 import {OnMoveIndication} from "./onMoveIndication";
+import {PromotingDialog, setPromotionDialog} from "./promotingDialog";
+
+const throttle = require("lodash/throttle");
 
 
 @connect((state) => ({
@@ -29,12 +21,14 @@ import {OnMoveIndication} from "./onMoveIndication";
     onMove: state.onMove,
     history: state.history,
     isFlip: state.isFlip,
-    lastMoveId: state.lastMoveId
+    lastMoveId: state.lastMoveId,
+    promotionDialog: state.promotionDialog,
+
 }))
 export class SmartAwesomeChessboard extends React.Component<any, any> {
 
     private board: any = null;
-    static FIRST_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+    static FIRST_POSITION = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
     constructor(props: IChessboardProps) {
 
@@ -42,7 +36,7 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
 
         this.state = {
             fen: SmartAwesomeChessboard.FIRST_POSITION,
-            orientation: 'white',
+            orientation: "white",
             evaluation: {}
         };
     }
@@ -52,6 +46,12 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
         return (
             <div className="brown pos-r">
                 <OnMoveIndication onMove={this.props.onMove} isFlip={this.props.isFlip}/>
+
+                <PromotingDialog
+                    {...this.props.promotionDialog}
+                    onMove={this.props.onMove}
+                    handleOnClick={this.handlePromotePiece}
+                />
 
                 <div id="awesome-chessboard" className="is2d"/>
 
@@ -63,14 +63,27 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
     }
 
     handleFenChange = (e: any) => {
-        console.log('handleFenChange');
+        console.log("handleFenChange");
         store.dispatch(setPosition(e.target.value));
+    }
+
+    handlePromotePiece = (e: any) => {
+        e.preventDefault();
+        const promotion: string = e.currentTarget.dataset.piece;
+        console.log("handlePromotePiece", e.currentTarget.dataset.piece);
+
+        // store.dispatch(setPosition(e.target.value));
+        const propsSetMove = {...store.getState()["promotionDialog"]["requestedParams"]};
+        propsSetMove.promotion = promotion;
+        console.log("propsSetMove", propsSetMove);
+        store.dispatch(setPromotionDialog({isOpen: false}));
+        store.dispatch(setMove(propsSetMove));
     }
 
     componentWillReceiveProps(nextProps: IChessboardProps) {
         if (nextProps.isFlip !== this.props.isFlip) {
             this.board.set({
-                orientation: nextProps.isFlip ? 'black' : 'white'
+                orientation: nextProps.isFlip ? "black" : "white"
             });
         }
 
@@ -104,50 +117,49 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
         }
     }
 
-    private updateStatus(chess) {
-        const moveColor = chess.turn() === 'b' ? 'Black' : 'White';
 
-        status = '';
+    private updateStatus(chess) {
+        const moveColor = chess.turn() === "b" ? "Black" : "White";
+
+        status = "";
         // checkmate?
         if (chess.in_checkmate() === true) {
-            status = 'Game over, ' + moveColor + ' is in checkmate.';
+            status = "Game over, " + moveColor + " is in checkmate.";
         } else if (chess.in_draw() === true) { // draw?
-            status = 'Game over, drawn position';
+            status = "Game over, drawn position";
         } else { // game still on
             // status = moveColor + ' to move';
             // check?
             if (chess.in_check() === true) {
-                status += moveColor + ' is in check';
+                status += moveColor + " is in check";
             }
         }
 
         store.dispatch(setStatus(status));
-        store.dispatch(setWhoIsOnMove(chess.turn() === 'b' ? IOnMove.BLACK : IOnMove.WHITE));
+        store.dispatch(setWhoIsOnMove(chess.turn() === "b" ? IOnMove.BLACK : IOnMove.WHITE));
     }
 
     private playOtherSide(cg: Api) {
         return (orig, dest) => {
 
             const uuid = guid();
-
-            store.dispatch(setMove(orig, dest, uuid));
-
+            store.dispatch(setMove({from: orig, to: dest, uuid, fen: (cg.state as any).fen}));
         };
     }
 
-    registerSavingHistory() {
+    initHistorySaving() {
         // auto saving for history
         let previousLength: number = 0;
 
         const saveHistory = throttle(() => {
-            const history = store.getState()['history'];
-            const user = store.getState()['user'];
+            const history = store.getState()["history"];
+            const user = store.getState()["user"];
             ApiManagerService.saveGame(history, user);
         }, 1000);
 
         function handleHistoryChange() {
 
-            let currentLength = Object.keys(store.getState()['history']).length;
+            let currentLength = Object.keys(store.getState()["history"]).length;
 
             if (previousLength !== currentLength) {
                 saveHistory();
@@ -159,9 +171,9 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
     }
 
     componentDidMount() {
-        const el: any = document.getElementById('awesome-chessboard');
+        const el: any = document.getElementById("awesome-chessboard");
         this.board = Chessground(el, {
-            orientation: 'white',
+            orientation: "white",
             addPieceZIndex: true,
             movable: {
                 // color: 'white',
@@ -180,7 +192,7 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
             }
         });
 
-        this.registerSavingHistory();
+        this.initHistorySaving();
     }
 
 

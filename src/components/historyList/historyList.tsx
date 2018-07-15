@@ -3,7 +3,7 @@ import {connect} from "react-redux";
 import FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import {faArrowRight} from "@fortawesome/fontawesome-free-solid";
 import {IAction} from "../../interfaces";
-import {IHistoryMove} from "../AwesomeChessboard";
+import {IHistoryMove} from "../chessboard/chessboard";
 import * as moment from "moment";
 import {getHistoryLine} from "../../libs/chessboardUtils";
 import {batchActions} from "redux-batched-actions";

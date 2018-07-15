@@ -1,13 +1,15 @@
 import {Move} from "./components/OpeningExplorer";
 import {IWorkerResponse} from "./interfaces";
 import config from "./config";
-import {IHistoryMove} from "./components/AwesomeChessboard";
+import {IHistoryMove} from "./components/chessboard/chessboard";
 import {IUser, IWorker} from "./reducers";
 import {batchActions} from "redux-batched-actions";
 import * as Chess from "chess.js";
-import {getHistoryChildren, getHistoryParents, getLastMove} from "./libs/chessboardUtils";
+import {getHistoryChildren, getLastMove} from "./libs/chessboardUtils";
 import {setSyzygyEvaluation} from "./components/syzygyExplorer";
 import {SessionManagerService} from "./services/sessionManager";
+import {store} from "./store";
+import {isPromoting, setPromotionDialog} from "./components/chessboard/promotingDialog";
 
 export const UPDATE_LOADING = "UPDATE_LOADING";
 export const SET_POSITION = "SET_POSITION";
@@ -22,6 +24,7 @@ export const SET_LAST_MOVE = "SET_LAST_MOVE";
 export const FLIP_BOARD = "FLIP_BOARD";
 export const MENU_TOGGLE_OPEN = "MENU_TOGGLE_OPEN";
 export const USER_SIGN_IN = "USER_SIGN_IN";
+export const SET_PROMOTION_DIALOG = "SET_PROMOTION_DIALOG";
 export const ON_MOVE = "ON_MOVE";
 
 export enum IOnMove {
@@ -84,6 +87,7 @@ export function lastMoveId(uuid: string) {
     };
 }
 
+
 export function setOpeningPosition(moves: Move[]) {
     return {
         moves,
@@ -99,48 +103,67 @@ export function setWorkerList(workerList: any[]) {
 }
 
 
-export function setMove(from: string, to: string, uuid: string, promotion: string = "q") {
+export interface ISetMoveProps {
+    from: string;
+    to: string;
+    uuid: string;
+    promotion?: string;
+    fen: string;
+}
 
-    const chess = new Chess();
-    const moves: IHistoryMove[] = getHistoryParents(getLastMove());
-    moves.reverse();
-    for (let move of moves) {
-        chess.move({from: move.notation.substring(0, 2), to: move.notation.substring(2, 4)});
-    }
 
-    const lastMove: any = chess.move({from, to, promotion});
-    const fen: string = chess.fen();
-    const parentId = getLastMove();
-    const child = getHistoryChildren(parentId);
 
-    //check if move exist in children
-    // if yes just move there and do not add new move
-    const childMove = child.find((move) => move.fen === fen);
-    if (childMove) {
+export function setMove(props: ISetMoveProps) {
+
+    const {from, to, promotion, uuid, fen} = props;
+
+    const chess = new Chess(fen);
+
+    if (!promotion && isPromoting(from, to, chess)) {
+        console.log("setPromotionDialog", from, to);
+        return store.dispatch(
+            setPromotionDialog({
+                requestedParams: props,
+                isOpen: true,
+            })
+        );
+
+
+    } else {
+        const lastMove: any = chess.move({from, to, promotion});
+        const newFen: string = chess.fen();
+        const parentId = getLastMove();
+        const child = getHistoryChildren(parentId);
+
+        //check if move exist in children
+        // if yes just move there and do not add new move
+        const childMove = child.find((move) => move.fen === newFen);
+        if (childMove) {
+            return batchActions([
+                lastMoveId(childMove.uuid),
+                setPosition(childMove.fen),
+                setEvaluation([]),
+                setOpeningPosition([])
+            ]);
+        }
+
         return batchActions([
-            lastMoveId(childMove.uuid),
-            setPosition(childMove.fen),
+            lastMoveId(uuid),
+            setPosition(newFen),
+            setOpeningPosition([]),
             setEvaluation([]),
-            setOpeningPosition([])
+            setSyzygyEvaluation(null),
+            setHistoryMove({
+                parentId: getLastMove(),
+                uuid,
+                fen: newFen,
+                notation: `${from}${to}`,
+                shortNotation: `${lastMove.san}`,
+            }),
+
+
         ]);
     }
-
-    return batchActions([
-        lastMoveId(uuid),
-        setPosition(fen),
-        setOpeningPosition([]),
-        setEvaluation([]),
-        setSyzygyEvaluation(null),
-        setHistoryMove({
-            parentId: getLastMove(),
-            uuid,
-            fen,
-            notation: `${from}${to}`,
-            shortNotation: `${lastMove.san}`,
-        }),
-
-
-    ]);
 }
 
 export function flipBoard() {

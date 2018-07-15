@@ -1,4 +1,4 @@
-import {combineReducers} from 'redux';
+import {combineReducers} from "redux";
 
 import {
     FLIP_BOARD,
@@ -17,12 +17,13 @@ import {
     UPDATE_LOADING,
     USER_SIGN_IN
 } from "./actions";
-import {IHistoryMove} from "./components/AwesomeChessboard";
+import {IHistoryMove} from "./components/chessboard/chessboard";
 import {historyListReducer} from "./components/historyList/historyList";
 import {Move} from "./components/OpeningExplorer";
 import {syzygyReducer} from "./components/syzygyExplorer";
 import {IAction, IWorkerResponse} from "./interfaces";
 import {SessionManagerService} from "./services/sessionManager";
+import {promotionDialogReducer} from "./components/chessboard/promotingDialog";
 
 export const loadingReducer = (isLoading: boolean = false, action: any) => {
     switch (action.type) {
@@ -34,7 +35,7 @@ export const loadingReducer = (isLoading: boolean = false, action: any) => {
     }
 };
 
-export const positionReducer = (fen: string = '', action: any) => {
+export const positionReducer = (fen: string = "", action: any) => {
     switch (action.type) {
         case SET_POSITION:
             return action.fen;
@@ -44,7 +45,7 @@ export const positionReducer = (fen: string = '', action: any) => {
     }
 };
 
-export const errorReducer = (msg: string = '', action: any) => {
+export const errorReducer = (msg: string = "", action: any) => {
     switch (action.type) {
         case SET_ERROR:
             return action.msg;
@@ -65,7 +66,7 @@ export const openingMovesReducer = (moves: Move[] = [], action: any) => {
     }
 };
 
-export const statusReducer = (status: string = '', action: any) => {
+export const statusReducer = (status: string = "", action: any) => {
     switch (action.type) {
         case SET_STATUS:
             return action.status;
@@ -105,8 +106,8 @@ interface IHistoryMoveCollection {
 export const historyReducer = (state: IHistoryMoveCollection = {}, action: IAction<IHistoryMove | any>) => {
     switch (action.type) {
         case SET_HISTORY_MOVE:
-            console.log('state', state);
-            console.log('action', action);
+            console.log("state", state);
+            console.log("action", action);
 
             const newState = {...state};
             newState[action.payload.uuid] = action.payload;
@@ -120,11 +121,11 @@ export const historyReducer = (state: IHistoryMoveCollection = {}, action: IActi
     }
 };
 
-export const lastMoveReducer = (state: string = '', action: any) => {
+export const lastMoveReducer = (state: string = "", action: any) => {
     switch (action.type) {
         case SET_LAST_MOVE:
-            console.log('state', state);
-            console.log('action', action);
+            console.log("state", state);
+            console.log("action", action);
 
 
             return action.uuid;
@@ -174,7 +175,7 @@ export interface IUser {
 export const userReducer = (user: IUser = SessionManagerService.getUser(), action: IAction<IUser>) => {
     switch (action.type) {
         case USER_SIGN_IN:
-            console.log('old state', user, 'new state', action.payload);
+            console.log("old state", user, "new state", action.payload);
             return {...user, ...action.payload};
 
         default:
@@ -190,7 +191,7 @@ export interface IWorker {
     ready: boolean;
 }
 
-export const workesReducer = (workerList: IWorker[] = [], action: IAction<IWorker[]>) => {
+export const workerReducer = (workerList: IWorker[] = [], action: IAction<IWorker[]>) => {
     switch (action.type) {
         case SET_WORKER_LIST:
             return [...action.payload];
@@ -223,10 +224,11 @@ export default combineReducers({
     isFlip: flipBoardReducer,
     lastMoveId: lastMoveReducer,
     menu: menuReducer,
-    workers: workesReducer,
+    workers: workerReducer,
     onMove: onMoveReducer,
     historyList: historyListReducer,
     syzygy: syzygyReducer,
+    promotionDialog: promotionDialogReducer
 });
 
 export function deepCopy(obj) {

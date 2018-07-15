@@ -36,9 +36,9 @@ export class Evaluation extends React.Component<any, any> {
                 }
 
                 let annotationMove = `${newMove.san}`;
-                if (newMove.promotion) {
-                    annotationMove += `=${newMove.promotion}`;
-                }
+                // if (newMove.promotion) {
+                //     annotationMove += `=${newMove.promotion}`;
+                // }
 
                 newMoves.push(annotationMove);
             }
@@ -52,7 +52,7 @@ export class Evaluation extends React.Component<any, any> {
             <div className="evaluation" key={evaluation[LINE_MAP.pv]}>
                 {evaluation && <div className="score">
                     <span>{this.getScore(evaluation)}</span>
-                    <span className="fs-xs fw-r">/{evaluation[LINE_MAP.depth]}</span>
+                    {!evaluation[LINE_MAP.mate] && <span className="fs-xs fw-r">/{evaluation[LINE_MAP.depth]}</span>}
                 </div>}
 
                 {/*{this.props.evaluation && <span className="nodes">{this.getNodes()}</span>}*/}
@@ -89,6 +89,11 @@ export class Evaluation extends React.Component<any, any> {
 
     getScore(evaluation: IEvaluation) {
         const score = evaluation[LINE_MAP.score];
+
+        if (evaluation[LINE_MAP.mate]) {
+            return `#${Number(evaluation[LINE_MAP.mate])}`;
+        }
+
         if (Number(score) >= 0) {
             return `+${score}`;
         }

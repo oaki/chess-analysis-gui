@@ -1,5 +1,5 @@
 import {store} from "../store";
-import {IHistoryMove} from "../components/AwesomeChessboard";
+import {IHistoryMove} from "../components/chessboard/chessboard";
 import {sortBy, first, find, filter} from 'lodash';
 
 

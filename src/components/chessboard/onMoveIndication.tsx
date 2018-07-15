@@ -1,5 +1,5 @@
 import * as React from "react";
-import {IOnMove} from "../actions";
+import {IOnMove} from "../../actions";
 import * as classnames from 'classnames';
 
 interface OnMoveIndicationProps {

@@ -1,6 +1,6 @@
 import * as React from "react";
-import {connect} from 'react-redux';
-import '../assets/css/explorerBox.css';
+import {connect} from "react-redux";
+import "../assets/css/explorerBox.css";
 import {loadOpeningPosition, setMove} from "../actions";
 import guid from "../libs/uuid";
 import {store} from "../store";
@@ -69,8 +69,13 @@ function mapStateToProps(state: any) {
 function mapDispatchToProps(dispatch: (data: any) => {}) {
     return {
         handleMove(move: string, fen: string) {
-            console.log('handleMove', fen, move);
-            dispatch(setMove(move.substring(0, 2), move.substring(2, 4), guid()));
+            console.log("handleMove", fen, move);
+            dispatch(setMove({
+                from: move.substring(0, 2),
+                to: move.substring(2, 4),
+                uuid: guid(),
+                fen
+            }));
         }
     };
 }

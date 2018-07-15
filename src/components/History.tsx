@@ -1,6 +1,6 @@
 import * as React from "react";
 import {connect} from "react-redux";
-import {IHistoryMove} from "./AwesomeChessboard";
+import {IHistoryMove} from "./chessboard/chessboard";
 import {getHistory, getHistoryMove} from "../libs/chessboardUtils";
 import {lastMoveId, setEvaluation, setOpeningPosition, setPosition} from "../actions";
 import {store} from "../store";

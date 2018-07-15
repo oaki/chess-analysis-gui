@@ -6,7 +6,7 @@ import {BrowserRouter} from 'react-router-dom'
 import {connect} from 'react-redux';
 import {Menu, MenuWithRouter} from "../components/Menu";
 import {History} from "../components/History";
-import {SmartAwesomeChessboard} from "../components/AwesomeChessboard";
+import {SmartAwesomeChessboard} from "../components/chessboard/chessboard";
 import BootstrapData from "../components/BootstrapData";
 import {SmartError} from "../components/error";
 import {checkWorkers, loadEngines, setError, setHistory, setLoading, setUser, setWorkerList} from "../actions";

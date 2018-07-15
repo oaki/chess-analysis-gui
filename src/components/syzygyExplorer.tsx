@@ -4,6 +4,7 @@ import "../assets/css/explorerBox.css";
 import {IAction} from "../interfaces";
 import guid from "../libs/uuid";
 import {setMove} from "../actions";
+import {store} from "../store";
 
 export class SyzygyExplorer extends React.Component<any, any> {
 
@@ -79,11 +80,19 @@ function mapDispatchToProps(dispatch: (data: any) => {}) {
         handleClickMove(e) {
             console.log("handleClickMove", e.currentTarget);
             const move = e.currentTarget.dataset.move;
-            console.log("move", move);
+            const fen = store.getState()["fen"];
+            console.log({move, fen});
 
             const promotion = move.length > 4 && move.substring(4, 5) || "q";
 
-            dispatch(setMove(move.substring(0, 2), move.substring(2, 4), guid(), promotion));
+
+            dispatch(setMove({
+                from: move.substring(0, 2),
+                to: move.substring(2, 4),
+                uuid: guid(),
+                promotion,
+                fen
+            }));
         }
     };
 }

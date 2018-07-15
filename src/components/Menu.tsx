@@ -17,7 +17,7 @@ import {
     toogleOpenMenu
 } from "../actions";
 import {getHistoryNextMove, getHistoryParents, getHistoryPreviousMove} from "../libs/chessboardUtils";
-import {SmartAwesomeChessboard} from "./AwesomeChessboard";
+import {SmartAwesomeChessboard} from "./chessboard/chessboard";
 import {SessionManagerService} from "../services/sessionManager";
 import {batchActions} from "redux-batched-actions";
 
