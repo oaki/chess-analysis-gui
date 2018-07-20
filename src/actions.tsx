@@ -132,7 +132,9 @@ export function setMove(props: ISetMoveProps) {
     } else {
         const lastMove: any = chess.move({from, to, promotion});
         const newFen: string = chess.fen();
+
         const parentId = getLastMove();
+
         const child = getHistoryChildren(parentId);
 
         //check if move exist in children
@@ -154,8 +156,8 @@ export function setMove(props: ISetMoveProps) {
             setEvaluation([]),
             setSyzygyEvaluation(null),
             setHistoryMove({
-                parentId: getLastMove(),
                 uuid,
+                parentId: getLastMove(),
                 fen: newFen,
                 notation: `${from}${to}`,
                 shortNotation: `${lastMove.san}`,

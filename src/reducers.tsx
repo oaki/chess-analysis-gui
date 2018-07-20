@@ -24,6 +24,7 @@ import {syzygyReducer} from "./components/syzygyExplorer";
 import {IAction, IWorkerResponse} from "./interfaces";
 import {SessionManagerService} from "./services/sessionManager";
 import {promotionDialogReducer} from "./components/chessboard/promotingDialog";
+import {historyReducer} from "./components/History";
 
 export const loadingReducer = (isLoading: boolean = false, action: any) => {
     switch (action.type) {
@@ -98,28 +99,6 @@ export const evaluationReducer = (evaluation: IWorkerResponse | Move[] = [], act
     }
 ;
 
-interface IHistoryMoveCollection {
-    [key: string]: IHistoryMove;
-}
-
-
-export const historyReducer = (state: IHistoryMoveCollection = {}, action: IAction<IHistoryMove | any>) => {
-    switch (action.type) {
-        case SET_HISTORY_MOVE:
-            console.log("state", state);
-            console.log("action", action);
-
-            const newState = {...state};
-            newState[action.payload.uuid] = action.payload;
-            return newState;
-
-        case SET_HISTORY:
-            return action.payload;
-
-        default:
-            return state;
-    }
-};
 
 export const lastMoveReducer = (state: string = "", action: any) => {
     switch (action.type) {

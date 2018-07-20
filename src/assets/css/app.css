@@ -80,3 +80,19 @@ input {
 table{
     width: 100%;
 }
+
+.level-0{
+    font-size: 18px;
+}
+
+.level-1{
+    font-size: 16px;
+}
+
+.level-2{
+    font-size: 14px;
+}
+
+.level-3{
+    font-size: 11px;
+}

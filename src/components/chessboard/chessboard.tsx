@@ -12,6 +12,7 @@ import guid from "../../libs/uuid";
 import {ApiManagerService} from "../../services/apiManager";
 import {OnMoveIndication} from "./onMoveIndication";
 import {PromotingDialog, setPromotionDialog} from "./promotingDialog";
+import {Tree} from "../moveTree/tree";
 
 const throttle = require("lodash/throttle");
 
@@ -39,6 +40,8 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
             orientation: "white",
             evaluation: {}
         };
+
+
     }
 
 
@@ -58,6 +61,8 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
                 <div className="fen">
                     FEN: <input className="form-control form-control-sm" value={this.props.fen}/>
                 </div>
+
+                {this.newHistoryStructure()}
             </div>
         );
     }
@@ -142,9 +147,61 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
     private playOtherSide(cg: Api) {
         return (orig, dest) => {
 
-            const uuid = guid();
-            store.dispatch(setMove({from: orig, to: dest, uuid, fen: (cg.state as any).fen}));
+            const history = [
+                {id: 0, n: 0, m: "d2d4", p: null},
+                {id: 1, n: 1, m: "d7d5", p: null},
+                {id: 2, n: 2, m: "c2c4", p: null},
+
+                {id: 3, n: 2, m: "g1f3", p: 2},
+                {id: 4, n: 2, m: "b1c3", p: 2},
+
+                {id: 5, n: 3, m: "g8f6", p: 2},
+                {id: 6, n: 4, m: "c2c4", p: 2},
+                {id: 7, n: 5, m: "c7c6", p: 2},
+
+                {id: 8, n: 3, m: "e7e6", p: 2},
+
+                {id: 9, n: 3, m: "g7g6", p: 5},
+                {id: 10, n: 4, m: "g2g3", p: 5},
+                {id: 11, n: 3, m: "c7c6", p: null},
+
+            ];
+
+
+            store.dispatch(setMove({
+                from: orig,
+                to: dest,
+                uuid: guid(),
+                fen: (cg.state as any).fen
+            }));
         };
+    }
+
+    doHistory() {
+
+    }
+
+    newHistoryStructure() {
+        const tree = new Tree();
+        let prevLevel = 0;
+        return tree.build().map((node: any, index: number) => {
+            const isNextLevel: boolean = prevLevel < node.level;
+            const isPrevLevel = prevLevel > node.level;
+            prevLevel = node.level;
+
+            const className = "level-" + node.level;
+            return (
+                <>
+                    {isNextLevel && <span>&lt;</span>}
+
+                    {node.isNewVariant && <div key={index} className={className}>{node.move} </div>}
+                    {!node.isNewVariant && <span key={index} className={className}>{node.move} </span>}
+                    {isPrevLevel && <span>&gt;</span>}
+                </>
+            )
+
+
+        });
     }
 
     initHistorySaving() {

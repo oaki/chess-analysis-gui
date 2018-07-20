@@ -22,7 +22,7 @@ export class OpeningExplorer extends React.Component<IOpeningExplorerProps, IOpe
 
         return this.props.moves.map((item: Move, index) => {
             return (
-                <tr key={index} onClick={this.handleClick} data-move={item.move} data-fen={item.fen}>
+                <tr key={index} onClick={this.handleClick} data-move={item.move}>
                     <td>
                         {item.move}
                     </td>
@@ -68,8 +68,9 @@ function mapStateToProps(state: any) {
 
 function mapDispatchToProps(dispatch: (data: any) => {}) {
     return {
-        handleMove(move: string, fen: string) {
-            console.log("handleMove", fen, move);
+        handleMove(move: string) {
+            const fen = store.getState()["fen"];
+
             dispatch(setMove({
                 from: move.substring(0, 2),
                 to: move.substring(2, 4),

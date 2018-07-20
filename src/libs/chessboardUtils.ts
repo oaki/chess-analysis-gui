@@ -1,6 +1,8 @@
 import {store} from "../store";
 import {IHistoryMove} from "../components/chessboard/chessboard";
-import {sortBy, first, find, filter} from 'lodash';
+
+const filter = require("lodash/filter");
+const find = require("lodash/find");
 
 
 export function toDests(chess: any) {
@@ -13,29 +15,29 @@ export function toDests(chess: any) {
 }
 
 export function toColor(chess: any) {
-    return (chess.turn() === 'w') ? 'white' : 'black';
+    return (chess.turn() === "w") ? "white" : "black";
 }
 
 export function getHistory() {
-    return store.getState()['history'];
+    return store.getState()["history"];
 }
 
 export function getHistoryMove(uuid: string): IHistoryMove {
-    return getHistory()[uuid];
+    return find(getHistory(), (item: IHistoryMove) => item.uuid === uuid);
 }
 
 export function getLastMove(): string {
-    return store.getState()['lastMoveId']
+    return store.getState()["lastMoveId"]
 }
 
 export function getHistoryPreviousMove(): IHistoryMove {
     const history = getHistory();
-    const lastMoveId = store.getState()['lastMoveId'];
+    const lastMoveId = store.getState()["lastMoveId"];
     const parentId = getHistory()[lastMoveId].parentId;
     return history[parentId];
 }
 
-export function getHistoryChildren(id: string = ''): IHistoryMove[] {
+export function getHistoryChildren(id: string = ""): IHistoryMove[] {
     const history = getHistory();
     const lastMoveId = id || getLastMove();
 
@@ -46,7 +48,7 @@ export function getHistoryChildren(id: string = ''): IHistoryMove[] {
     return moves;
 }
 
-export function getHistoryNextMove(id: string = ''): IHistoryMove {
+export function getHistoryNextMove(id: string = ""): IHistoryMove {
     const children: IHistoryMove[] = getHistoryChildren();
     const move = getHistoryChildren()[0];
     if (move) {
@@ -56,25 +58,13 @@ export function getHistoryNextMove(id: string = ''): IHistoryMove {
     return children[0];
 }
 
-export function getHistoryTree() {
-    const buffer = [];
-    getHistoryLine2('', buffer);
-    return buffer;
-}
-
-export function getHistoryLine2(parentId: string = '', buffer: IHistoryMove[]) {
-    const children: IHistoryMove[] = getHistoryChildren();
-
-}
-
-
 export function getHistoryParents(uuid: string): IHistoryMove[] {
     const history: any = getHistory();
     const output: IHistoryMove[] = [];
     let parentId = uuid;
     let counter = 0;
 
-    while (parentId !== '' && counter < 500) {
+    while (parentId !== "" && counter < 500) {
         const move = history[parentId];
         if (!move) {
             break;
@@ -89,7 +79,7 @@ export function getHistoryParents(uuid: string): IHistoryMove[] {
 
 export function getHistoryLine(history: IHistoryMove[]) {
     const output: any = [];
-    let parentId = '';
+    let parentId = "";
     let counter = 0;
 
     while (counter < 500) {
@@ -105,8 +95,4 @@ export function getHistoryLine(history: IHistoryMove[]) {
     }
 
     return output;
-}
-
-export function getMainLine(history) {
-
 }
