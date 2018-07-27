@@ -1,5 +1,4 @@
 import {store} from "../store";
-import {IHistoryMove} from "../components/chessboard/chessboard";
 
 const filter = require("lodash/filter");
 const find = require("lodash/find");
@@ -22,77 +21,7 @@ export function getHistory() {
     return store.getState()["history"];
 }
 
-export function getHistoryMove(uuid: string): IHistoryMove {
-    return find(getHistory(), (item: IHistoryMove) => item.uuid === uuid);
-}
-
-export function getLastMove(): string {
+export function getLastMove(): number {
     return store.getState()["lastMoveId"]
 }
 
-export function getHistoryPreviousMove(): IHistoryMove {
-    const history = getHistory();
-    const lastMoveId = store.getState()["lastMoveId"];
-    const parentId = getHistory()[lastMoveId].parentId;
-    return history[parentId];
-}
-
-export function getHistoryChildren(id: string = ""): IHistoryMove[] {
-    const history = getHistory();
-    const lastMoveId = id || getLastMove();
-
-    const moves = filter(history, (move: IHistoryMove) => {
-        return move.parentId === lastMoveId;
-    });
-
-    return moves;
-}
-
-export function getHistoryNextMove(id: string = ""): IHistoryMove {
-    const children: IHistoryMove[] = getHistoryChildren();
-    const move = getHistoryChildren()[0];
-    if (move) {
-        return move;
-    }
-
-    return children[0];
-}
-
-export function getHistoryParents(uuid: string): IHistoryMove[] {
-    const history: any = getHistory();
-    const output: IHistoryMove[] = [];
-    let parentId = uuid;
-    let counter = 0;
-
-    while (parentId !== "" && counter < 500) {
-        const move = history[parentId];
-        if (!move) {
-            break;
-        }
-        output.push(move);
-        parentId = move.parentId;
-        counter++;
-    }
-
-    return output;
-}
-
-export function getHistoryLine(history: IHistoryMove[]) {
-    const output: any = [];
-    let parentId = "";
-    let counter = 0;
-
-    while (counter < 500) {
-        const move = find(history, (move) => {
-            return move.parentId === parentId;
-        });
-        if (!move) {
-            break;
-        }
-        output.push(move);
-        parentId = move.uuid;
-        counter++;
-    }
-
-    return output;
-}

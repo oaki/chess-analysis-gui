@@ -2,12 +2,13 @@ import * as React from "react";
 import GoogleLogin from "react-google-login";
 import config from "./../config/";
 import {Redirect, Route, RouteComponentProps, RouteProps} from "react-router-dom"
-import {setHistory, setUser} from "../actions";
-import {connect} from 'react-redux';
+import {setUser} from "../actions";
+import {connect} from "react-redux";
 import {IUser} from "../reducers";
 import {SessionManagerService} from "../services/sessionManager";
 import {store} from "./../store";
 import {ApiManagerService} from "../services/apiManager";
+import {setHistory} from "../components/history/History";
 
 
 interface ISignInPageProps {
@@ -28,18 +29,18 @@ class SignInPage extends React.Component<ISignInPageProps, any> {
             name: res.profileObj.name,
             img: res.profileObj.imageUrl,
             googleToken: res.tokenId,
-            token: '',
+            token: "",
             last_game_id: 0,
         };
 
         const apiRes = await ApiManagerService.getSignUser(values);
-        console.log('jwtToken', apiRes);
+        console.log("jwtToken", apiRes);
         values.token = apiRes.token;
 
 
         const game = await ApiManagerService.getLastGame(apiRes.token);
 
-        console.log('game', game);
+        console.log("game", game);
         values.last_game_id = game.id;
 
 
@@ -49,7 +50,7 @@ class SignInPage extends React.Component<ISignInPageProps, any> {
 
         SessionManagerService.setUser(values);
         store.dispatch(setUser(values));
-        store.dispatch(setHistory(JSON.parse(game.moves)));
+        store.dispatch(setHistory(game.moves));
     }
 
     handleOnFailure = (res) => {
@@ -57,7 +58,7 @@ class SignInPage extends React.Component<ISignInPageProps, any> {
 
         setUser(SessionManagerService.getUser());
 
-        console.log('res', res);
+        console.log("res", res);
     }
 
     // shouldComponentUpdate(props, nextState) {
@@ -72,13 +73,13 @@ class SignInPage extends React.Component<ISignInPageProps, any> {
         const {redirectToReferrer} = this.state;
 
         if (redirectToReferrer || (this.props.user.isLoggedIn && this.props.user.token && this.props.user.googleToken)) {
-            console.log('Redirect!!!');
+            console.log("Redirect!!!");
             return <Redirect to={from}/>;
         }
 
         const style = {
-            textAlign: 'center',
-            marginTop: '2rem'
+            textAlign: "center",
+            marginTop: "2rem"
         }
         return (
             <div className="page-log-in container" style={style}>
@@ -87,8 +88,10 @@ class SignInPage extends React.Component<ISignInPageProps, any> {
                 </h2>
 
                 <p>
-                    Welcome to the 2018 edition of Chess analysis. It's a strongest chess engine on mobile. Let'a try if you can WIN.
-                    Featuring a faster and smoother user interface along with a stronger state of the art artificial intelligence engine.
+                    Welcome to the 2018 edition of Chess analysis. It's a strongest chess engine on mobile. Let'a try if
+                    you can WIN.
+                    Featuring a faster and smoother user interface along with a stronger state of the art artificial
+                    intelligence engine.
                 </p>
 
                 <GoogleLogin
@@ -96,6 +99,7 @@ class SignInPage extends React.Component<ISignInPageProps, any> {
                     buttonText="Google"
                     onSuccess={this.handleOnSuccess}
                     onFailure={this.handleOnFailure}
+
                 />
             </div>
         );

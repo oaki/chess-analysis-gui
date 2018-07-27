@@ -3,17 +3,17 @@ import {connect} from "react-redux";
 import FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import {faArrowRight} from "@fortawesome/fontawesome-free-solid";
 import {IAction} from "../../interfaces";
-import {IHistoryMove} from "../chessboard/chessboard";
 import * as moment from "moment";
-import {getHistoryLine} from "../../libs/chessboardUtils";
+
 import {batchActions} from "redux-batched-actions";
 import {withRouter} from "react-router";
 
-import {lastMoveId, setEvaluation, setHistory, setOpeningPosition, setPosition, setUser} from "../../actions";
+import {setEvaluation, setOpeningPosition, setPosition, setUser} from "../../actions";
 import {store} from "../../store";
 import {SessionManagerService} from "../../services/sessionManager";
 import {Link} from "react-router-dom"
 import {setSyzygyEvaluation} from "../syzygyExplorer";
+import {IHistoryMove, lastMoveId, setHistory} from "../history/History";
 
 
 @connect((state) => ({historyList: state.historyList}))
@@ -36,7 +36,7 @@ export class HistoryList extends React.Component<any, any> {
             store.dispatch(batchActions([
                 setUser(user),
                 setHistory(historyGameResponse.moves),
-                lastMoveId(""),
+                lastMoveId(null),
                 setPosition(""),
                 setOpeningPosition([]),
                 setEvaluation([]),
@@ -68,12 +68,13 @@ export class HistoryList extends React.Component<any, any> {
 
     private prepareMoves(historyMoves: IHistoryMove[]) {
 
-        const moves = getHistoryLine(historyMoves);
+        return null;
+        /*const moves = getHistoryLine(historyMoves);
         return moves.map((move, index) => {
             return (
                 <span className="" key={index}>{this.showMoveNumber(index)}{move.shortNotation} </span>
             )
-        })
+        })*/
     }
 
     renderItem() {

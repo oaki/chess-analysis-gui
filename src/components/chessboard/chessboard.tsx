@@ -4,15 +4,16 @@ import {store} from "../../store";
 import {Chessground} from "chessground";
 import * as Chess from "chess.js";
 
-import {IOnMove, setMove, setPosition, setStatus, setWhoIsOnMove} from "../../actions";
+import {IOnMove, setPosition, setStatus, setWhoIsOnMove} from "../../actions";
 
 import {Api} from "chessground/api";
-import {getHistoryMove, toColor, toDests} from "../../libs/chessboardUtils";
-import guid from "../../libs/uuid";
+import {toColor, toDests} from "../../libs/chessboardUtils";
 import {ApiManagerService} from "../../services/apiManager";
 import {OnMoveIndication} from "./onMoveIndication";
 import {PromotingDialog, setPromotionDialog} from "./promotingDialog";
-import {Tree} from "../moveTree/tree";
+import {IHistoryMove, setMove} from "../history/History";
+import {treeService} from "../moveTree/tree";
+
 
 const throttle = require("lodash/throttle");
 
@@ -62,7 +63,6 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
                     FEN: <input className="form-control form-control-sm" value={this.props.fen}/>
                 </div>
 
-                {this.newHistoryStructure()}
             </div>
         );
     }
@@ -93,32 +93,18 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
         }
 
         if (nextProps.lastMoveId !== this.props.lastMoveId) {
-            const move = getHistoryMove(nextProps.lastMoveId);
-            if (move) {
-                const chess = new Chess(move.fen);
-                this.board.set({
-                    turnColor: toColor(chess),
-                    movable: {
-                        color: toColor(chess),
-                        dests: toDests(chess)
-                    },
-                    fen: move.fen
-                });
-                this.board.redrawAll();
-                this.updateStatus(chess);
-            } else {
-                const chess = new Chess(nextProps.fen);
-                this.board.set({
-                    turnColor: toColor(chess),
-                    movable: {
-                        color: toColor(chess),
-                        dests: toDests(chess)
-                    },
-                    fen: nextProps.fen
-                });
-                this.board.redrawAll();
-                this.updateStatus(chess);
-            }
+
+            const chess = new Chess(nextProps.fen);
+            this.board.set({
+                turnColor: toColor(chess),
+                movable: {
+                    color: toColor(chess),
+                    dests: toDests(chess)
+                },
+                fen: nextProps.fen
+            });
+            this.board.redrawAll();
+            this.updateStatus(chess);
         }
     }
 
@@ -147,66 +133,18 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
     private playOtherSide(cg: Api) {
         return (orig, dest) => {
 
-            const history = [
-                {id: 0, n: 0, m: "d2d4", p: null},
-                {id: 1, n: 1, m: "d7d5", p: null},
-                {id: 2, n: 2, m: "c2c4", p: null},
-
-                {id: 3, n: 2, m: "g1f3", p: 2},
-                {id: 4, n: 2, m: "b1c3", p: 2},
-
-                {id: 5, n: 3, m: "g8f6", p: 2},
-                {id: 6, n: 4, m: "c2c4", p: 2},
-                {id: 7, n: 5, m: "c7c6", p: 2},
-
-                {id: 8, n: 3, m: "e7e6", p: 2},
-
-                {id: 9, n: 3, m: "g7g6", p: 5},
-                {id: 10, n: 4, m: "g2g3", p: 5},
-                {id: 11, n: 3, m: "c7c6", p: null},
-
-            ];
-
-
             store.dispatch(setMove({
                 from: orig,
                 to: dest,
-                uuid: guid(),
+                id: treeService.getCounter(),
                 fen: (cg.state as any).fen
             }));
         };
     }
 
-    doHistory() {
-
-    }
-
-    newHistoryStructure() {
-        const tree = new Tree();
-        let prevLevel = 0;
-        return tree.build().map((node: any, index: number) => {
-            const isNextLevel: boolean = prevLevel < node.level;
-            const isPrevLevel = prevLevel > node.level;
-            prevLevel = node.level;
-
-            const className = "level-" + node.level;
-            return (
-                <>
-                    {isNextLevel && <span>&lt;</span>}
-
-                    {node.isNewVariant && <div key={index} className={className}>{node.move} </div>}
-                    {!node.isNewVariant && <span key={index} className={className}>{node.move} </span>}
-                    {isPrevLevel && <span>&gt;</span>}
-                </>
-            )
-
-
-        });
-    }
-
     initHistorySaving() {
         // auto saving for history
-        let previousLength: number = 0;
+        let previousHash: string = treeService.getStateHash();
 
         const saveHistory = throttle(() => {
             const history = store.getState()["history"];
@@ -216,12 +154,12 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
 
         function handleHistoryChange() {
 
-            let currentLength = Object.keys(store.getState()["history"]).length;
+            let currentHash = treeService.getStateHash();
 
-            if (previousLength !== currentLength) {
+            if (previousHash !== currentHash) {
                 saveHistory();
             }
-            previousLength = currentLength;
+            previousHash = currentHash;
         }
 
         store.subscribe(handleHistoryChange);
@@ -255,13 +193,6 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
 
 }
 
-export interface IHistoryMove {
-    uuid: string;
-    parentId: string | null;
-    fen: string;
-    notation: string;
-    shortNotation: string;
-}
 
 interface IChessboardProps {
     fen: string;

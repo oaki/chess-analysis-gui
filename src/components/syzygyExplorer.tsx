@@ -2,9 +2,10 @@ import * as React from "react";
 import {connect} from "react-redux";
 import "../assets/css/explorerBox.css";
 import {IAction} from "../interfaces";
-import guid from "../libs/uuid";
-import {setMove} from "../actions";
+import guid, {id} from "../libs/uuid";
 import {store} from "../store";
+import {setMove} from "./history/History";
+import {treeService} from "./moveTree/tree";
 
 export class SyzygyExplorer extends React.Component<any, any> {
 
@@ -89,7 +90,7 @@ function mapDispatchToProps(dispatch: (data: any) => {}) {
             dispatch(setMove({
                 from: move.substring(0, 2),
                 to: move.substring(2, 4),
-                uuid: guid(),
+                id: treeService.getCounter(),
                 promotion,
                 fen
             }));

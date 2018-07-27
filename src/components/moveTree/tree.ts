@@ -1,116 +1,226 @@
-interface Node {
-    id: number;
-    num: number; //move number
-    move: string;
-    path: string;
-    moves?: Node[];
-    variants?: Node[];
-    level?: number;
+import guid from "../../libs/uuid";
+
+export enum NODE_MAP {
+    id = "id",
+    fen = "f",
+    move = "m",
+    variant = "v",
+    variants = "vs",
+    moves = "ms",
+    shortNotation = "s",
+}
+
+export interface Node {
+    [NODE_MAP.id]: number;
+    [NODE_MAP.fen]: string; //move number
+    [NODE_MAP.move]: string;
+    [NODE_MAP.shortNotation]: string;
+    [NODE_MAP.variants]: NodeVariant[];
+}
+
+
+export interface NodeVariant {
+    [NODE_MAP.variant]: string;
+    [NODE_MAP.moves]: Node[];
 }
 
 export class Tree {
-    private flatTree: any[] = [];
-    private nodes: Node[] = [
-        {
-            id: 0, num: 0, move: "d2d4", path: "", moves: [
-                {id: 1, num: 1, move: "d7d5", path: ""},
-                {
-                    id: 2, num: 2, move: "c2c4", path: "",
-                    variants: [
-                        {
-                             moves: [
-                                 {id: 3, num: 2, move: "g1f3", path: "2/3"},
-                                {id: 5, num: 3, move: "g8f6", path: "2/3"},
-                                {id: 6, num: 4, move: "c2c4", path: "2/3"},
-                                {
-                                    id: 7, num: 5, move: "c7c6", path: "2", variants: [
-                                        {
-                                            id: 32, num: 5, move: "g7g6", moves: [
-                                                {id: 10, num: 4, move: "g2g3", path: "2/3/7"},
-                                                {id: 102, num: 5, move: "f8g7", p: 5},
-                                            ]
-                                        }
-                                    ]
-                                },
-                            ]
-                        },
+    private counter: number = 0;
+    private nodes: Node[] = [];
+    private cache = {}; //not used yet
+    private stateHash: string;
 
-                        {
-                            id: 32, num: 2, move: "b2c3", path: "2/32", moves: [
-                                {id: 51, num: 3, move: "g8f6", path: "2/32/51"},
-                            ]
-                        }
-                    ]
-                },
-            ]
-        },
+    setNodes(nodes: Node[]) {
+        this.nodes = nodes;
 
-    ];
+        let idCounter = 0;
+        this.iterate(this.nodes, (node: Node) => {
+            if (node && idCounter < node.id) {
+                idCounter = node.id;
+            }
+        });
 
+        this.setCounter(idCounter);
 
-    add(node: Node, level, isNewVariant: boolean = false) {
-        console.log({node, level});
-        this.flatTree.push({
-            level,
-            isNewVariant,
-            move: node.move,
-        })
-
+        this.generateNewState();
     }
 
-    //
-    // makeFlat(level) {
-    //
-    //     history.forEach((move) => {
-    //         this.flatTree.push(move);
-    //         if (move.variants && move.variants.length > 0) {
-    //             this.flatTree.push({...move, level: 1});
-    //             move.variants.forEach((submove) => {
-    //
-    //                 this.flatTree.push({...submove, level: 2});
-    //
-    //
-    //             });
-    //         }
-    //
-    //         if (move.moves && move.moves.length > 0) {
-    //             move.moves.forEach((subsubmove) => {
-    //                 this.flatTree.push({...subsubmove, level: 3});
-    //             })
-    //         }
-    //
-    //     });
-    // }
+    generateNewState() {
+        this.stateHash = guid();
+    }
 
-    makeFlat(moves: Node[], level) {
+    getStateHash() {
+        return this.stateHash;
+    }
 
-        moves.forEach((move) => {
-            this.add(move, level);
 
-            if (move.variants && move.variants.length > 0) {
+    toString() {
+        return JSON.stringify(this.nodes);
+    }
 
-                move.variants.forEach((submove) => {
+    toJson(): Node[] {
+        return this.nodes;
+    }
 
-                    this.add(submove, level + 1, true);
+    getNextMoveId(parentId: number, newFen: string): number | null {
+        const ref: ReferenceToMove = treeService.getReference(parentId);
+        if (ref.parent && ref.parent[ref.index + 1]) {
+            if (ref.parent[ref.index + 1][NODE_MAP.fen] === newFen) {
+                return ref.parent[ref.index + 1][NODE_MAP.id];
+            } else {
+                if (ref.parent[ref.index + 1][NODE_MAP.variants]) {
+                    const variant: NodeVariant | undefined = ref.parent[ref.index + 1][NODE_MAP.variants].find((variant: NodeVariant) =>
+                        variant[NODE_MAP.moves] && variant[NODE_MAP.moves][0] && variant[NODE_MAP.moves][0][NODE_MAP.fen] === newFen);
 
-                    if (submove.moves && submove.moves.length > 0) {
-                        this.makeFlat(submove.moves, level + 1);
+                    if (variant) {
+                        return variant[NODE_MAP.moves][0][NODE_MAP.id];
                     }
-                });
+                }
             }
 
-            if (move.moves && move.moves.length > 0) {
-                this.makeFlat(move.moves, level + 1);
-            }
-        })
+        }
+
+        return null;
+    }
+
+    add(node: Node, parentId: number): ReferenceToMove {
+        const ref: ReferenceToMove = this.getReference(parentId);
+
+        return this.addWithRef(node, ref);
+    }
+
+    addNewVariant(variants: NodeVariant[], node: Node): ReferenceToMove {
+        variants.push({
+            [NODE_MAP.variant]: node[NODE_MAP.move],
+            [NODE_MAP.moves]: [node]
+        });
+
+        this.generateNewState();
+
+        return {
+            isLast: true,
+            index: 0,
+            node: variants[variants.length - 1][NODE_MAP.moves][0],
+            parent: variants[variants.length - 1][NODE_MAP.moves]
+        };
+    }
+
+    addWithRef(node: Node, ref: ReferenceToMove): ReferenceToMove {
+        if (ref.isLast) {
+            ref.parent.push(node);
+            this.generateNewState();
+        } else if (ref && ref.node) {
+
+            // if node is not last it means that there is another node after
+            const nextMove = ref.parent[ref.index + 1];
+            return this.addNewVariant(nextMove[NODE_MAP.variants], node)
+        }
+
+        const index = ref.parent.length - 1;
+        return {
+            isLast: true,
+            index: index,
+            node: ref.parent[index],
+            parent: ref.parent
+        };
+    }
+
+    getPrevMove(id: number): Node {
+        const ref = this.getReference(id);
+
+        if (ref.index > 0) {
+            return ref.parent[ref.index - 1];
+        } else {
+            debugger;
+            return ref.parent[ref.index - 1];
+        }
 
     }
 
+    getNextMove(id: number): Node {
 
-    build() {
-        this.makeFlat(this.nodes, 0);
+        const ref = this.getReference(id);
 
-        console.log("FLAT", this.flatTree);
-        return this.flatTree;
+        // if it's last return same
+        if (ref.index === ref.parent.length - 1 && ref.node) {
+            return ref.node;
+        } else {
+
+            if (ref.parent[ref.index + 1]) {
+                return ref.parent[ref.index + 1];
+            } else {
+                return ref.parent[ref.index];
+            }
+
+        }
     }
+
+    getCounter() {
+        this.counter++;
+        return this.counter;
+    }
+
+    setCounter(num: number) {
+        this.counter = num;
+    }
+
+
+    private findReference(moveRef: ReferenceToMove, moves: Node[], id: number): void {
+
+        for (let i = 0; i < moves.length; i++) {
+            const move: Node = moves[i];
+            if (move.id === id) {
+                moveRef.isLast = moves.length - 1 === i;
+                moveRef.node = moves[i];
+                moveRef.parent = moves;
+                moveRef.index = i;
+                break;
+            } else {
+
+                for (let j = 0; j < move[NODE_MAP.variants].length; j++) {
+                    const variant: NodeVariant = move[NODE_MAP.variants][j];
+                    this.findReference(moveRef, variant[NODE_MAP.moves], id);
+                }
+            }
+        }
+    }
+
+
+    public iterate(moves: Node[], callback: (node: Node) => void) {
+        for (let i = 0; i < moves.length; i++) {
+            const move: Node = moves[i];
+            callback(move);
+
+            if (move[NODE_MAP.variants] && move[NODE_MAP.variants].length > 0) {
+                for (let j = 0; j < move[NODE_MAP.variants].length; j++) {
+                    const variant: NodeVariant = move[NODE_MAP.variants][j];
+                    this.iterate(variant[NODE_MAP.moves], callback);
+                }
+            }
+        }
+    }
+
+
+    getReference(id: number) {
+        const ref: ReferenceToMove = {
+            node: null,
+            parent: this.nodes,
+            isLast: true,
+            index: -1
+        };
+        this.findReference(ref, this.nodes, id);
+
+        return ref;
+    }
+
+}
+
+
+export const treeService = new Tree();
+
+interface ReferenceToMove {
+    node: Node | null;
+    parent: Node[];
+    isLast: boolean;
+    index: number;
 }

@@ -1,30 +1,22 @@
 import * as React from "react";
 import {SessionManagerService} from "../services/sessionManager";
 import {store} from "../store";
-import {setHistory, setUser} from "../actions";
+import {setUser} from "../actions";
 import {ApiManagerService} from "../services/apiManager";
 import {SocketManagerService} from "../services/socketManager";
 import {ConnectionError} from "../libs/errors/connectionError";
+import {setHistory} from "./history/History";
 
 export default class BootstrapData extends React.Component<any, any> {
     state = {
         isLoaded: false,
         errorMsg: "",
-        progressBarWidth: 10
     }
 
     renderAlert() {
         return (
             <div className="alert alert-warning" role="alert" key="alert">
                 <strong>Error!</strong> {this.state.errorMsg}
-            </div>
-        )
-    }
-
-    renderProgress() {
-        return (
-            <div className="c-progress-bar" key="progress">
-                <div className="progress-bar" style={{width: `${this.state.progressBarWidth}%`}}/>
             </div>
         )
     }
@@ -37,10 +29,6 @@ export default class BootstrapData extends React.Component<any, any> {
                 this.renderAlert()
             )
         }
-
-        components.push(
-            this.renderProgress()
-        )
 
         components.push(this.props.children);
 
@@ -83,7 +71,7 @@ export default class BootstrapData extends React.Component<any, any> {
                 }
 
                 user.last_game_id = lastGame.id;
-                store.dispatch(setHistory(JSON.parse(lastGame.moves)));
+                store.dispatch(setHistory(lastGame.moves));
             } else if (Object.keys(store.getState()["history"]).length === 0) {
                 const game = await ApiManagerService.getGame(user.token, user.last_game_id);
                 store.dispatch(setHistory(game.moves));
@@ -113,9 +101,5 @@ export default class BootstrapData extends React.Component<any, any> {
         // check if you are logged in
 
         this.loadApp();
-
-        this.setState({
-            progressBarWidth: this.state.progressBarWidth + 30
-        })
     }
 }

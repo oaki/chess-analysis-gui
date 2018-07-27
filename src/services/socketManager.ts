@@ -51,7 +51,6 @@ export default class SocketManager {
     // }
 
     connect() {
-        console.log("this.signInToken", this.signInToken);
         this.socket = io(this.config.socketIo.host, {
             path: config.socketIo.path,
             query: {

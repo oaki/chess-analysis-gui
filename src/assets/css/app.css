@@ -96,3 +96,7 @@ table{
 .level-3{
     font-size: 11px;
 }
+
+.cf{
+    clear: both;
+}

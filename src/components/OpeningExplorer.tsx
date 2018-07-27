@@ -1,9 +1,11 @@
 import * as React from "react";
 import {connect} from "react-redux";
 import "../assets/css/explorerBox.css";
-import {loadOpeningPosition, setMove} from "../actions";
-import guid from "../libs/uuid";
+import {loadOpeningPosition} from "../actions";
+import guid, {id} from "../libs/uuid";
 import {store} from "../store";
+import {setMove} from "./history/History";
+import {treeService} from "./moveTree/tree";
 
 export class OpeningExplorer extends React.Component<IOpeningExplorerProps, IOpeningExplorerState> {
 
@@ -74,7 +76,7 @@ function mapDispatchToProps(dispatch: (data: any) => {}) {
             dispatch(setMove({
                 from: move.substring(0, 2),
                 to: move.substring(2, 4),
-                uuid: guid(),
+                id: treeService.getCounter(),
                 fen
             }));
         }

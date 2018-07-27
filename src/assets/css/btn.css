@@ -18,6 +18,9 @@
     transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
 }
 
+.btn:focus {outline:0;}
+
+
 .btn-success {
     color: #fff;
     background-color: #6dce69;
@@ -30,8 +33,19 @@
     border-color: #dc3545;
 }
 
+.btn-link {
+    font-weight: 400;
+    color: #b3b3b3;
+    background-color: transparent;
+}
+
 .btn-syzygy {
     border-radius: .5rem;
     padding: 0 .2rem;
     margin: .2rem 0 .2rem .3rem;
+}
+
+.btn-block {
+    display: block;
+    width: 100%;
 }

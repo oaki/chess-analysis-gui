@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as ReactDOM from "react-dom";
 import {connect} from "react-redux";
 import {Link, withRouter} from "react-router-dom";
 import FontAwesomeIcon from "@fortawesome/react-fontawesome";
@@ -7,22 +8,16 @@ import * as faAngleDoubleLeft from "@fortawesome/fontawesome-free-solid/faAngleD
 import * as faAngleDoubleRight from "@fortawesome/fontawesome-free-solid/faAngleDoubleRight";
 import * as faBars from "@fortawesome/fontawesome-free-solid/faBars";
 import {store} from "../store";
-import {
-    addNewGame,
-    flipBoard,
-    lastMoveId,
-    setEvaluation,
-    setOpeningPosition,
-    setPosition,
-    toogleOpenMenu
-} from "../actions";
-import {getHistoryNextMove, getHistoryParents, getHistoryPreviousMove} from "../libs/chessboardUtils";
-import {SmartAwesomeChessboard} from "./chessboard/chessboard";
+import {addNewGame, flipBoard, setEvaluation, setOpeningPosition, setPosition} from "../actions";
 import {SessionManagerService} from "../services/sessionManager";
 import {batchActions} from "redux-batched-actions";
+import {Node, NODE_MAP, treeService} from "./moveTree/tree";
+import {lastMoveId} from "./history/History";
+import {SmartAwesomeChessboard} from "./chessboard/chessboard";
+import {IAction} from "../interfaces";
 
 @connect((state) => ({
-    isSubMenuOpen: state.menu.isSubMenuOpen
+    isOpen: state.menu.isOpen
 }))
 export class Menu extends React.Component<any, any> {
 
@@ -32,37 +27,45 @@ export class Menu extends React.Component<any, any> {
 
     handleUndo() {
 
-        const moves = getHistoryParents(store.getState()["lastMoveId"]);
-        const previousMove = getHistoryPreviousMove();
+        const lastMove = store.getState()["lastMoveId"];
+        const previousMove: Node | undefined = treeService.getPrevMove(lastMove);
 
-        if (previousMove) {
-            store.dispatch(batchActions([
-                lastMoveId(previousMove.uuid),
-                setPosition(previousMove.fen),
-                setOpeningPosition([]),
-                setEvaluation([]),
-            ]));
-        } else {
-            store.dispatch(batchActions([
-                lastMoveId(""),
-                setPosition(SmartAwesomeChessboard.FIRST_POSITION),
-                setOpeningPosition([]),
-                setEvaluation([]),
-            ]));
+        let id: number | null = null;
+        if (previousMove && previousMove[NODE_MAP.id]) {
+            id = (previousMove[NODE_MAP.id] as number);
         }
+        store.dispatch(batchActions([
+            lastMoveId(id),
+            setPosition(previousMove ? previousMove[NODE_MAP.fen] : SmartAwesomeChessboard.FIRST_POSITION),
+            setOpeningPosition([]),
+            setEvaluation([]),
+        ]));
     }
 
     handleRedo() {
 
-        const nextMove = getHistoryNextMove();
-        if (nextMove) {
+        const lastId: number = store.getState()["lastMoveId"];
+        const nextMove: Node | undefined = treeService.getNextMove(lastId);
+
+        if (nextMove && nextMove[NODE_MAP.id]) {
             store.dispatch(batchActions([
-                lastMoveId(nextMove.uuid),
-                setPosition(nextMove.fen),
+                lastMoveId((nextMove[NODE_MAP.id] as number)),
+                setPosition(nextMove[NODE_MAP.fen]),
                 setOpeningPosition([]),
                 setEvaluation([]),
             ]));
         }
+        /*
+                const nextMove = getHistoryNextMove();
+                if (nextMove) {
+                    store.dispatch(batchActions([
+                        lastMoveId(nextMove.uuid),
+                        setPosition(nextMove.fen),
+                        setOpeningPosition([]),
+                        setEvaluation([]),
+                    ]));
+                }
+                */
     }
 
     handleToggleSubMenu() {
@@ -80,9 +83,29 @@ export class Menu extends React.Component<any, any> {
             // props.history.push(`/#game_${id}`);
             window.location.href = "/";
         }));
+    };
+
+    componentDidMount() {
+        document.addEventListener("click", this.handleClickOutside, true);
     }
 
+    componentWillUnmount() {
+        document.removeEventListener("click", this.handleClickOutside, true);
+    }
+
+    handleClickOutside = (event) => {
+        const domNode = ReactDOM.findDOMNode(this);
+
+        if (!domNode || !domNode.contains(event.target)) {
+            if (store.getState()["menu"].isOpen) {
+                store.dispatch(toogleOpenMenu(false));
+            }
+        }
+    }
+
+
     render() {
+        const btnClasses = "btn btn-link btn-block";
         console.log("this.props.isSubMenuOpen", this.props.isSubMenuOpen);
         return (
             <div className="bottom-menu">
@@ -90,13 +113,37 @@ export class Menu extends React.Component<any, any> {
 
                 <ul className="main">
                     {this.props.showMainMenu &&
-                    <li><a href="#" onClick={this.handleToggleSubMenu}> <FontAwesomeIcon icon={faBars}/></a></li>}
+                    <li>
+                        <button
+                            className={btnClasses}
+                            onClick={this.handleToggleSubMenu}
+                        ><FontAwesomeIcon icon={faBars}/>
+                        </button>
+                    </li>}
                     {this.props.showFlip &&
-                    <li><a href="#" onClick={this.handleFlipBoard}> <FontAwesomeIcon icon={faRetweet}/></a></li>}
+                    <li>
+                        <button
+                            className={btnClasses}
+                            onClick={this.handleFlipBoard}
+                        ><FontAwesomeIcon icon={faRetweet}/>
+                        </button>
+                    </li>}
                     {this.props.showUndo &&
-                    <li><a href="#" onClick={this.handleUndo}> <FontAwesomeIcon icon={faAngleDoubleLeft}/></a></li>}
+                    <li>
+                        <button
+                            className={btnClasses}
+                            onClick={this.handleUndo}
+                        ><FontAwesomeIcon icon={faAngleDoubleLeft}/>
+                        </button>
+                    </li>}
                     {this.props.showRedo &&
-                    <li><a href="#" onClick={this.handleRedo}> <FontAwesomeIcon icon={faAngleDoubleRight}/></a></li>}
+                    <li>
+                        <button
+                            className={btnClasses}
+                            onClick={this.handleRedo}
+                        ><FontAwesomeIcon icon={faAngleDoubleRight}/>
+                        </button>
+                    </li>}
                 </ul>
             </div>
         )
@@ -109,7 +156,7 @@ export class Menu extends React.Component<any, any> {
 
     renderSubmenu() {
 
-        if (this.props.isSubMenuOpen) {
+        if (this.props.isOpen) {
             return (
                 <div className="position-relative">
                     <ul className="sub-menu">
@@ -134,3 +181,33 @@ export class Menu extends React.Component<any, any> {
 }
 
 export const MenuWithRouter = withRouter(Menu);
+export const MENU_TOGGLE_OPEN = "MENU_TOGGLE_OPEN";
+
+
+export function toogleOpenMenu(isOpen: boolean | null = null) {
+    return {
+        payload: {isOpen},
+        type: MENU_TOGGLE_OPEN
+    };
+}
+
+export interface IMenu {
+    isOpen: boolean;
+}
+
+export const menuReducer = (menu: IMenu = {isOpen: false}, action: IAction<Partial<IMenu>>) => {
+    switch (action.type) {
+        case MENU_TOGGLE_OPEN:
+            const m = {...menu};
+            if (action.payload.isOpen) {
+                m.isOpen = action.payload.isOpen;
+            } else {
+                m.isOpen = !m.isOpen;
+            }
+
+            return m;
+
+        default:
+            return menu;
+    }
+};

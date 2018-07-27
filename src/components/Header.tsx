@@ -1,14 +1,14 @@
-import * as React from 'react';
+import * as React from "react";
 import {faArrowLeft} from "@fortawesome/fontawesome-free-solid";
-import FontAwesomeIcon from '@fortawesome/react-fontawesome';
-import {Link} from 'react-router-dom';
+import FontAwesomeIcon from "@fortawesome/react-fontawesome";
+import {Link} from "react-router-dom";
 
 interface IHeaderProps {
     title: string;
 
 }
 
-export const Header = (props: IHeaderProps) => {
+export function Header(props: IHeaderProps) {
     return (
         <div className="row header p-sm fs-4 bg-mine-shaft2">
 

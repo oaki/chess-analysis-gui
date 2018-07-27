@@ -3,12 +3,9 @@ import {combineReducers} from "redux";
 import {
     FLIP_BOARD,
     IOnMove,
-    MENU_TOGGLE_OPEN,
     ON_MOVE,
     SET_ERROR,
     SET_EVALUATION,
-    SET_HISTORY,
-    SET_HISTORY_MOVE,
     SET_LAST_MOVE,
     SET_OPENING_POSITION,
     SET_POSITION,
@@ -17,14 +14,14 @@ import {
     UPDATE_LOADING,
     USER_SIGN_IN
 } from "./actions";
-import {IHistoryMove} from "./components/chessboard/chessboard";
 import {historyListReducer} from "./components/historyList/historyList";
 import {Move} from "./components/OpeningExplorer";
 import {syzygyReducer} from "./components/syzygyExplorer";
 import {IAction, IWorkerResponse} from "./interfaces";
 import {SessionManagerService} from "./services/sessionManager";
 import {promotionDialogReducer} from "./components/chessboard/promotingDialog";
-import {historyReducer} from "./components/History";
+import {historyReducer} from "./components/history/History";
+import {menuReducer} from "./components/Menu";
 
 export const loadingReducer = (isLoading: boolean = false, action: any) => {
     switch (action.type) {
@@ -100,14 +97,10 @@ export const evaluationReducer = (evaluation: IWorkerResponse | Move[] = [], act
 ;
 
 
-export const lastMoveReducer = (state: string = "", action: any) => {
+export const lastMoveReducer = (state: number = -1, action: any) => {
     switch (action.type) {
         case SET_LAST_MOVE:
-            console.log("state", state);
-            console.log("action", action);
-
-
-            return action.uuid;
+            return action.id;
 
         default:
             return state;
@@ -125,21 +118,6 @@ export const flipBoardReducer = (isFlip: boolean = false, action: any) => {
 };
 
 
-interface Menu {
-    isSubMenuOpen: boolean;
-}
-
-export const menuReducer = (menu: Menu = {isSubMenuOpen: false}, action: any) => {
-    switch (action.type) {
-        case MENU_TOGGLE_OPEN:
-            const m = {...menu};
-            m.isSubMenuOpen = !m.isSubMenuOpen;
-            return m;
-
-        default:
-            return menu;
-    }
-};
 
 export interface IUser {
     isLoggedIn: boolean;

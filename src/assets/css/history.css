@@ -10,8 +10,18 @@
 }
 
 .history .move {
-    padding: .1rem .6rem .1rem 0;
-    /*display: inline-block;*/
+    padding: .1rem .3rem .1rem 0;
+    display: inline-block;
+}
+
+.history .l-1{
+    font-size: .7rem;
+    color: rgba(170, 165, 170, 0.99);
+}
+
+.history .l-2{
+    font-size: .6rem;
+    color: rgba(170, 165, 170, 0.99);
 }
 
 .history__subline {
@@ -37,7 +47,7 @@
 
 .history__slider {
 
-    padding: 0 15px;
+    padding: 0 .8rem;
     -webkit-overflow-scrolling: touch;
     overflow-scrolling: touch;
     overflow-y: auto;
