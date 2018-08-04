@@ -37,15 +37,14 @@ class ApiManager {
         return await this.fetch(`/user/history/${Number(user.last_game_id)}`, fetchData);
     }
 
-    async getSignUser(user: IUser) {
+    async getSignUser(token: string) {
 
         const fetchData = {
             headers: new Headers(),
             method: "POST",
             // mode: 'no-cors',
             body: JSON.stringify({
-                jwt_token: user.googleToken,
-                email: user.email
+                jwt_token: token
             }),
         };
 
@@ -57,8 +56,9 @@ class ApiManager {
             const url: string = `${this.apiHost}${path}`;
             console.log("fetch", {url, data});
             const response = await fetch(url, data);
+            console.log("response", response);
             if (!response.ok) {
-                console.log("response", response);
+
                 if (response.status === 403) {
                     throw await response.json();
                 }

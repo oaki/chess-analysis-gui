@@ -43,7 +43,13 @@ export class ChessboardPage extends React.Component<any, any> {
                     </div>
 
 
-                    <MenuWithRouter showMainMenu={true} showFlip={true} showUndo={true} showRedo={true}/>
+                    <MenuWithRouter
+                        showMainMenu={true}
+                        showFlip={true}
+                        showUndo={true}
+                        showRedo={true}
+                        showAutoplay={true}
+                    />
                 </div>
             </BootstrapData>
         );

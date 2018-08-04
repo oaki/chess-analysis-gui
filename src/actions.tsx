@@ -14,7 +14,6 @@ export const SET_EVALUATION = "SET_EVALUATION";
 export const SET_HISTORY_MOVE = "SET_HISTORY_MOVE";
 export const SET_HISTORY = "SET_HISTORY";
 export const SET_LAST_MOVE = "SET_LAST_MOVE";
-export const FLIP_BOARD = "FLIP_BOARD";
 export const USER_SIGN_IN = "USER_SIGN_IN";
 export const SET_PROMOTION_DIALOG = "SET_PROMOTION_DIALOG";
 export const ON_MOVE = "ON_MOVE";
@@ -77,11 +76,6 @@ export interface ISetMoveProps {
 }
 
 
-export function flipBoard() {
-    return {
-        type: FLIP_BOARD
-    };
-}
 
 export function setError(msg: string) {
     return {

@@ -1,7 +1,7 @@
 import * as React from "react";
 import {Provider} from 'react-redux';
 import {store} from "./store";
-import SignInPage from "./layouts/signInPage";
+import SignInPage from "./layouts/auth/signInPage";
 import {ChessboardPage} from "./layouts/chessboard";
 import {
     BrowserRouter,
@@ -13,6 +13,8 @@ import {
 import {PrivateRoute} from "./libs/privateRoute";
 import {EnginesPageSmart} from "./layouts/enginesPage";
 import {HistoryPage} from "./layouts/historyPage";
+import GooglePopupRedirect from "./layouts/auth/googlePopupRedirect";
+import {VerifyGoogleResponse} from "./layouts/auth/verifyGoogleResponse";
 
 export class App extends React.Component<{}, {}> {
 
@@ -27,6 +29,8 @@ export class App extends React.Component<{}, {}> {
                         <PrivateRoute path="/user/history" component={HistoryPage}/>
 
                         <Route path="/auth/sign-in" component={SignInPage}/>
+                        <Route path="/auth/google-popup" component={GooglePopupRedirect}/>
+                        <Route path="/auth/verify-google-response" component={VerifyGoogleResponse}/>
 
                     </div>
                 </BrowserRouter>

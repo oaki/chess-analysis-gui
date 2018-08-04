@@ -1,7 +1,6 @@
 import {combineReducers} from "redux";
 
 import {
-    FLIP_BOARD,
     IOnMove,
     ON_MOVE,
     SET_ERROR,
@@ -21,7 +20,7 @@ import {IAction, IWorkerResponse} from "./interfaces";
 import {SessionManagerService} from "./services/sessionManager";
 import {promotionDialogReducer} from "./components/chessboard/promotingDialog";
 import {historyReducer} from "./components/history/History";
-import {menuReducer} from "./components/Menu";
+import {autoplayReducer, flipBoardReducer, menuReducer} from "./components/Menu";
 
 export const loadingReducer = (isLoading: boolean = false, action: any) => {
     switch (action.type) {
@@ -107,24 +106,11 @@ export const lastMoveReducer = (state: number = -1, action: any) => {
     }
 };
 
-export const flipBoardReducer = (isFlip: boolean = false, action: any) => {
-    switch (action.type) {
-        case FLIP_BOARD:
-            return !isFlip;
-
-        default:
-            return isFlip;
-    }
-};
-
-
-
 export interface IUser {
     isLoggedIn: boolean;
     email: string;
     name: string;
     img: string;
-    googleToken: string;
     token: string;
     last_game_id: number;
 }
@@ -185,7 +171,8 @@ export default combineReducers({
     onMove: onMoveReducer,
     historyList: historyListReducer,
     syzygy: syzygyReducer,
-    promotionDialog: promotionDialogReducer
+    promotionDialog: promotionDialogReducer,
+    autoplay: autoplayReducer,
 });
 
 export function deepCopy(obj) {

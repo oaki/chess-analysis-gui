@@ -7,22 +7,41 @@ import * as faRetweet from "@fortawesome/fontawesome-free-solid/faRetweet";
 import * as faAngleDoubleLeft from "@fortawesome/fontawesome-free-solid/faAngleDoubleLeft";
 import * as faAngleDoubleRight from "@fortawesome/fontawesome-free-solid/faAngleDoubleRight";
 import * as faBars from "@fortawesome/fontawesome-free-solid/faBars";
+import * as faPlay from "@fortawesome/fontawesome-free-solid/faPlay";
 import {store} from "../store";
-import {addNewGame, flipBoard, setEvaluation, setOpeningPosition, setPosition} from "../actions";
+import {addNewGame, setEvaluation, setOpeningPosition, setPosition} from "../actions";
 import {SessionManagerService} from "../services/sessionManager";
 import {batchActions} from "redux-batched-actions";
 import {Node, NODE_MAP, treeService} from "./moveTree/tree";
 import {lastMoveId} from "./history/History";
 import {SmartAwesomeChessboard} from "./chessboard/chessboard";
 import {IAction} from "../interfaces";
+import {faPause} from "@fortawesome/fontawesome-free-solid";
+
+
+interface IMenuProps {
+    showMainMenu: boolean;
+    showFlip: boolean;
+    showAutoplay: boolean;
+    showUndo: boolean;
+    showRedo: boolean;
+
+    history: any;
+    isOpen: boolean;
+}
 
 @connect((state) => ({
-    isOpen: state.menu.isOpen
+    isOpen: state.menu.isOpen,
+    autoplay: state.autoplay
 }))
 export class Menu extends React.Component<any, any> {
 
     handleFlipBoard() {
         store.dispatch(flipBoard());
+    }
+
+    toggleAutoplay() {
+        store.dispatch(toggleAutoplay());
     }
 
     handleUndo() {
@@ -55,17 +74,6 @@ export class Menu extends React.Component<any, any> {
                 setEvaluation([]),
             ]));
         }
-        /*
-                const nextMove = getHistoryNextMove();
-                if (nextMove) {
-                    store.dispatch(batchActions([
-                        lastMoveId(nextMove.uuid),
-                        setPosition(nextMove.fen),
-                        setOpeningPosition([]),
-                        setEvaluation([]),
-                    ]));
-                }
-                */
     }
 
     handleToggleSubMenu() {
@@ -128,6 +136,16 @@ export class Menu extends React.Component<any, any> {
                         ><FontAwesomeIcon icon={faRetweet}/>
                         </button>
                     </li>}
+                    {this.props.showAutoplay &&
+                    <li>
+                        <button
+                            className={btnClasses}
+                            onClick={this.toggleAutoplay}
+                        >
+                            {this.props.autoplay && <FontAwesomeIcon icon={faPlay}/>}
+                            {!this.props.autoplay && <FontAwesomeIcon icon={faPause}/>}
+                        </button>
+                    </li>}
                     {this.props.showUndo &&
                     <li>
                         <button
@@ -181,8 +199,25 @@ export class Menu extends React.Component<any, any> {
 }
 
 export const MenuWithRouter = withRouter(Menu);
-export const MENU_TOGGLE_OPEN = "MENU_TOGGLE_OPEN";
 
+
+export const MENU_TOGGLE_OPEN = "MENU_TOGGLE_OPEN";
+export const FLIP_BOARD = "FLIP_BOARD";
+export const AUTOPLAY = "AUTOPLAY";
+
+
+export function flipBoard() {
+    return {
+        type: FLIP_BOARD
+    };
+}
+
+export function toggleAutoplay(isAutoplay: boolean | null = null) {
+    return {
+        payload: {isAutoplay},
+        type: AUTOPLAY
+    };
+}
 
 export function toogleOpenMenu(isOpen: boolean | null = null) {
     return {
@@ -194,6 +229,31 @@ export function toogleOpenMenu(isOpen: boolean | null = null) {
 export interface IMenu {
     isOpen: boolean;
 }
+
+
+export const flipBoardReducer = (isFlip: boolean = false, action: any) => {
+    switch (action.type) {
+        case FLIP_BOARD:
+            return !isFlip;
+
+        default:
+            return isFlip;
+    }
+};
+
+interface IAutoplay {
+    isAutoplay: boolean
+}
+
+export const autoplayReducer = (isAutoplay: boolean = false, action: IAction<IAutoplay>) => {
+    switch (action.type) {
+        case AUTOPLAY:
+            return action.payload.isAutoplay === null ? !isAutoplay : action.payload.isAutoplay;
+
+        default:
+            return isAutoplay;
+    }
+};
 
 export const menuReducer = (menu: IMenu = {isOpen: false}, action: IAction<Partial<IMenu>>) => {
     switch (action.type) {
