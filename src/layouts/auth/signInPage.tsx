@@ -3,9 +3,9 @@ import {Redirect, Route, RouteComponentProps, RouteProps} from "react-router-dom
 import {connect} from "react-redux";
 import {IUser} from "../../reducers";
 import {ApiManagerService} from "../../services/apiManager";
-import {store} from "../../store";
+import store from "../../store";
 import {setUser} from "../../actions";
-import {setHistory} from "../../components/history/History";
+import {setHistory} from "../../components/history/historyReducers";
 import {SessionManagerService} from "../../services/sessionManager";
 
 

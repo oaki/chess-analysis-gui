@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {connect} from "react-redux";
+import store from "../../store";
 import {Link, withRouter} from "react-router-dom";
 import FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import * as faRetweet from "@fortawesome/fontawesome-free-solid/faRetweet";
@@ -8,16 +9,16 @@ import * as faAngleDoubleLeft from "@fortawesome/fontawesome-free-solid/faAngleD
 import * as faAngleDoubleRight from "@fortawesome/fontawesome-free-solid/faAngleDoubleRight";
 import * as faBars from "@fortawesome/fontawesome-free-solid/faBars";
 import * as faPlay from "@fortawesome/fontawesome-free-solid/faPlay";
-import {store} from "../store";
-import {addNewGame, setEvaluation, setPosition} from "../actions";
-import {SessionManagerService} from "../services/sessionManager";
+
+import {addNewGame, setEvaluation, setPosition} from "../../actions";
+import {SessionManagerService} from "../../services/sessionManager";
 import {batchActions} from "redux-batched-actions";
-import {Node, NODE_MAP, treeService} from "./moveTree/tree";
-import {lastMoveId} from "./history/History";
-import {SmartAwesomeChessboard} from "./chessboard/chessboard";
-import {IAction} from "../interfaces";
+import {Node, NODE_MAP, treeService} from "../moveTree/tree";
+import {lastMoveId} from "../history/historyReducers";
+import {SmartAwesomeChessboard} from "../chessboard/chessboard";
 import {faPause} from "@fortawesome/fontawesome-free-solid";
-import {setOpeningPosition} from "./OpeningExplorer";
+import {setOpeningPosition} from "../openingExplorer/openingExplorerReducers";
+import {flipBoard, toggleAutoplay, toogleOpenMenu} from "./menuReducers";
 
 
 interface IMenuProps {
@@ -142,8 +143,8 @@ export class Menu extends React.Component<any, any> {
                             className={btnClasses}
                             onClick={this.toggleAutoplay}
                         >
-                            {this.props.autoplay && <FontAwesomeIcon icon={faPlay}/>}
-                            {!this.props.autoplay && <FontAwesomeIcon icon={faPause}/>}
+                            {!this.props.autoplay && <FontAwesomeIcon icon={faPlay}/>}
+                            {this.props.autoplay && <FontAwesomeIcon icon={faPause}/>}
                         </button>
                     </li>}
                     {this.props.showUndo &&
@@ -200,74 +201,3 @@ export class Menu extends React.Component<any, any> {
 
 export const MenuWithRouter = withRouter(Menu);
 
-
-export const MENU_TOGGLE_OPEN = "MENU_TOGGLE_OPEN";
-export const FLIP_BOARD = "FLIP_BOARD";
-export const AUTOPLAY = "AUTOPLAY";
-
-
-export function flipBoard() {
-    return {
-        type: FLIP_BOARD
-    };
-}
-
-export function toggleAutoplay(isAutoplay: boolean | null = null) {
-    return {
-        payload: {isAutoplay},
-        type: AUTOPLAY
-    };
-}
-
-export function toogleOpenMenu(isOpen: boolean | null = null) {
-    return {
-        payload: {isOpen},
-        type: MENU_TOGGLE_OPEN
-    };
-}
-
-export interface IMenu {
-    isOpen: boolean;
-}
-
-
-export const flipBoardReducer = (isFlip: boolean = false, action: any) => {
-    switch (action.type) {
-        case FLIP_BOARD:
-            return !isFlip;
-
-        default:
-            return isFlip;
-    }
-};
-
-interface IAutoplay {
-    isAutoplay: boolean
-}
-
-export const autoplayReducer = (isAutoplay: boolean = false, action: IAction<IAutoplay>) => {
-    switch (action.type) {
-        case AUTOPLAY:
-            return action.payload.isAutoplay === null ? !isAutoplay : action.payload.isAutoplay;
-
-        default:
-            return isAutoplay;
-    }
-};
-
-export const menuReducer = (menu: IMenu = {isOpen: false}, action: IAction<Partial<IMenu>>) => {
-    switch (action.type) {
-        case MENU_TOGGLE_OPEN:
-            const m = {...menu};
-            if (action.payload.isOpen) {
-                m.isOpen = action.payload.isOpen;
-            } else {
-                m.isOpen = !m.isOpen;
-            }
-
-            return m;
-
-        default:
-            return menu;
-    }
-};

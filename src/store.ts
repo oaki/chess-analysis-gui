@@ -1,16 +1,17 @@
 import {applyMiddleware, createStore} from "redux";
-// import createWorkerMiddleware from 'redux-worker-middleware';
-
 import thunk from "redux-thunk";
 import reducers from "./reducers";
-import {composeWithDevTools} from 'redux-devtools-extension';
-import {enableBatching} from 'redux-batched-actions';
+import {composeWithDevTools} from "redux-devtools-extension";
+import {enableBatching} from "redux-batched-actions";
+// import createWorkerMiddleware from 'redux-worker-middleware';
 
 
-export const store = createStore(
+const store = createStore(
     // workerMiddleware,
     enableBatching(reducers),
     composeWithDevTools(
         applyMiddleware(thunk)
     ),
 );
+console.log("ourAwesameStore", store);
+export default store;

@@ -3,7 +3,7 @@ import * as Chess from "chess.js";
 import {connect} from "react-redux";
 
 import {IEvaluation, LINE_MAP} from "../interfaces";
-import {SocketManagerService} from "../services/socketManager";
+import {SocketManagerService} from "../services/socketService";
 
 export interface Evaluation {
     score: string;
@@ -20,10 +20,14 @@ interface SocketIoProviderProps {
 @connect((state) => ({fen: state.fen, evaluation: state.evaluation}))
 export class Evaluation extends React.Component<any, any> {
 
+    static splitPv(pv: string) {
+        return pv.split(" ");
+    }
+
     prepareEvaluation(pv: string, fen: string) {
         const chess = new Chess(fen);
 
-        const moves = pv.split(" ");
+        const moves = Evaluation.splitPv(pv);
 
         const newMoves: any = [];
         if (moves && moves.length > 0) {

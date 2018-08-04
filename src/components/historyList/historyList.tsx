@@ -1,21 +1,22 @@
+import store from "../../store";
 import * as React from "react";
 import {connect} from "react-redux";
 import FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import {faArrowRight} from "@fortawesome/fontawesome-free-solid";
-import {IAction} from "../../interfaces";
 import * as moment from "moment";
 
 import {batchActions} from "redux-batched-actions";
 import {withRouter} from "react-router";
 
 import {setEvaluation, setPosition, setUser} from "../../actions";
-import {store} from "../../store";
+
 import {SessionManagerService} from "../../services/sessionManager";
 import {Link} from "react-router-dom"
-import {setSyzygyEvaluation} from "../syzygyExplorer";
-import {IHistoryMove, lastMoveId, setHistory} from "../history/History";
-import {setOpeningPosition} from "../OpeningExplorer";
+import {setSyzygyEvaluation} from "../syzygyExplorer/syzygyExplorerReducers";
+import {IHistoryMove, lastMoveId, setHistory} from "../history/historyReducers";
+import {setOpeningPosition} from "../openingExplorer/openingExplorerReducers";
 import {NODE_MAP} from "../moveTree/tree";
+import {IHistoryGameResponse} from "./historyListReducers";
 
 
 @connect((state) => ({historyList: state.historyList}))
@@ -105,30 +106,6 @@ export class HistoryList extends React.Component<any, any> {
 }
 
 
-export const SET_HISTORY_GAME_LIST = "SET_HISTORY_GAME_LIST";
 
-export function setHistoryGameList(games: any[]) {
-    return {
-        payload: games,
-        type: SET_HISTORY_GAME_LIST
-    };
-}
 
-export interface IHistoryGameResponse {
-    id: number;
-    user_id: number;
-    moves: IHistoryMove[];
-    created_at: string;
-    updated_at: string;
-}
-
-export const historyListReducer = (games: IHistoryGameResponse[] = [], action: IAction<IHistoryGameResponse[]>) => {
-    switch (action.type) {
-        case SET_HISTORY_GAME_LIST:
-            return action.payload;
-
-        default:
-            return games;
-    }
-};
 

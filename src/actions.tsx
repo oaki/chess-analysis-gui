@@ -1,4 +1,3 @@
-import {IOpeningMove} from "./components/OpeningExplorer";
 import {IWorkerResponse} from "./interfaces";
 import config from "./config";
 import {IUser, IWorker} from "./reducers";
@@ -68,7 +67,6 @@ export interface ISetMoveProps {
     promotion?: string;
     fen: string;
 }
-
 
 
 export function setError(msg: string) {

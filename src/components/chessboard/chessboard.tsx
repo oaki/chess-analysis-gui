@@ -1,6 +1,6 @@
 import * as React from "react";
 import {connect} from "react-redux";
-import {store} from "../../store";
+import store from "../../store";
 import {Chessground} from "chessground";
 import * as Chess from "chess.js";
 
@@ -10,9 +10,11 @@ import {Api} from "chessground/api";
 import {toColor, toDests} from "../../libs/chessboardUtils";
 import {ApiManagerService} from "../../services/apiManager";
 import {OnMoveIndication} from "./onMoveIndication";
-import {PromotingDialog, setPromotionDialog} from "./promotingDialog";
-import {IHistoryMove, setMove} from "../history/History";
+import {PromotingDialog} from "./promotingDialog";
+import {IHistoryMove, setMove} from "../history/historyReducers";
 import {treeService} from "../moveTree/tree";
+import {AutoplayService} from "../../libs/autoplayEngine";
+import {setPromotionDialog} from "./promotingDialogReducers";
 
 
 const throttle = require("lodash/throttle");
@@ -41,10 +43,7 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
             orientation: "white",
             evaluation: {}
         };
-
-
     }
-
 
     render() {
         return (
@@ -188,6 +187,8 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
         });
 
         this.initHistorySaving();
+        console.log("before -> AutoplayService", store);
+        new AutoplayService();
     }
 
 

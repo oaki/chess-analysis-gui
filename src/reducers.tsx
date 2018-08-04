@@ -12,14 +12,15 @@ import {
     UPDATE_LOADING,
     USER_SIGN_IN
 } from "./actions";
-import {historyListReducer} from "./components/historyList/historyList";
-import {IOpeningMove, openingMovesReducer} from "./components/OpeningExplorer";
-import {syzygyReducer} from "./components/syzygyExplorer";
+import {historyListReducer} from "./components/historyList/historyListReducers";
+import {IOpeningMove, openingMovesReducer} from "./components/openingExplorer/openingExplorerReducers";
+import {syzygyReducer} from "./components/syzygyExplorer/syzygyExplorerReducers";
 import {IAction, IWorkerResponse} from "./interfaces";
 import {SessionManagerService} from "./services/sessionManager";
-import {promotionDialogReducer} from "./components/chessboard/promotingDialog";
-import {historyReducer} from "./components/history/History";
-import {autoplayReducer, flipBoardReducer, menuReducer} from "./components/Menu";
+
+import {historyReducer} from "./components/history/historyReducers";
+import {autoplayReducer, flipBoardReducer, menuReducer} from "./components/menu/menuReducers";
+import {promotionDialogReducer} from "./components/chessboard/promotingDialogReducers";
 
 export const loadingReducer = (isLoading: boolean = false, action: any) => {
     switch (action.type) {

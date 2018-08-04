@@ -1,6 +1,6 @@
 import * as React from "react";
-import {IOnMove, ISetMoveProps, SET_PROMOTION_DIALOG} from "../../actions";
-import {IAction} from "../../interfaces";
+import {IOnMove} from "../../actions";
+import {IPromotingDialogProps} from "./promotingDialogReducers";
 
 const classNames = require("classnames");
 declare global {
@@ -39,24 +39,6 @@ export const PromotingDialog = (props: IPromotingDialogProps) => {
     )
 }
 
-export interface IShowPromotionDialogProps {
-    requestedParams?: ISetMoveProps;
-    isOpen: boolean;
-}
-
-export interface IPromotingDialogProps extends IShowPromotionDialogProps {
-    onMove: IOnMove;
-    handleOnClick: (e: any) => {}
-}
-
-export function setPromotionDialog(props: IShowPromotionDialogProps) {
-    return {
-        payload: props,
-        type: SET_PROMOTION_DIALOG
-    };
-}
-
-
 export function isPromoting(from: string, to: string, chess: any) {
     // is it a promotion?
     const source_rank = from.substring(2, 1);
@@ -65,14 +47,3 @@ export function isPromoting(from: string, to: string, chess: any) {
     return (piece === "p" &&
         ((source_rank === "7" && target_rank === "8") || (source_rank === "2" && target_rank === "1")));
 }
-
-
-export const promotionDialogReducer = (promotionDialog: IShowPromotionDialogProps = {isOpen: false}, action: IAction<IShowPromotionDialogProps>) => {
-    switch (action.type) {
-        case SET_PROMOTION_DIALOG:
-            return action.payload;
-
-        default:
-            return promotionDialog;
-    }
-};

@@ -1,10 +1,10 @@
 import * as React from "react";
 import {connect} from "react-redux";
-import {SmartOpeningExplorer} from "./OpeningExplorer";
-import {store} from "../store";
+import {SmartOpeningExplorer} from "./openingExplorer/openingExplorer";
+import store from "../store";
 import {loadOpeningBook} from "../actions";
 import {Evaluation} from "./evaluation";
-import {SyzygyExplorerSmart} from "./syzygyExplorer";
+import {SyzygyExplorerSmart} from "./syzygyExplorer/syzygyExplorer";
 
 interface IPannelProps {
     status: string;

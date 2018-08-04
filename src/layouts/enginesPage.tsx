@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {Provider} from 'react-redux';
+import store from "../store";
 import {Router, Route, Switch} from 'react-router'
 import {BrowserRouter} from 'react-router-dom'
 import {connect} from 'react-redux';
-import {addWorker, deleteWorker, loadEngines, setUser} from "../actions";
-import {store} from "../store";
+import {addWorker, deleteWorker, loadEngines} from "../actions";
 import {IWorker} from "../reducers";
 import {SmartError} from "../components/error";
 
@@ -12,7 +12,7 @@ import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import * as faPlus from "@fortawesome/fontawesome-free-solid/faPlus";
 import * as faTrash from "@fortawesome/fontawesome-free-solid/faTrash";
 import {faMicrophoneSlash, faSignal} from "@fortawesome/fontawesome-free-solid";
-import {Menu, MenuWithRouter} from "../components/Menu";
+import {MenuWithRouter} from "../components/menu/menu";
 import {Header} from "../components/Header";
 
 

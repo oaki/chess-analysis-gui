@@ -1,11 +1,11 @@
 import * as React from "react";
 import {SessionManagerService} from "../services/sessionManager";
-import {store} from "../store";
+import store from "../store";
 import {setUser} from "../actions";
 import {ApiManagerService} from "../services/apiManager";
-import {SocketManagerService} from "../services/socketManager";
+import {SocketManagerService} from "../services/socketService";
 import {ConnectionError} from "../libs/errors/connectionError";
-import {setHistory} from "./history/History";
+import {setHistory} from "./history/historyReducers";
 
 export default class BootstrapData extends React.Component<any, any> {
     state = {

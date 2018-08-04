@@ -1,11 +1,10 @@
 import * as React from "react";
 import {connect} from "react-redux";
-import "../assets/css/explorerBox.css";
-import {IAction} from "../interfaces";
-import guid, {id} from "../libs/uuid";
-import {store} from "../store";
-import {setMove} from "./history/History";
-import {treeService} from "./moveTree/tree";
+import "../../assets/css/explorerBox.css";
+import store from "../../store";
+import {setMove} from "./../history/historyReducers";
+import {treeService} from "./../moveTree/tree";
+import {ISyzygyMove} from "./syzygyExplorerReducers";
 
 export class SyzygyExplorer extends React.Component<any, any> {
 
@@ -96,54 +95,6 @@ function mapDispatchToProps(dispatch: (data: any) => {}) {
             }));
         }
     };
-}
-
-export const SET_SYZYGY_EVALUATION = "SET_SYZYGY_EVALUATION";
-
-export function setSyzygyEvaluation(syzygy: ISyzygy | null) {
-    return {
-        payload: syzygy,
-        type: SET_SYZYGY_EVALUATION
-    };
-}
-
-// export const userReducer = (user: IUser = SessionManagerService.getUser(), action: IAction<IUser>) => {
-
-export const syzygyReducer = (syzygy: ISyzygy | null = null, action: IAction<ISyzygy>) => {
-    switch (action.type) {
-        case SET_SYZYGY_EVALUATION:
-            return action.payload;
-
-        default:
-            return syzygy;
-    }
-};
-
-
-export interface ISyzygyMove {
-    uci: string;
-    san: string;
-    zeroing: boolean;
-    checkmate: boolean;
-    stalemate: boolean;
-    variant_win: boolean;
-    variant_loss: boolean;
-    insufficient_material: boolean;
-    wdl: number;
-    dtz: number;
-    dtm?: any;
-}
-
-export interface ISyzygy {
-    checkmate: boolean;
-    stalemate: boolean;
-    variant_win: boolean;
-    variant_loss: boolean;
-    insufficient_material: boolean;
-    wdl: number;
-    dtz: number;
-    dtm?: any;
-    moves: ISyzygyMove[];
 }
 
 

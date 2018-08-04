@@ -1,19 +1,20 @@
 import * as io from "socket.io-client";
 import {setError, setEvaluation} from "../actions";
-import {ISyzygy, setSyzygyEvaluation} from "../components/syzygyExplorer";
+import {ISyzygy, setSyzygyEvaluation} from "../components/syzygyExplorer/syzygyExplorerReducers";
 import config from "../config";
 import {IWorkerResponse, LINE_MAP} from "../interfaces";
-import {store} from "../store";
+import store from "../store";
 
 const throttle = require("lodash/throttle");
-const debounce = require("lodash/debounce");
 
 export default class SocketManager {
     private socket;
+    private store;
     private signInToken;
     private dispatchResults;
 
-    constructor(private config: SocketIoConfig, private store) {
+    constructor(private config: SocketIoConfig, store) {
+        this.store = store;
         console.log("store", store);
         this.dispatchResults = throttle((results) => {
             this.store.dispatch(setEvaluation(results));
@@ -75,12 +76,12 @@ export default class SocketManager {
         // this.socket.on('openingMoves', this.handleOpeningMoves);
 
         this.socket.on("disconnect", () => {
-            store.dispatch(setError("Socket disconnect"));
+            this.store.dispatch(setError("Socket disconnect"));
             console.log(`socket disconnect`);
         });
 
         this.socket.on("connect_timeout", (timeout) => {
-            store.dispatch(setError("Socket connection timeout"));
+            this.store.dispatch(setError("Socket connection timeout"));
         });
     }
 
@@ -115,4 +116,4 @@ interface SocketIoConfig {
     }
 }
 
-export const SocketManagerService = new SocketManager(config, store);
+

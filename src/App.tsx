@@ -1,6 +1,6 @@
 import * as React from "react";
 import {Provider} from 'react-redux';
-import {store} from "./store";
+import store from "./store";
 import SignInPage from "./layouts/auth/signInPage";
 import {ChessboardPage} from "./layouts/chessboard";
 import {

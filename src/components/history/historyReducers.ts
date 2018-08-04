@@ -1,23 +1,13 @@
-import * as React from "react";
-import {connect} from "react-redux";
-import * as Chess from "chess.js";
-import {getLastMove} from "../../libs/chessboardUtils";
-import {ISetMoveProps, SET_HISTORY, SET_HISTORY_MOVE, SET_LAST_MOVE, setEvaluation, setPosition} from "../../actions";
-import {store} from "../../store";
-import {batchActions} from "redux-batched-actions";
-import {setSyzygyEvaluation} from "../syzygyExplorer";
-import {IAction} from "../../interfaces";
-import {isPromoting, setPromotionDialog} from "../chessboard/promotingDialog";
 import {Node, NODE_MAP, treeService} from "../moveTree/tree";
-import {IMoves, Moves} from "./moves";
-import {setOpeningPosition} from "../OpeningExplorer";
-
-const classNames = require("classnames");
-
-interface IHistoryProps {
-    history: string[];
-    lastMoveId: string;
-}
+import {isPromoting} from "../chessboard/promotingDialog";
+import {setOpeningPosition} from "../openingExplorer/openingExplorerReducers";
+import {ISetMoveProps, SET_HISTORY, SET_HISTORY_MOVE, SET_LAST_MOVE, setEvaluation, setPosition} from "../../actions";
+import {batchActions} from "redux-batched-actions";
+import store from "../../store";
+import {IAction} from "../../interfaces";
+import * as Chess from "chess.js";
+import {setSyzygyEvaluation} from "../syzygyExplorer/syzygyExplorerReducers";
+import {setPromotionDialog} from "../chessboard/promotingDialogReducers";
 
 
 export interface IHistoryMove {
@@ -27,59 +17,6 @@ export interface IHistoryMove {
     notation: string;
     shortNotation: string;
 }
-
-@connect((state) => ({
-    history: state.history,
-    lastMoveId: state.lastMoveId,
-}))
-export class History extends React.Component<any, any> {
-
-
-    handleMoveClick(e) {
-        e.preventDefault();
-        const id: number = Number(e.currentTarget.dataset.id);
-
-        const ref = treeService.getReference(id);
-
-        if (ref && ref.node) {
-            store.dispatch(batchActions([
-                lastMoveId(ref.node[NODE_MAP.id]),
-                setPosition(ref.node[NODE_MAP.fen]),
-                setEvaluation([]),
-                setSyzygyEvaluation(null),
-                setOpeningPosition([])
-            ]));
-        }
-    }
-
-    prepareMovesProps(): IMoves {
-        return {
-            moves: this.props.history,
-            counter: 0,
-            level: 0,
-            lastMoveId: this.props.lastMoveId,
-            handleMoveClick: this.handleMoveClick,
-            showBracket: false
-        }
-    }
-
-    render() {
-
-        return (
-            <div className="history">
-
-                <div className="history__slider">
-                    <div className="history__slider__holder">
-                        <Moves {...this.prepareMovesProps()}/>
-                    </div>
-                </div>
-            </div>
-        )
-    }
-
-
-}
-
 
 export const historyReducer = (state: Node[] = [], action: IAction<IHistoryMove | any>) => {
     switch (action.type) {
@@ -115,7 +52,7 @@ export function setMove(props: ISetMoveProps) {
     } else {
         const newMove: any = chess.move({from, to, promotion});
         const newFen: string = chess.fen();
-        const previousId = getLastMove();
+        const previousId = store.getState()["lastMoveId"];
 
         //check if FEN is not exist already like next move
         const nextMoveId = treeService.getNextMoveId(previousId, newFen);
