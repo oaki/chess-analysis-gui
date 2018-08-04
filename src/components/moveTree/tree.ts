@@ -131,7 +131,6 @@ export class Tree {
         if (ref.index > 0) {
             return ref.parent[ref.index - 1];
         } else {
-            debugger;
             return ref.parent[ref.index - 1];
         }
 

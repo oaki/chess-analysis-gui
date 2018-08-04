@@ -15,6 +15,7 @@ import {Link} from "react-router-dom"
 import {setSyzygyEvaluation} from "../syzygyExplorer";
 import {IHistoryMove, lastMoveId, setHistory} from "../history/History";
 import {setOpeningPosition} from "../OpeningExplorer";
+import {NODE_MAP} from "../moveTree/tree";
 
 
 @connect((state) => ({historyList: state.historyList}))
@@ -69,13 +70,11 @@ export class HistoryList extends React.Component<any, any> {
 
     private prepareMoves(historyMoves: IHistoryMove[]) {
 
-        return null;
-        /*const moves = getHistoryLine(historyMoves);
-        return moves.map((move, index) => {
+        return historyMoves.map((move: IHistoryMove, index) => {
             return (
-                <span className="" key={index}>{this.showMoveNumber(index)}{move.shortNotation} </span>
+                <span className="" key={index}>{this.showMoveNumber(index)}{move[NODE_MAP.shortNotation]} </span>
             )
-        })*/
+        })
     }
 
     renderItem() {
