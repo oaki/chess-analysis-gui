@@ -8,12 +8,13 @@ import * as moment from "moment";
 import {batchActions} from "redux-batched-actions";
 import {withRouter} from "react-router";
 
-import {setEvaluation, setOpeningPosition, setPosition, setUser} from "../../actions";
+import {setEvaluation, setPosition, setUser} from "../../actions";
 import {store} from "../../store";
 import {SessionManagerService} from "../../services/sessionManager";
 import {Link} from "react-router-dom"
 import {setSyzygyEvaluation} from "../syzygyExplorer";
 import {IHistoryMove, lastMoveId, setHistory} from "../history/History";
+import {setOpeningPosition} from "../OpeningExplorer";
 
 
 @connect((state) => ({historyList: state.historyList}))

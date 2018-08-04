@@ -1,4 +1,4 @@
-import {Move} from "./components/OpeningExplorer";
+import {IOpeningMove} from "./components/OpeningExplorer";
 import {IWorkerResponse} from "./interfaces";
 import config from "./config";
 import {IUser, IWorker} from "./reducers";
@@ -6,7 +6,7 @@ import {SessionManagerService} from "./services/sessionManager";
 
 export const UPDATE_LOADING = "UPDATE_LOADING";
 export const SET_POSITION = "SET_POSITION";
-export const SET_OPENING_POSITION = "SET_OPENING_POSITION";
+
 export const SET_WORKER_LIST = "SET_WORKER_LIST";
 export const SET_ERROR = "SET_ERROR";
 export const SET_STATUS = "SET_STATUS";
@@ -52,12 +52,6 @@ export function setEvaluation(evaluation: IWorkerResponse[]) {
     };
 }
 
-export function setOpeningPosition(moves: Move[]) {
-    return {
-        moves,
-        type: SET_OPENING_POSITION
-    };
-}
 
 export function setWorkerList(workerList: any[]) {
     return {
@@ -105,39 +99,6 @@ export function loadOpeningBook() {
 
         dispatch(setLoading(false));
     }
-}
-
-export function loadOpeningPosition(fen: string) {
-    return async (dispatch: (data: any) => {}) => {
-        console.log("loadOpeningPosition", fen);
-        dispatch(setLoading(true));
-
-        const url = `${config.apiHost}/opening-book?fen=${fen}`;
-        const headers: RequestInit = {
-            method: "GET",
-            headers: new Headers({
-                "Content-Type": "application/json"
-            })
-        };
-
-        try {
-            const response = await fetch(url, headers);
-            if (response.ok) {
-                const moves: any = await response.json();
-                console.log(moves);
-                dispatch(setOpeningPosition(moves));
-            } else {
-                dispatch(setOpeningPosition([]));
-            }
-
-        } catch (e) {
-            dispatch(setError("opening book failed"));
-            console.log(e);
-        }
-
-        dispatch(setLoading(false));
-    }
-
 }
 
 

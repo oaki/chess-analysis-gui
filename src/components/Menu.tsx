@@ -9,7 +9,7 @@ import * as faAngleDoubleRight from "@fortawesome/fontawesome-free-solid/faAngle
 import * as faBars from "@fortawesome/fontawesome-free-solid/faBars";
 import * as faPlay from "@fortawesome/fontawesome-free-solid/faPlay";
 import {store} from "../store";
-import {addNewGame, setEvaluation, setOpeningPosition, setPosition} from "../actions";
+import {addNewGame, setEvaluation, setPosition} from "../actions";
 import {SessionManagerService} from "../services/sessionManager";
 import {batchActions} from "redux-batched-actions";
 import {Node, NODE_MAP, treeService} from "./moveTree/tree";
@@ -17,6 +17,7 @@ import {lastMoveId} from "./history/History";
 import {SmartAwesomeChessboard} from "./chessboard/chessboard";
 import {IAction} from "../interfaces";
 import {faPause} from "@fortawesome/fontawesome-free-solid";
+import {setOpeningPosition} from "./OpeningExplorer";
 
 
 interface IMenuProps {
@@ -86,7 +87,6 @@ export class Menu extends React.Component<any, any> {
     }
 
     handleNewGame = () => {
-        const props = this.props;
         store.dispatch(addNewGame((id) => {
             // props.history.push(`/#game_${id}`);
             window.location.href = "/";

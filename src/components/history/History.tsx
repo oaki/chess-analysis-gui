@@ -2,15 +2,7 @@ import * as React from "react";
 import {connect} from "react-redux";
 import * as Chess from "chess.js";
 import {getLastMove} from "../../libs/chessboardUtils";
-import {
-    ISetMoveProps,
-    SET_HISTORY,
-    SET_HISTORY_MOVE,
-    SET_LAST_MOVE,
-    setEvaluation,
-    setOpeningPosition,
-    setPosition
-} from "../../actions";
+import {ISetMoveProps, SET_HISTORY, SET_HISTORY_MOVE, SET_LAST_MOVE, setEvaluation, setPosition} from "../../actions";
 import {store} from "../../store";
 import {batchActions} from "redux-batched-actions";
 import {setSyzygyEvaluation} from "../syzygyExplorer";
@@ -18,6 +10,7 @@ import {IAction} from "../../interfaces";
 import {isPromoting, setPromotionDialog} from "../chessboard/promotingDialog";
 import {Node, NODE_MAP, treeService} from "../moveTree/tree";
 import {IMoves, Moves} from "./moves";
+import {setOpeningPosition} from "../OpeningExplorer";
 
 const classNames = require("classnames");
 
@@ -134,12 +127,12 @@ export function setMove(props: ISetMoveProps) {
             setSyzygyEvaluation(null)
         ];
 
-        if (nextMoveId ) {
+        if (nextMoveId) {
             actions.push(lastMoveId(nextMoveId));
         } else {
             actions.push(lastMoveId(id));
 
-            if(!newMove.san){
+            if (!newMove.san) {
                 debugger;
             }
             actions.push(

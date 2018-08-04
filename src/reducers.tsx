@@ -6,7 +6,6 @@ import {
     SET_ERROR,
     SET_EVALUATION,
     SET_LAST_MOVE,
-    SET_OPENING_POSITION,
     SET_POSITION,
     SET_STATUS,
     SET_WORKER_LIST,
@@ -14,7 +13,7 @@ import {
     USER_SIGN_IN
 } from "./actions";
 import {historyListReducer} from "./components/historyList/historyList";
-import {Move} from "./components/OpeningExplorer";
+import {IOpeningMove, openingMovesReducer} from "./components/OpeningExplorer";
 import {syzygyReducer} from "./components/syzygyExplorer";
 import {IAction, IWorkerResponse} from "./interfaces";
 import {SessionManagerService} from "./services/sessionManager";
@@ -52,16 +51,6 @@ export const errorReducer = (msg: string = "", action: any) => {
     }
 };
 
-export const openingMovesReducer = (moves: Move[] = [], action: any) => {
-
-    switch (action.type) {
-        case SET_OPENING_POSITION:
-            return action.moves;
-
-        default:
-            return moves;
-    }
-};
 
 export const statusReducer = (status: string = "", action: any) => {
     switch (action.type) {
@@ -84,7 +73,7 @@ export const statusReducer = (status: string = "", action: any) => {
 //     [LINE_MAP.tbhits]: '',
 //     [LINE_MAP.import]: '',
 // };
-export const evaluationReducer = (evaluation: IWorkerResponse | Move[] = [], action: any): IWorkerResponse | Move[] => {
+export const evaluationReducer = (evaluation: IWorkerResponse | IOpeningMove[] = [], action: any): IWorkerResponse | IOpeningMove[] => {
         switch (action.type) {
             case SET_EVALUATION:
                 return action.evaluation;

@@ -1,11 +1,11 @@
 import * as React from "react";
 import {connect} from "react-redux";
 import "../assets/css/explorerBox.css";
-import {loadOpeningPosition} from "../actions";
-import guid, {id} from "../libs/uuid";
+import {setError, setLoading} from "../actions";
 import {store} from "../store";
 import {setMove} from "./history/History";
 import {treeService} from "./moveTree/tree";
+import config from "../config";
 
 export class OpeningExplorer extends React.Component<IOpeningExplorerProps, IOpeningExplorerState> {
 
@@ -22,11 +22,11 @@ export class OpeningExplorer extends React.Component<IOpeningExplorerProps, IOpe
 
     renderTr() {
 
-        return this.props.moves.map((item: Move, index) => {
+        return this.props.moves.map((item: IOpeningMove, index) => {
             return (
                 <tr key={index} onClick={this.handleClick} data-move={item.move}>
                     <td>
-                        {item.move}
+                        {item.san}
                     </td>
                     <td>{item.weight}</td>
                 </tr>
@@ -83,14 +83,15 @@ function mapDispatchToProps(dispatch: (data: any) => {}) {
     };
 }
 
-export interface Move {
+export interface IOpeningMove {
     move: string;
     weight: number;
     fen: string;
+    san: string;
 }
 
 export interface IOpeningExplorerProps {
-    moves: Move[],
+    moves: IOpeningMove[],
     fen: string,
     handleMove: (move: string, fen: string) => {}
 }
@@ -100,3 +101,56 @@ export interface IOpeningExplorerState {
 }
 
 export const SmartOpeningExplorer = connect(mapStateToProps, mapDispatchToProps)(OpeningExplorer);
+
+export function loadOpeningPosition(fen: string) {
+    return async (dispatch: (data: any) => {}) => {
+        console.log("loadOpeningPosition", fen);
+        dispatch(setLoading(true));
+
+        const url = `${config.apiHost}/opening-book?fen=${fen}`;
+        const headers: RequestInit = {
+            method: "GET",
+            headers: new Headers({
+                "Content-Type": "application/json"
+            })
+        };
+
+        try {
+            const response = await fetch(url, headers);
+            if (response.ok) {
+                const moves: any = await response.json();
+                console.log(moves);
+                dispatch(setOpeningPosition(moves));
+            } else {
+                dispatch(setOpeningPosition([]));
+            }
+
+        } catch (e) {
+            dispatch(setError("opening book failed"));
+            console.log(e);
+        }
+
+        dispatch(setLoading(false));
+    }
+
+}
+
+export function setOpeningPosition(moves: IOpeningMove[]) {
+    return {
+        moves,
+        type: SET_OPENING_POSITION
+    };
+}
+
+export const SET_OPENING_POSITION = "SET_OPENING_POSITION";
+
+export function openingMovesReducer(moves: IOpeningMove[] = [], action: any) {
+
+    switch (action.type) {
+        case SET_OPENING_POSITION:
+            return action.moves;
+
+        default:
+            return moves;
+    }
+};
