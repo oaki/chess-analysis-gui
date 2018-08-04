@@ -3,9 +3,7 @@ import {ApiManagerService} from "../../services/apiManager";
 import * as jwt from "jsonwebtoken";
 
 export function VerifyGoogleResponse(props: any) {
-    console.log({props});
     const hash = window.location.hash;
-
     const token = hash.replace("#id_token=", "");
 
     ApiManagerService.getSignUser(token).then((response) => {
@@ -16,5 +14,5 @@ export function VerifyGoogleResponse(props: any) {
         console.log({jwtValues});
     });
 
-    return "test";
+    return "Loading ...";
 }

@@ -16,7 +16,6 @@ interface ISignInPageProps {
 
 class SignInPage extends React.Component<ISignInPageProps, any> {
 
-
     handleOnSuccess = async (data: Partial<IUser>) => {
         const values: IUser = {
             isLoggedIn: true,
@@ -32,19 +31,13 @@ class SignInPage extends React.Component<ISignInPageProps, any> {
         console.log("game", game);
         values.last_game_id = game.id;
 
-
-        // set history
-        // setHistoryMove();
-        // console.log('responseGoogle', res);
-
-
         SessionManagerService.setUser(values);
         store.dispatch(setUser(values));
         store.dispatch(setHistory(game.moves));
 
-        if ( this.props.user.isLoggedIn && this.props.user.token) {
+        if (this.props.user.isLoggedIn && this.props.user.token) {
             console.log("Redirect!!!");
-            return location.href = '/';
+            return location.href = "/";
         }
     }
 
@@ -70,7 +63,8 @@ class SignInPage extends React.Component<ISignInPageProps, any> {
         const style = {
             textAlign: "center",
             marginTop: "2rem"
-        }
+        };
+
         return (
             <div className="page-log-in container" style={style}>
                 <h2>
