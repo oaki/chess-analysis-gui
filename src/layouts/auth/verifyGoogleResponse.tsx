@@ -9,7 +9,7 @@ export function VerifyGoogleResponse(props: any) {
     ApiManagerService.getSignUser(token).then((response) => {
         const jwtValues = jwt.decode(response.token);
         jwtValues.token = response.token;
-        window.opener.postMessage(jwtValues, "http://localhost:3000");
+        window.opener.postMessage(jwtValues, window.location.origin);
 
         console.log({jwtValues});
     });
