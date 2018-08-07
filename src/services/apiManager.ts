@@ -51,6 +51,15 @@ class ApiManager {
         return await this.fetch("/auth/register", fetchData);
     }
 
+    async saveLog(data: any[]) {
+        const fetchData = {
+            method: "POST",
+            body: JSON.stringify(data)
+        };
+
+        return await this.fetch(`/logs/save`, fetchData);
+    }
+
     async fetch(path, data) {
         try {
             const url: string = `${this.apiHost}${path}`;

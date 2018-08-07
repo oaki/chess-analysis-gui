@@ -2,6 +2,7 @@ import * as React from "react";
 import {Redirect, Route, RouteComponentProps, RouteProps} from "react-router-dom"
 import {connect} from "react-redux";
 import config from "../../config/index";
+import {Log} from "../../libs/logger";
 
 export default function GooglePopupRedirect() {
 
@@ -9,5 +10,7 @@ export default function GooglePopupRedirect() {
     const scope = "https://www.googleapis.com/auth/userinfo.email";
     const responseType = "id_token";
     const href = `https://accounts.google.com/o/oauth2/auth?redirect_uri=${redirectUri}&client_id=${config.google.clientId}&scope=${scope}&response_type=${responseType}`
+
+    Log.info("redirect to google", href);
     window.location.href = href;
 }

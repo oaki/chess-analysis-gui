@@ -6,6 +6,7 @@ import {ApiManagerService} from "../services/apiManager";
 import {SocketManagerService} from "../services/socketService";
 import {ConnectionError} from "../libs/errors/connectionError";
 import {setHistory} from "./history/historyReducers";
+import {Log} from "../libs/logger";
 
 export default class BootstrapData extends React.Component<any, any> {
     state = {
@@ -36,6 +37,9 @@ export default class BootstrapData extends React.Component<any, any> {
     }
 
     initSockets(token: string) {
+        console.log("initSockets");
+        Log.info("initSockets", token);
+        Log.error("initSockets", token);
         SocketManagerService.setSignInToken(token);
         SocketManagerService.connect();
     }
@@ -43,6 +47,9 @@ export default class BootstrapData extends React.Component<any, any> {
     async loadApp() {
 
         const user: any = SessionManagerService.getUser();
+
+        Log.warn("SessionManagerService", user);
+        Log.error("SessionManagerServiceError");
 
         console.log("SessionManagerService.getUser()", user);
 

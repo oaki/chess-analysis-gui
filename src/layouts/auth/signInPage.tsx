@@ -7,7 +7,7 @@ import store from "../../store";
 import {setUser} from "../../actions";
 import {setHistory} from "../../components/history/historyReducers";
 import {SessionManagerService} from "../../services/sessionManager";
-
+import {Log} from "../../libs/logger";
 
 interface ISignInPageProps {
     user: IUser;
@@ -27,8 +27,6 @@ class SignInPage extends React.Component<ISignInPageProps, any> {
         };
 
         const game = await ApiManagerService.getLastGame(values.token);
-
-        console.log("game", game);
         values.last_game_id = game.id;
 
         SessionManagerService.setUser(values);
@@ -36,6 +34,7 @@ class SignInPage extends React.Component<ISignInPageProps, any> {
         store.dispatch(setHistory(game.moves));
 
         if (this.props.user.isLoggedIn && this.props.user.token) {
+
             console.log("Redirect!!!");
             return location.href = "/";
         }
@@ -43,9 +42,10 @@ class SignInPage extends React.Component<ISignInPageProps, any> {
 
     handleOpenPopup = () => {
         let popup: any = {};
+        Log.info("handleOpenPopup");
 
         const messageListener = (e) => {
-            console.log({e});
+            Log.info("handleOpenPopup->messageListener", e.data);
             if (e.data && e.data.user_id) {
                 this.handleOnSuccess(e.data);
                 popup.close();
@@ -54,7 +54,6 @@ class SignInPage extends React.Component<ISignInPageProps, any> {
         };
 
         window.addEventListener("message", messageListener);
-
         popup = window.open("/auth/google-popup", "google-popup-window", "width=450,height=450");
     }
 
