@@ -2,12 +2,13 @@ import {IWorkerResponse} from "./interfaces";
 import config from "./config";
 import {IUser, IWorker} from "./reducers";
 import {SessionManagerService} from "./services/sessionManager";
+import {Flash} from "./services/errorManager";
 
 export const UPDATE_LOADING = "UPDATE_LOADING";
 export const SET_POSITION = "SET_POSITION";
 
 export const SET_WORKER_LIST = "SET_WORKER_LIST";
-export const SET_ERROR = "SET_ERROR";
+
 export const SET_STATUS = "SET_STATUS";
 export const SET_EVALUATION = "SET_EVALUATION";
 export const SET_HISTORY_MOVE = "SET_HISTORY_MOVE";
@@ -69,13 +70,6 @@ export interface ISetMoveProps {
 }
 
 
-export function setError(msg: string) {
-    return {
-        msg,
-        type: SET_ERROR
-    };
-}
-
 export function setStatus(status: string) {
     return {
         status,
@@ -131,7 +125,7 @@ export function loadEngines() {
 
 
         } catch (e) {
-            dispatch(setError("opening book failed"));
+            Flash.error({msg: "opening book failed", identifier: "loadEngines"});
             dispatch(setLoading(false));
             console.log(e);
         }
@@ -168,7 +162,8 @@ export function checkWorkers(workerList: IWorker[]) {
 
 
         } catch (e) {
-            dispatch(setError("Fetch error"));
+            Flash.error({msg: "Fetch error", identifier: "workers"});
+
             dispatch(setLoading(false));
             console.log(e);
         }
@@ -207,7 +202,8 @@ export function addWorker(props: any) {
             dispatch(loadEngines());
 
         } catch (e) {
-            dispatch(setError("Update error"));
+
+            Flash.error({msg: "Update error", identifier: "worker"});
             dispatch(setLoading(false));
             console.log(e);
         }
@@ -243,7 +239,7 @@ export function deleteWorker(props: any) {
             dispatch(loadEngines());
 
         } catch (e) {
-            dispatch(setError("opening book failed"));
+            Flash.error({msg: "opening book failed", identifier: "worker"});
             dispatch(setLoading(false));
             console.log(e);
         }
@@ -284,7 +280,7 @@ export function addNewGame(callback) {
             callback(game.id);
 
         } catch (e) {
-            dispatch(setError("Adding a new game failed."));
+            Flash.error({msg: "Adding a new game failed.", identifier: "game"});
             dispatch(setLoading(false));
             console.log(e);
         }

@@ -7,7 +7,6 @@ import {MenuWithRouter} from "../components/menu/menu";
 import {History} from "../components/history/history";
 import {SmartAwesomeChessboard} from "../components/chessboard/chessboard";
 import BootstrapData from "../components/BootstrapData";
-import {SmartError} from "../components/error";
 
 
 export class ChessboardPage extends React.Component<any, any> {
@@ -27,8 +26,6 @@ export class ChessboardPage extends React.Component<any, any> {
         return (
             <BootstrapData>
                 <div className="container">
-
-                    <SmartError/>
 
                     <div className="row">
                         <div className="col-md-7">

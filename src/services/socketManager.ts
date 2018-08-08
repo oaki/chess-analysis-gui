@@ -1,9 +1,10 @@
 import * as io from "socket.io-client";
-import {setError, setEvaluation} from "../actions";
+import {setEvaluation} from "../actions";
 import {ISyzygy, setSyzygyEvaluation} from "../components/syzygyExplorer/syzygyExplorerReducers";
 import config from "../config";
 import {IWorkerResponse, LINE_MAP} from "../interfaces";
 import store from "../store";
+import {Flash} from "./errorManager";
 
 const throttle = require("lodash/throttle");
 
@@ -65,6 +66,8 @@ export default class SocketManager {
         });
 
         this.socket.on("connect", () => {
+
+            Flash.info({msg: "Chess engine connected", identifier: "socket"});
             console.log(`socket connected to ${this.config.socketIo.host}`);
         });
 
@@ -76,12 +79,11 @@ export default class SocketManager {
         // this.socket.on('openingMoves', this.handleOpeningMoves);
 
         this.socket.on("disconnect", () => {
-            this.store.dispatch(setError("Socket disconnect"));
-            console.log(`socket disconnect`);
+            Flash.error({msg: "Chess engine disconnect", identifier: "socket"});
         });
 
         this.socket.on("connect_timeout", (timeout) => {
-            this.store.dispatch(setError("Socket connection timeout"));
+            Flash.error({msg: "Chess engine connection timeout", identifier: "socket"});
         });
     }
 

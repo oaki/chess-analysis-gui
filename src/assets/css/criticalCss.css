@@ -893,6 +893,7 @@
 .p-l-xl {
     padding-left: 1.4rem
 }
+
 .p-l-xxl {
     padding-left: 2rem
 }
@@ -1113,6 +1114,22 @@
     height: 100%
 }
 
-.cur-p{
+.cur-p {
     cursor: pointer;
+}
+
+.l-0 {
+    left: 0;
+}
+
+.r-0 {
+    right: 0;
+}
+
+.b-0 {
+    bottom: 0;
+}
+
+.b-xl {
+    bottom: 2rem;
 }

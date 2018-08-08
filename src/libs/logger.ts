@@ -27,6 +27,7 @@ class Logger {
     }
 
     log(data, level) {
+        console[level](data);
         const obj = {
             level: level,
             // context: navigator.userAgent,

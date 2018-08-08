@@ -3,12 +3,13 @@ import {connect, Provider} from "react-redux";
 import {Route, Router, Switch} from "react-router"
 import {BrowserRouter} from "react-router-dom"
 import {MenuWithRouter} from "../components/menu/menu";
-import {setError, setLoading} from "../actions";
+import {setLoading} from "../actions";
 import store from "../store";
 import config from "../config";
 import {Header} from "../components/Header";
 import {HistoryList} from "../components/historyList/historyList";
 import {setHistoryGameList} from "../components/historyList/historyListReducers";
+import {addError, Flash} from "../services/errorManager";
 
 export class HistoryPage extends React.PureComponent<any, undefined> {
 
@@ -64,12 +65,10 @@ export function loadHistoryGames() {
             const games: any = await response.json();
             console.log(games);
             dispatch(setHistoryGameList(games));
-            // dispatch(checkWorkers(workerList));
 
         } catch (e) {
-            dispatch(setError("opening book failed"));
+            Flash.error({msg: "Fetching history failed", identifier: "history"});
             dispatch(setLoading(false));
-            console.log(e);
         }
 
         dispatch(setLoading(false));

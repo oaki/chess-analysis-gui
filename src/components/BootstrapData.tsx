@@ -7,37 +7,19 @@ import {SocketManagerService} from "../services/socketService";
 import {ConnectionError} from "../libs/errors/connectionError";
 import {setHistory} from "./history/historyReducers";
 import {Log} from "../libs/logger";
+import {onlineOfflineIndicatorService} from "../services/onlineOfflineIndicator";
 
 export default class BootstrapData extends React.Component<any, any> {
     state = {
         isLoaded: false,
-        errorMsg: "",
-    }
-
-    renderAlert() {
-        return (
-            <div className="alert alert-warning" role="alert" key="alert">
-                <strong>Error!</strong> {this.state.errorMsg}
-            </div>
-        )
     }
 
     render() {
-        const components: any = [];
-
-        if (this.state.errorMsg) {
-            components.push(
-                this.renderAlert()
-            )
-        }
-
-        components.push(this.props.children);
-
-        return components;
+        return this.props.children;
     }
 
     initSockets(token: string) {
-        console.log("initSockets");
+
         Log.info("initSockets", token);
         Log.error("initSockets", token);
         SocketManagerService.setSignInToken(token);
@@ -46,12 +28,9 @@ export default class BootstrapData extends React.Component<any, any> {
 
     async loadApp() {
 
+        onlineOfflineIndicatorService.init();
+
         const user: any = SessionManagerService.getUser();
-
-        Log.warn("SessionManagerService", user);
-        Log.error("SessionManagerServiceError");
-
-        console.log("SessionManagerService.getUser()", user);
 
         try {
             if (!user || user.token === "") {
@@ -94,6 +73,7 @@ export default class BootstrapData extends React.Component<any, any> {
             console.log(err, err instanceof Error);
             let msg = "We can not load application but we are working on it.";
             if (err instanceof Error) {
+
                 msg = err.message;
             }
             this.setState({

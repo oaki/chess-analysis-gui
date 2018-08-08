@@ -1,5 +1,6 @@
-import {setError, setLoading} from "../../actions";
+import {setLoading} from "../../actions";
 import config from "../../config";
+import {addError, Flash} from "../../services/errorManager";
 
 
 export interface IOpeningMove {
@@ -43,7 +44,7 @@ export function loadOpeningPosition(fen: string) {
             }
 
         } catch (e) {
-            dispatch(setError("opening book failed"));
+            Flash.error({msg: "opening book failed", identifier: "openingExplorer"});
             console.log(e);
         }
 

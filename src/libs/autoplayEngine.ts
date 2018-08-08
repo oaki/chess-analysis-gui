@@ -20,14 +20,11 @@ export class AutoplayService {
 
     private storeListener = () => {
         const state: any = this.store.getState();
-        console.log({state});
 
         // check if autoplay is enabled
         if (state.autoplay && state.loading === false) {
             // check who is on move
-
             if (AutoplayService.isAiOnMove(state)) {
-                console.log("play!!!");
                 const openingMove = this.getOpeningMove(state.openingMoves);
                 if (openingMove) {
                     this.dispatchOpeningMove(openingMove, state.fen);

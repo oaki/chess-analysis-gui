@@ -3,7 +3,6 @@ import {combineReducers} from "redux";
 import {
     IOnMove,
     ON_MOVE,
-    SET_ERROR,
     SET_EVALUATION,
     SET_LAST_MOVE,
     SET_POSITION,
@@ -21,6 +20,7 @@ import {SessionManagerService} from "./services/sessionManager";
 import {historyReducer} from "./components/history/historyReducers";
 import {autoplayReducer, flipBoardReducer, menuReducer} from "./components/menu/menuReducers";
 import {promotionDialogReducer} from "./components/chessboard/promotingDialogReducers";
+import {errorReducers} from "./services/errorManager";
 
 export const loadingReducer = (isLoading: boolean = false, action: any) => {
     switch (action.type) {
@@ -39,16 +39,6 @@ export const positionReducer = (fen: string = "", action: any) => {
 
         default:
             return fen;
-    }
-};
-
-export const errorReducer = (msg: string = "", action: any) => {
-    switch (action.type) {
-        case SET_ERROR:
-            return action.msg;
-
-        default:
-            return msg;
     }
 };
 
@@ -151,7 +141,7 @@ export default combineReducers({
     fen: positionReducer,
     evaluation: evaluationReducer,
     openingMoves: openingMovesReducer,
-    error: errorReducer,
+    errors: errorReducers,
     history: historyReducer,
     status: statusReducer,
     isFlip: flipBoardReducer,

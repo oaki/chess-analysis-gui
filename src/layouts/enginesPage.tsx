@@ -6,7 +6,6 @@ import {BrowserRouter} from 'react-router-dom'
 import {connect} from 'react-redux';
 import {addWorker, deleteWorker, loadEngines} from "../actions";
 import {IWorker} from "../reducers";
-import {SmartError} from "../components/error";
 
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import * as faPlus from "@fortawesome/fontawesome-free-solid/faPlus";
@@ -90,8 +89,6 @@ export class EnginesPageSmart extends React.Component<any, any> {
                 <div className="row">
                     <div className="col-md-12">
                         <Header title="Your chess engines"/>
-                        <SmartError/>
-
 
                         <table className="table fs-xs">
                             <thead>
