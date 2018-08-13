@@ -6,7 +6,7 @@ import {BrowserRouter} from "react-router-dom"
 import {MenuWithRouter} from "../components/menu/menu";
 import {History} from "../components/history/history";
 import {SmartAwesomeChessboard} from "../components/chessboard/chessboard";
-import BootstrapData from "../components/BootstrapData";
+import BootstrapData from "../components/bootstrapData";
 
 
 export class ChessboardPage extends React.Component<any, any> {
