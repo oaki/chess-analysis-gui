@@ -1,6 +1,6 @@
 {
   "name": "Strongest chess engine",
-  "short_name": "Chess analysis",
+  "short_name": "Chess 2.0",
   "lang": "en-GB",
   "start_url": "/",
   "display": "standalone",
@@ -28,7 +28,5 @@
       "sizes": "384x384",
       "type": "image/png"
     }
-  ],
-
-
+  ]
 }
