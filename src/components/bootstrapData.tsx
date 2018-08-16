@@ -8,6 +8,7 @@ import {ConnectionError} from "../libs/errors/connectionError";
 import {setHistory} from "./history/historyReducers";
 import {Log} from "../libs/logger";
 import {onlineOfflineIndicatorService} from "../services/onlineOfflineIndicator";
+import {windowMessageListenerService} from "../services/windowMessageListener";
 
 export default class BootstrapData extends React.Component<any, any> {
     state = {
@@ -29,6 +30,7 @@ export default class BootstrapData extends React.Component<any, any> {
     async loadApp() {
 
         onlineOfflineIndicatorService.init();
+        windowMessageListenerService.init()
 
         const user: any = SessionManagerService.getUser();
 

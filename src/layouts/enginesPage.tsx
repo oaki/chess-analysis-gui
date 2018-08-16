@@ -1,13 +1,12 @@
-import * as React from 'react';
-import {Provider} from 'react-redux';
+import * as React from "react";
+import {connect, Provider} from "react-redux";
 import store from "../store";
-import {Router, Route, Switch} from 'react-router'
-import {BrowserRouter} from 'react-router-dom'
-import {connect} from 'react-redux';
+import {Route, Router, Switch} from "react-router"
+import {BrowserRouter} from "react-router-dom"
 import {addWorker, deleteWorker, loadEngines} from "../actions";
 import {IWorker} from "../reducers";
 
-import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import * as faPlus from "@fortawesome/fontawesome-free-solid/faPlus";
 import * as faTrash from "@fortawesome/fontawesome-free-solid/faTrash";
 import {faMicrophoneSlash, faSignal} from "@fortawesome/fontawesome-free-solid";
@@ -24,8 +23,8 @@ export class EnginesPageSmart extends React.Component<any, any> {
         super(props);
 
         this.state = {
-            name: '',
-            uuid: ''
+            name: "",
+            uuid: ""
         }
     }
 
@@ -62,8 +61,8 @@ export class EnginesPageSmart extends React.Component<any, any> {
         }));
 
         this.setState({
-            name: '',
-            uuid: ''
+            name: "",
+            uuid: ""
         })
     }
 

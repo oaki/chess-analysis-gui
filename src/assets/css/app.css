@@ -100,3 +100,7 @@ table{
 .cf{
     clear: both;
 }
+
+.container-fullscreen{
+    height: 100vh;
+}

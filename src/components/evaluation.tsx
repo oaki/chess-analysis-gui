@@ -79,6 +79,7 @@ export class Evaluation extends React.Component<any, any> {
             return null
         }
         console.log("this.props.evaluation", this.props.evaluation);
+        console.log("this.props.evaluation.fen === props.fen", this.props.evaluation.fen, this.props.fen);
         return this.props.evaluation.map((evaluation) => this.renderLine(evaluation));
     }
 

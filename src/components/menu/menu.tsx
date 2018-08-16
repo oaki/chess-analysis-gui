@@ -3,7 +3,7 @@ import * as ReactDOM from "react-dom";
 import {connect} from "react-redux";
 import store from "../../store";
 import {Link, withRouter} from "react-router-dom";
-import FontAwesomeIcon from "@fortawesome/react-fontawesome";
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import * as faRetweet from "@fortawesome/fontawesome-free-solid/faRetweet";
 import * as faAngleDoubleLeft from "@fortawesome/fontawesome-free-solid/faAngleDoubleLeft";
 import * as faAngleDoubleRight from "@fortawesome/fontawesome-free-solid/faAngleDoubleRight";
@@ -21,6 +21,7 @@ import {setOpeningPosition} from "../openingExplorer/openingExplorerReducers";
 import {flipBoard, toggleAutoplay, toogleOpenMenu} from "./menuReducers";
 
 
+
 interface IMenuProps {
     showMainMenu: boolean;
     showFlip: boolean;
@@ -36,7 +37,7 @@ interface IMenuProps {
     isOpen: state.menu.isOpen,
     autoplay: state.autoplay
 }))
-export class Menu extends React.Component<any, any> {
+export class Menu extends React.PureComponent<any, any> {
 
     handleFlipBoard() {
         store.dispatch(flipBoard());
@@ -89,8 +90,7 @@ export class Menu extends React.Component<any, any> {
 
     handleNewGame = () => {
         store.dispatch(addNewGame((id) => {
-            // props.history.push(`/#game_${id}`);
-            window.location.href = "/";
+            console.log('id', id);
         }));
     };
 
@@ -134,7 +134,8 @@ export class Menu extends React.Component<any, any> {
                         <button
                             className={btnClasses}
                             onClick={this.handleFlipBoard}
-                        ><FontAwesomeIcon icon={faRetweet}/>
+                        >
+                            <FontAwesomeIcon icon={faRetweet}/>
                         </button>
                     </li>}
                     {this.props.showAutoplay &&
@@ -180,7 +181,7 @@ export class Menu extends React.Component<any, any> {
                 <div className="position-relative">
                     <ul className="sub-menu">
                         <li className="sub-menu__line">
-                            <a href="#" onClick={this.handleNewGame}>New game</a>
+                            <Link to="/" onClick={this.handleNewGame}>New game</Link>
                         </li>
                         <li className="sub-menu__line">
                             <Link to="/user/history" onClick={this.handleBeforeGoToList}>History</Link>
@@ -188,8 +189,11 @@ export class Menu extends React.Component<any, any> {
                         <li className="sub-menu__line">
                             <Link to="/user/engines" onClick={this.handleBeforeGoToList}>My chess engines</Link>
                         </li>
+                        <li className="sub-menu__line">
+                            <Link to="/settings">Settings</Link>
+                        </li>
                         <li className="">
-                            <a onClick={this.handleLogout} href="#">Logout</a>
+                            <Link to="/" onClick={this.handleLogout}>Logout</Link>
                         </li>
                     </ul>
                 </div>

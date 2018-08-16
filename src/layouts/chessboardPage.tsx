@@ -25,13 +25,13 @@ export class ChessboardPage extends React.Component<any, any> {
         });
         return (
             <BootstrapData>
-                <div className="container">
+                <div className="container container-fullscreen">
 
                     <div className="row">
-                        <div className="col-md-7">
+                        <div className="col-sm-7">
                             <SmartAwesomeChessboard key="1"/>
                         </div>
-                        <div className="col-md-5">
+                        <div className="col-sm-5">
                             <div className="ox-a" style={{height}}>
                                 <Pannel/>
                                 <History/>

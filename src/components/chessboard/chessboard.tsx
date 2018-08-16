@@ -15,9 +15,12 @@ import {IHistoryMove, setMove} from "../history/historyReducers";
 import {treeService} from "../moveTree/tree";
 import {AutoplayService} from "../../libs/autoplayEngine";
 import {setPromotionDialog} from "./promotingDialogReducers";
+import {Log} from "../../libs/logger";
 
+const once = require("lodash/once");
 
 const throttle = require("lodash/throttle");
+const debounce = require("lodash/debounce");
 
 
 @connect((state) => ({
@@ -187,7 +190,17 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
         });
 
         this.initHistorySaving();
-        console.log("before -> AutoplayService", store);
+        Log.info("before -> AutoplayService", store);
+
+        const initialize = once(() => {
+            const onResize = debounce(() => {
+                this.board.redrawAll();
+                console.log('resizing....');
+            }, 100);
+            window.addEventListener("resize", onResize, true);
+        });
+        initialize();
+
         new AutoplayService();
     }
 

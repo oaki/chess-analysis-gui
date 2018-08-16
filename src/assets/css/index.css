@@ -1,5 +1,6 @@
 @import 'bootstrap/bootstrap-reboot.css';
 @import 'bootstrap/bootstrap-grid.css';
+@import './react-toggle.css';
 @import './criticalCss.css';
 @import './colors.css';
 @import './btn.css';
@@ -7,7 +8,6 @@
 @import './awesomeBoard.css';
 @import './promotionDialog.css';
 @import './bottomMenu.css';
-
 @import './evaluation.css';
 @import './history.css';
 @import './page.css';

@@ -1,4 +1,5 @@
 import * as React from "react";
+import {CSSProperties} from "react";
 import {Redirect, Route, RouteComponentProps, RouteProps} from "react-router-dom"
 import {connect} from "react-redux";
 import {IUser} from "../../reducers";
@@ -59,7 +60,7 @@ class SignInPage extends React.Component<ISignInPageProps, any> {
 
     render() {
 
-        const style = {
+        const style: CSSProperties = {
             textAlign: "center",
             marginTop: "2rem"
         };
