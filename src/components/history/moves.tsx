@@ -79,28 +79,30 @@ export function Moves(props: IMoves) {
 
         className += ` l-${props.level > 1 ? 2 : props.level}`;
 
-        return [
-            <div
-                className={className}
-                style={style}
-                key={move[NODE_MAP.id]}
-                onClick={props.handleMoveClick}
-                data-id={move[NODE_MAP.id]}
-            >
-                {showLeftBracket && "("}
-                <MoveNumber counter={counter} moveIndex={moveIndex}/>
-                <span>{move[NODE_MAP.shortNotation]}</span>
-                {showRightBracket && ")"}
-            </div>,
+        return (
+            <>
+                <div
+                    className={className}
+                    style={style}
+                    key={move[NODE_MAP.id]}
+                    onClick={props.handleMoveClick}
+                    data-id={move[NODE_MAP.id]}
+                >
+                    {showLeftBracket && "("}
+                    <MoveNumber counter={counter} moveIndex={moveIndex}/>
+                    <span>{move[NODE_MAP.shortNotation]}</span>
+                    {showRightBracket && ")"}
+                </div>
 
-            <Variants
-                key={`variant_${move[NODE_MAP.id]}`}
-                variants={move[NODE_MAP.variants]}
-                level={props.level}
-                lastMoveId={props.lastMoveId}
-                counter={counter}
-                handleMoveClick={props.handleMoveClick}
-            />
-        ]
+                <Variants
+                    key={`variant_${move[NODE_MAP.id]}`}
+                    variants={move[NODE_MAP.variants]}
+                    level={props.level}
+                    lastMoveId={props.lastMoveId}
+                    counter={counter}
+                    handleMoveClick={props.handleMoveClick}
+                />
+            </>
+        )
     })
 }

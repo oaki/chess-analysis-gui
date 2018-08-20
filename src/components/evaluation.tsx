@@ -4,6 +4,7 @@ import {connect} from "react-redux";
 
 import {IEvaluation, LINE_MAP} from "../interfaces";
 import {SocketManagerService} from "../services/socketService";
+import {isYourMove} from "../libs/isYourMove";
 
 export interface Evaluation {
     score: string;
@@ -17,7 +18,12 @@ interface SocketIoProviderProps {
 }
 
 
-@connect((state) => ({fen: state.fen, evaluation: state.evaluation}))
+@connect((state) => ({
+    fen: state.fen,
+    evaluation: state.evaluation,
+    onMove: state.onMove,
+    isFlip: state.isFlip
+}))
 export class Evaluation extends React.Component<any, any> {
 
     static splitPv(pv: string) {
@@ -93,13 +99,17 @@ export class Evaluation extends React.Component<any, any> {
     }
 
     getScore(evaluation: IEvaluation) {
-        const score = evaluation[LINE_MAP.score];
+        let score = Number(evaluation[LINE_MAP.score]);
 
         if (evaluation[LINE_MAP.mate]) {
             return `#${Number(evaluation[LINE_MAP.mate])}`;
         }
 
-        if (Number(score) >= 0) {
+        if (!isYourMove(this.props.onMove, this.props.isFlip)) {
+            score *= (-1);
+        }
+
+        if (score >= 0) {
             return `+${score}`;
         }
 

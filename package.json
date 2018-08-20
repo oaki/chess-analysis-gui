@@ -25,11 +25,11 @@
     "dot-prop-immutable": "^1.4.0",
     "dotenv": "^5.0.1",
     "informed": "^1.10.4",
-    "jquery": "^3.3.1",
     "jsonwebtoken": "^8.3.0",
     "lodash": "^4.17.5",
     "moment": "^2.22.2",
     "react": "^16.2.0",
+    "react-app-rewire-scss": "^1.0.2",
     "react-app-rewired": "^1.5.2",
     "react-dom": "^16.2.0",
     "react-redux": "^5.0.7",
@@ -57,12 +57,12 @@
     "@types/react-dom": "^16.0.3",
     "@types/socket.io-client": "^1.4.32",
     "redux-devtools-extension": "^2.13.2",
-    "typescript": "^2.7.1"
+    "typescript": "^2.9.2"
   },
   "scripts": {
-    "start": "react-scripts-ts start",
+    "start": "react-app-rewired start --scripts-version react-scripts-ts start",
     "start:dev": "REACT_APP_SECRET_CODE=dev123 npm start",
-    "build": "react-scripts-ts build",
+    "build": "react-app-rewired start --scripts-version react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",
     "eject": "react-scripts-ts eject"
   }

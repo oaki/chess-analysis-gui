@@ -3,23 +3,23 @@ import * as ReactDOM from "react-dom";
 import {connect} from "react-redux";
 import store from "../../store";
 import {Link, withRouter} from "react-router-dom";
-import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import * as faRetweet from "@fortawesome/fontawesome-free-solid/faRetweet";
 import * as faAngleDoubleLeft from "@fortawesome/fontawesome-free-solid/faAngleDoubleLeft";
 import * as faAngleDoubleRight from "@fortawesome/fontawesome-free-solid/faAngleDoubleRight";
 import * as faBars from "@fortawesome/fontawesome-free-solid/faBars";
 import * as faPlay from "@fortawesome/fontawesome-free-solid/faPlay";
 
-import {addNewGame, setEvaluation, setPosition} from "../../actions";
+import {addNewGame, IOnMove, setEvaluation, setPosition, setStatus, setWhoIsOnMove} from "../../actions";
 import {SessionManagerService} from "../../services/sessionManager";
 import {batchActions} from "redux-batched-actions";
 import {Node, NODE_MAP, treeService} from "../moveTree/tree";
-import {lastMoveId} from "../history/historyReducers";
+import {lastMoveId, setHistory} from "../history/historyReducers";
 import {SmartAwesomeChessboard} from "../chessboard/chessboard";
 import {faPause} from "@fortawesome/fontawesome-free-solid";
 import {setOpeningPosition} from "../openingExplorer/openingExplorerReducers";
 import {flipBoard, toggleAutoplay, toogleOpenMenu} from "./menuReducers";
-
+import {setSyzygyEvaluation} from "../syzygyExplorer/syzygyExplorerReducers";
 
 
 interface IMenuProps {
@@ -89,8 +89,19 @@ export class Menu extends React.PureComponent<any, any> {
     }
 
     handleNewGame = () => {
+        store.dispatch(toogleOpenMenu(false));
         store.dispatch(addNewGame((id) => {
-            console.log('id', id);
+            store.dispatch(batchActions([
+                setStatus(""),
+                setWhoIsOnMove(IOnMove.WHITE),
+                lastMoveId(null),
+                setPosition(SmartAwesomeChessboard.FIRST_POSITION),
+                setEvaluation([]),
+                setSyzygyEvaluation(null),
+                setOpeningPosition([]),
+                setHistory([])
+            ]));
+            console.log("id", id);
         }));
     };
 

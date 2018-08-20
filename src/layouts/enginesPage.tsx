@@ -6,7 +6,7 @@ import {BrowserRouter} from "react-router-dom"
 import {addWorker, deleteWorker, loadEngines} from "../actions";
 import {IWorker} from "../reducers";
 
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import * as faPlus from "@fortawesome/fontawesome-free-solid/faPlus";
 import * as faTrash from "@fortawesome/fontawesome-free-solid/faTrash";
 import {faMicrophoneSlash, faSignal} from "@fortawesome/fontawesome-free-solid";
@@ -107,7 +107,8 @@ export class EnginesPageSmart extends React.Component<any, any> {
                                 </td>
                                 <td>
                                     <button className="btn btn-success" onClick={this.handleSubmit}>
-                                        <FontAwesomeIcon icon={faPlus}/></button>
+                                        <FontAwesomeIcon icon={faPlus}/>
+                                    </button>
                                 </td>
                             </tr>
 

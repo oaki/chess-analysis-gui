@@ -16,17 +16,6 @@ export interface IWorkerResponse extends IEvaluation {
     fen: string
 }
 
-export interface IOpeningMoves {
-    [LINE_MAP.score]: string;
-    [LINE_MAP.depth]: number;
-    [LINE_MAP.pv]: string;
-    [LINE_MAP.nodes]?: number;
-    [LINE_MAP.time]?: string;
-    [LINE_MAP.multipv]?: string;
-    [LINE_MAP.nps]?: string;
-    [LINE_MAP.tbhits]?: string;
-    [LINE_MAP.import]?: number;
-}
 export interface IEvaluation {
     [LINE_MAP.score]: string;
     [LINE_MAP.depth]: number;

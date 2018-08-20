@@ -98,7 +98,11 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
 
             const chess = new Chess(nextProps.fen);
             this.board.set({
+                check: chess.in_check(),
                 turnColor: toColor(chess),
+                highlight: {
+                    check: true
+                },
                 movable: {
                     color: toColor(chess),
                     dests: toDests(chess)
@@ -171,6 +175,9 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
         const el: any = document.getElementById("awesome-chessboard");
         this.board = Chessground(el, {
             orientation: "white",
+            highlight: {
+                check: true
+            },
             addPieceZIndex: true,
             movable: {
                 // color: 'white',
@@ -192,16 +199,18 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
         this.initHistorySaving();
         Log.info("before -> AutoplayService", store);
 
-        const initialize = once(() => {
-            const onResize = debounce(() => {
-                this.board.redrawAll();
-                console.log('resizing....');
-            }, 100);
-            window.addEventListener("resize", onResize, true);
-        });
-        initialize();
+        this.initializeResizeListener();
 
         new AutoplayService();
+    }
+
+    initializeResizeListener() {
+        return once(() => {
+            const onResize = debounce(() => {
+                this.board.redrawAll();
+            }, 100);
+            window.addEventListener("resize", onResize, true);
+        })
     }
 
 
