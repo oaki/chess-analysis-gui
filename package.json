@@ -60,9 +60,9 @@
     "typescript": "^2.9.2"
   },
   "scripts": {
-    "start": "react-app-rewired start --scripts-version react-scripts-ts start",
+    "start": "react-scripts-ts start",
     "start:dev": "REACT_APP_SECRET_CODE=dev123 npm start",
-    "build": "react-app-rewired start --scripts-version react-scripts-ts build",
+    "build": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",
     "eject": "react-scripts-ts eject"
   }
