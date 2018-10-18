@@ -15,5 +15,6 @@
 @import './progressBar.css';
 @import 'list.css';
 @import 'alert.css';
+@import 'fullLoading.css';
 @import './app.css';
 

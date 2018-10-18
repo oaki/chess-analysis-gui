@@ -5,3 +5,12 @@
     flex-direction: column;
 
 }
+
+.sing-in-with-google{
+    width: 200px;
+    display: inline-block;
+    margin-top: 3rem;
+}
+.sing-in-with-google--image{
+    width: 100%;
+}

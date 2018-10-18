@@ -1,5 +1,4 @@
 import config from "../config";
-import {IUser} from "../reducers";
 
 class ApiManager {
     constructor(private apiHost: string) {
@@ -25,24 +24,32 @@ class ApiManager {
         return await this.fetch(`/user/history/${Number(id)}`, fetchData);
     }
 
-    async saveGame(moves: any, user: IUser) {
+    async getProfile(token) {
         const fetchData = {
             headers: new Headers({
-                Authorization: `Bearer ${user.token}`
+                Authorization: `Bearer ${token}`
+            })
+        };
+        return await this.fetch(`/user/profile/`, fetchData);
+    }
+
+    async saveGame(moves: any, lastGameId: number, token: string) {
+        const fetchData = {
+            headers: new Headers({
+                Authorization: `Bearer ${token}`
             }),
             method: "PUT",
             body: JSON.stringify({moves: moves})
         };
 
-        return await this.fetch(`/user/history/${Number(user.last_game_id)}`, fetchData);
+        return await this.fetch(`/user/history/${Number(lastGameId)}`, fetchData);
     }
 
-    async getSignUser(token: string) {
+    async getUserBasedOnGoogleToken(token: string) {
 
         const fetchData = {
             headers: new Headers(),
             method: "POST",
-            // mode: 'no-cors',
             body: JSON.stringify({
                 jwt_token: token
             }),
@@ -80,6 +87,57 @@ class ApiManager {
             throw e;
         }
 
+    }
+
+
+    async getTemporaryToken() {
+
+        const fetchData = {
+            method: "GET",
+        };
+
+        return await this.fetch("/auth/temporary-session", fetchData);
+    }
+
+    async verifyTemporaryToken(token) {
+
+        const fetchData = {
+            headers: new Headers(),
+            method: "POST",
+            // mode: 'no-cors',
+            body: JSON.stringify({
+                token
+            }),
+        };
+
+        return await this.fetch("/auth/verify-temporary-session", fetchData);
+    }
+
+    async pairGoogleTokenAndTemporaryToken(googleToken, temporaryToken) {
+
+        const fetchData = {
+            headers: new Headers(),
+            method: "POST",
+            body: JSON.stringify({
+                google_token: googleToken,
+                temporary_token: temporaryToken
+            }),
+        };
+
+        return await this.fetch("/auth/pair-temporary-session", fetchData);
+    }
+
+    async checkTemporaryToken(temporaryToken) {
+
+        const fetchData = {
+            headers: new Headers(),
+            method: "POST",
+            body: JSON.stringify({
+                temporary_token: temporaryToken
+            }),
+        };
+
+        return await this.fetch("/auth/check-temporary-token", fetchData);
     }
 
 }

@@ -16,7 +16,7 @@ class Logger {
 
     constructor() {
         this.uuid = guid();
-        this.interval = setInterval(this.saveLogs, 2000);
+        this.interval = setInterval(this.saveLogs, 10000);
     }
 
     saveLogs = () => {

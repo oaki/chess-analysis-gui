@@ -3,12 +3,9 @@ import {CSSProperties} from "react";
 import {Redirect, Route, RouteComponentProps, RouteProps} from "react-router-dom"
 import {connect} from "react-redux";
 import {IUser} from "../../reducers";
-import {ApiManagerService} from "../../services/apiManager";
-import store from "../../store";
-import {setUser} from "../../actions";
-import {setHistory} from "../../components/history/historyReducers";
 import {SessionManagerService} from "../../services/sessionManager";
-import {Log} from "../../libs/logger";
+import {Loading} from "../../components/Loading";
+import {ApiManagerService} from "../../services/apiManager";
 
 interface ISignInPageProps {
     user: IUser;
@@ -17,48 +14,72 @@ interface ISignInPageProps {
 
 class SignInPage extends React.Component<ISignInPageProps, any> {
 
-    handleOnSuccess = async (data: Partial<IUser>) => {
-        const values: IUser = {
-            isLoggedIn: true,
-            email: data.email || "",
-            name: data.name || "",
-            img: data.img || "",
-            token: data.token || "",
-            last_game_id: 0,
-        };
+    private timer;
 
-        const game = await ApiManagerService.getLastGame(values.token);
-        values.last_game_id = game.id;
+    constructor(props: ISignInPageProps) {
+        super(props);
+        this.state = {
+            isLoading: true
+        }
 
-        SessionManagerService.setUser(values);
-        store.dispatch(setUser(values));
-        store.dispatch(setHistory(game.moves));
+    }
 
-        if (this.props.user.isLoggedIn && this.props.user.token) {
+    // loadUserData = async (data: Partial<IUser>) => {
+    //     const values: IUser = {
+    //         isLoggedIn: true,
+    //         email: data.email || "",
+    //         name: data.name || "",
+    //         img: data.img || "",
+    //         last_game_id: 0,
+    //     };
+    //
+    //     const game = await ApiManagerService.getLastGame(values.token);
+    //     values.last_game_id = game.id;
+    //
+    //     SessionManagerService.setUser(values);
+    //     store.dispatch(setUser(values));
+    //     store.dispatch(setHistory(game.moves));
+    //
+    //     if (this.props.user.isLoggedIn && this.props.user.token) {
+    //
+    //         console.log("Redirect!!!");
+    //         return location.href = "/";
+    //     }
+    // }
 
-            console.log("Redirect!!!");
-            return location.href = "/";
+    handleOpenPopup = (e) => {
+        e.preventDefault();
+        this.setState({isLoading: true});
+
+        const token = SessionManagerService.getTemporaryToken();
+        window.open(`/auth/google-popup?state=${JSON.stringify({token})}`, "google-popup-window", "width=450,height=550");
+
+        // start checking each second if temporary token is valid on the server
+        // if yes redirect to homepage
+        this.timer = setInterval(() => {
+            this.checkTemporaryTokenOnServer();
+        }, 1000)
+    }
+
+    private async checkTemporaryTokenOnServer() {
+        try {
+            const res = await ApiManagerService.checkTemporaryToken(SessionManagerService.getTemporaryToken());
+            clearInterval(this.timer);
+            SessionManagerService.removeTemporaryToken();
+            SessionManagerService.setToken(res.token);
+            location.href = '/';
+        } catch (e) {
+            console.log(e);
         }
     }
 
-    handleOpenPopup = () => {
-        let popup: any = {};
-        Log.info("handleOpenPopup");
-
-        const messageListener = (e) => {
-            Log.info("handleOpenPopup->messageListener", e.data);
-            if (e.data && e.data.user_id) {
-                this.handleOnSuccess(e.data);
-                popup.close();
-                window.removeEventListener("message", messageListener);
-            }
-        };
-
-        window.addEventListener("message", messageListener);
-        popup = window.open("/auth/google-popup", "google-popup-window", "width=450,height=450");
-    }
-
     render() {
+
+        if (this.state.isLoading) {
+            return (
+                <Loading isLoading={this.state.isLoading}/>
+            )
+        }
 
         const style: CSSProperties = {
             textAlign: "center",
@@ -68,7 +89,7 @@ class SignInPage extends React.Component<ISignInPageProps, any> {
         return (
             <div className="page-log-in container" style={style}>
                 <h2>
-                    Log in
+                    Sing in
                 </h2>
 
                 <p>
@@ -78,9 +99,25 @@ class SignInPage extends React.Component<ISignInPageProps, any> {
                     intelligence engine.
                 </p>
 
-                <button type="button" className="btn" onClick={this.handleOpenPopup}>Google Sign In</button>
+
+                <a href="#" className="sing-in-with-google" onClick={this.handleOpenPopup}>
+                    <img
+                        className="sing-in-with-google--image"
+                        src="/img/btn_google_signin_light_normal_web@2x.png"
+                        alt="Sign in with Google"
+                    />
+                </a>
             </div>
         );
+    }
+
+    componentDidMount() {
+
+        if (this.props.user.isLoggedIn) {
+            (this.props as any).history.push("/");
+        }
+
+        this.setState({isLoading: false});
     }
 }
 

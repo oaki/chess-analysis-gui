@@ -6,7 +6,6 @@ import {BrowserRouter} from "react-router-dom"
 import {MenuWithRouter} from "../components/menu/menu";
 import {History} from "../components/history/history";
 import {SmartAwesomeChessboard} from "../components/chessboard/chessboard";
-import BootstrapData from "../components/bootstrapData";
 
 
 export class ChessboardPage extends React.Component<any, any> {
@@ -19,36 +18,35 @@ export class ChessboardPage extends React.Component<any, any> {
         const chessboarcWidth = availWidth - 30/* padding:15*/;
         const chessboarcHeight = chessboarcWidth;
         const height = availHeight - 40 /* bottom menu height */ - chessboarcHeight;
-
         console.log({
             availHeight, availWidth, chessboarcWidth, chessboarcHeight, height
         });
         return (
-            <BootstrapData>
-                <div className="container container-fullscreen">
 
-                    <div className="row">
-                        <div className="col-sm-7">
-                            <SmartAwesomeChessboard key="1"/>
-                        </div>
-                        <div className="col-sm-5">
-                            <div className="ox-a" style={{height}}>
-                                <Pannel/>
-                                <History/>
-                            </div>
+            <div className="container container-fullscreen">
+
+                <div className="row">
+                    <div className="col-sm-7">
+                        <SmartAwesomeChessboard key="1"/>
+                    </div>
+                    <div className="col-sm-5">
+                        <div className="ox-a" style={{height}}>
+                            <Pannel/>
+                            <History/>
                         </div>
                     </div>
-
-
-                    <MenuWithRouter
-                        showMainMenu={true}
-                        showFlip={true}
-                        showUndo={true}
-                        showRedo={true}
-                        showAutoplay={true}
-                    />
                 </div>
-            </BootstrapData>
+
+
+                <MenuWithRouter
+                    showMainMenu={true}
+                    showFlip={true}
+                    showUndo={true}
+                    showRedo={true}
+                    showAutoplay={true}
+                />
+            </div>
+
         );
     }
 }

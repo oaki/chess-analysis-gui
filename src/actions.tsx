@@ -1,8 +1,8 @@
 import {IWorkerResponse} from "./interfaces";
 import config from "./config";
 import {IUser, IWorker} from "./reducers";
-import {SessionManagerService} from "./services/sessionManager";
 import {Flash} from "./services/errorManager";
+import {SessionManagerService} from "./services/sessionManager";
 
 export const UPDATE_LOADING = "UPDATE_LOADING";
 export const SET_POSITION = "SET_POSITION";
@@ -77,6 +77,7 @@ export function setStatus(status: string) {
     };
 }
 
+
 export function setUser(user: IUser) {
     return {
         payload: user,
@@ -87,8 +88,6 @@ export function setUser(user: IUser) {
 export function loadOpeningBook() {
     return async (dispatch: (data: any) => {}, getState: any) => {
         dispatch(setLoading(true));
-
-
         dispatch(setLoading(false));
     }
 }
@@ -97,7 +96,7 @@ export function loadOpeningBook() {
 export function loadEngines() {
     return async (dispatch: (data: any) => {}, getState: any) => {
         console.log("data", getState());
-        const token = getState()["user"]["token"];
+        const token = SessionManagerService.getToken();
         dispatch(setLoading(true));
 
         const url = `${config.apiHost}/user/workers?offset=${Number(0)}&limit=${Number(10)}`;
@@ -140,7 +139,7 @@ export function checkWorkers(workerList: IWorker[]) {
         dispatch(setLoading(true));
 
 
-        const token = getState()["user"]["token"];
+        const token = SessionManagerService.getToken();
         const params = workerList.map((worker: IWorker) => worker.uuid).map((uuid: string) => `uuids=${uuid}`).join("&");
 
         const url = `${config.apiHost}/user/workers/ready?${params}`;
@@ -175,7 +174,7 @@ export function checkWorkers(workerList: IWorker[]) {
 export function addWorker(props: any) {
     return async (dispatch: (data: any) => {}, getState: any) => {
 
-        const token = getState()["user"]["token"];
+        const token = SessionManagerService.getToken();
         dispatch(setLoading(true));
 
         const url = `${config.apiHost}/user/workers`;
@@ -216,7 +215,7 @@ export function addWorker(props: any) {
 export function deleteWorker(props: any) {
     return async (dispatch: (data: any) => {}, getState: any) => {
 
-        const token = getState()["user"]["token"];
+        const token = SessionManagerService.getToken();
         dispatch(setLoading(true));
 
         const url = `${config.apiHost}/user/workers/${Number(props.id)}`;
@@ -254,7 +253,7 @@ export function addNewGame(callback) {
     return async (dispatch: (data: any) => {}, getState: any) => {
 
         const user = getState()["user"];
-        const token = user.token;
+        const token = SessionManagerService.getToken();
         dispatch(setLoading(true));
 
         const url = `${config.apiHost}/user/history`;
@@ -274,9 +273,7 @@ export function addNewGame(callback) {
 
             const game: any = await response.json();
 
-            const newUser = {...user, last_game_id: game.id};
-            SessionManagerService.setUser(newUser);
-            dispatch(setUser({...user, last_game_id: game.id}));
+            dispatch(setUser({...user, lastGameId: game.id}));
             callback(game.id);
 
         } catch (e) {

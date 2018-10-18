@@ -1,7 +1,9 @@
 import {IUser} from "../reducers";
 
-export const TOKEN_BASE_NAME = "chess-analysis__token";
+export const TOKEN_BASE_NAME = "chess-analysis";
+export const TOKEN_NAME = "chess-analysis__token";
 export const TOKEN_USER_NAME = `${TOKEN_BASE_NAME}__user`;
+export const TOKEN_TEMPORARY = `temporary_token`;
 
 class SessionManager {
     private storage;
@@ -12,29 +14,31 @@ class SessionManager {
         }
     }
 
-    getUser(): IUser {
-        const value = this.storage.getItem(TOKEN_USER_NAME);
-        if (!value) {
-            return {
-                name: "",
-                email: "",
-                isLoggedIn: false,
-                img: "",
-                token: "",
-                last_game_id: 0,
-            };
-        }
-
-        return JSON.parse(value);
+    getToken(): string {
+        return this.storage.getItem(TOKEN_NAME);
     }
 
-    setUser(user: IUser) {
-        this.storage.setItem(TOKEN_USER_NAME, JSON.stringify(user));
+    setToken(token: string) {
+        this.storage.setItem(TOKEN_NAME, token);
     }
 
-    removeUser() {
-        this.storage.removeItem(TOKEN_USER_NAME);
+    removeToken() {
+        this.storage.removeItem(TOKEN_NAME);
     }
+
+    getTemporaryToken(): string {
+        return this.storage.getItem(TOKEN_TEMPORARY);
+
+    }
+
+    setTemporaryToken(token: string) {
+        this.storage.setItem(TOKEN_TEMPORARY, token);
+    }
+
+    removeTemporaryToken() {
+        this.storage.removeItem(TOKEN_TEMPORARY);
+    }
+
 }
 
 export const SessionManagerService = new SessionManager();

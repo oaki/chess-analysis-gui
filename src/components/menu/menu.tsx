@@ -84,8 +84,9 @@ export class Menu extends React.PureComponent<any, any> {
     }
 
     handleLogout = () => {
-        SessionManagerService.removeUser();
-        this.props.history.push("/auth/sign-in");
+        SessionManagerService.removeToken();
+        SessionManagerService.removeTemporaryToken();
+        location.href = '/';
     }
 
     handleNewGame = () => {
@@ -204,7 +205,7 @@ export class Menu extends React.PureComponent<any, any> {
                             <Link to="/settings">Settings</Link>
                         </li>
                         <li className="">
-                            <Link to="/" onClick={this.handleLogout}>Logout</Link>
+                            <Link to="/auth/sign-in" onClick={this.handleLogout}>Logout</Link>
                         </li>
                     </ul>
                 </div>

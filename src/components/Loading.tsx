@@ -5,17 +5,16 @@ interface ILoadingProps {
     isLoading: boolean;
 }
 
-function mapStateToProps(state: any) {
-    return {
-        isLoading: state.isLoading
-    }
-}
-
-@connect(mapStateToProps)
 export class Loading extends React.Component<ILoadingProps, any> {
     render() {
         if (this.props.isLoading) {
-            return <div className="alert alert-danger">{this.props.isLoading}</div>
+            return (
+                <div className="full-loading">
+                    <div className="full-loading__img">
+                        <img src="/img/chess-analysis-logo.svg" alt="chess-analysis-logo.svg"/>
+                    </div>
+                </div>
+            )
         }
         return null;
     }

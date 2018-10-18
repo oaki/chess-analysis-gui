@@ -10,6 +10,7 @@ import {Header} from "../components/Header";
 import {HistoryList} from "../components/historyList/historyList";
 import {setHistoryGameList} from "../components/historyList/historyListReducers";
 import {addError, Flash} from "../services/errorManager";
+import {SessionManagerService} from "../services/sessionManager";
 
 export class HistoryPage extends React.PureComponent<any, undefined> {
 
@@ -44,7 +45,7 @@ export class HistoryPage extends React.PureComponent<any, undefined> {
 export function loadHistoryGames() {
     return async (dispatch: (data: any) => {}, getState: any) => {
 
-        const token = getState()["user"]["token"];
+        const token = SessionManagerService.getToken();
         dispatch(setLoading(true));
 
         const url = `${config.apiHost}/user/history?offset=${Number(0)}&limit=${Number(10)}&order=DESC`;

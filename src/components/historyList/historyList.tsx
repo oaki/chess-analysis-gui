@@ -9,8 +9,6 @@ import {batchActions} from "redux-batched-actions";
 import {withRouter} from "react-router";
 
 import {setEvaluation, setPosition, setUser} from "../../actions";
-
-import {SessionManagerService} from "../../services/sessionManager";
 import {Link} from "react-router-dom"
 import {setSyzygyEvaluation} from "../syzygyExplorer/syzygyExplorerReducers";
 import {IHistoryMove, lastMoveId, setHistory} from "../history/historyReducers";
@@ -33,9 +31,6 @@ export class HistoryList extends React.Component<any, any> {
 
         if (historyGameResponse) {
             const user = store.getState()["user"];
-
-            SessionManagerService.setUser({...user, last_game_id: historyGameResponse.id});
-
             store.dispatch(batchActions([
                 setUser(user),
                 setHistory(historyGameResponse.moves),

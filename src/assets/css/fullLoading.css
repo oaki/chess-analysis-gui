@@ -1,0 +1,38 @@
+.full-loading {
+
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    z-index: 100;
+
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#375895+0,2d4a7d+100 */
+    background: #375895; /* Old browsers */
+    background: -moz-linear-gradient(45deg, #375895 0%, #2d4a7d 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(45deg, #375895 0%, #2d4a7d 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(45deg, #375895 0%, #2d4a7d 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#375895', endColorstr='#2d4a7d', GradientType=1); /* IE6-9 fallback on horizontal gradient */
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.full-loading .full-loading__img{
+    width: 40px;
+    height: 40px;
+    animation: pulse 2s infinite ease-in;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+}

@@ -16,6 +16,8 @@ import {treeService} from "../moveTree/tree";
 import {AutoplayService} from "../../libs/autoplayEngine";
 import {setPromotionDialog} from "./promotingDialogReducers";
 import {Log} from "../../libs/logger";
+import {SessionManagerService} from "../../services/sessionManager";
+import {IUser} from "../../reducers";
 
 const once = require("lodash/once");
 
@@ -154,8 +156,11 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
 
         const saveHistory = throttle(() => {
             const history = store.getState()["history"];
-            const user = store.getState()["user"];
-            ApiManagerService.saveGame(history, user);
+            const user: IUser = store.getState()["user"];
+            const token = SessionManagerService.getToken();
+            if (user.lastGameId) {
+                ApiManagerService.saveGame(history, user.lastGameId, token);
+            }
         }, 1000);
 
         function handleHistoryChange() {
@@ -204,13 +209,18 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
         new AutoplayService();
     }
 
+    onResize = debounce(() => {
+        this.board.redrawAll();
+        console.log("redraw");
+    }, 100)
+
     initializeResizeListener() {
-        return once(() => {
-            const onResize = debounce(() => {
-                this.board.redrawAll();
-            }, 100);
-            window.addEventListener("resize", onResize, true);
-        })
+
+        window.addEventListener("resize", this.onResize, true);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.onResize, true);
     }
 
 

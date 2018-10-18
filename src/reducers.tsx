@@ -15,7 +15,6 @@ import {historyListReducer} from "./components/historyList/historyListReducers";
 import {IOpeningMove, openingMovesReducer} from "./components/openingExplorer/openingExplorerReducers";
 import {syzygyReducer} from "./components/syzygyExplorer/syzygyExplorerReducers";
 import {IAction, IWorkerResponse} from "./interfaces";
-import {SessionManagerService} from "./services/sessionManager";
 
 import {historyReducer} from "./components/history/historyReducers";
 import {autoplayReducer, flipBoardReducer, menuReducer} from "./components/menu/menuReducers";
@@ -88,14 +87,13 @@ export const lastMoveReducer = (state: number = -1, action: any) => {
 
 export interface IUser {
     isLoggedIn: boolean;
-    email: string;
-    name: string;
-    img: string;
-    token: string;
-    last_game_id: number;
+    email?: string;
+    name?: string;
+    img?: string;
+    lastGameId?: number;
 }
 
-export const userReducer = (user: IUser = SessionManagerService.getUser(), action: IAction<IUser>) => {
+export const userReducer = (user: IUser = {isLoggedIn: false}, action: IAction<IUser>) => {
     switch (action.type) {
         case USER_SIGN_IN:
             console.log("old state", user, "new state", action.payload);
