@@ -9,7 +9,7 @@
     "diagram",
     "board"
   ],
-  "homepage": "https://chess-analysis.com/",
+  "homepage": "https://www.chess-analysis.com/",
   "author": "Pavol Bincik",
   "license": "MIT",
   "dependencies": {
