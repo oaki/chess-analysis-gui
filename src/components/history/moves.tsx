@@ -80,11 +80,11 @@ export function Moves(props: IMoves) {
         className += ` l-${props.level > 1 ? 2 : props.level}`;
 
         return (
-            <>
+            <React.Fragment key={moveIndex}>
                 <div
                     className={className}
                     style={style}
-                    key={move[NODE_MAP.id]}
+                    key={moveIndex}
                     onClick={props.handleMoveClick}
                     data-id={move[NODE_MAP.id]}
                 >
@@ -102,7 +102,7 @@ export function Moves(props: IMoves) {
                     counter={counter}
                     handleMoveClick={props.handleMoveClick}
                 />
-            </>
+            </React.Fragment>
         )
     })
 }

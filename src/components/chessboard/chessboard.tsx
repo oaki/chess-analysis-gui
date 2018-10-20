@@ -63,10 +63,6 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
 
                 <div id="awesome-chessboard" className="is2d"/>
 
-                <div className="fen">
-                    FEN: <input className="form-control form-control-sm" value={this.props.fen}/>
-                </div>
-
             </div>
         );
     }

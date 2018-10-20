@@ -94,7 +94,6 @@ export class HistoryList extends React.Component<any, any> {
         return (
             <ul>
                 {this.renderItem()}
-
             </ul>
         )
     }
