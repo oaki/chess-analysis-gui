@@ -11,3 +11,11 @@
     background-color: #c85b53;
     color: white;
 }
+
+.note {
+    margin: 1rem;
+    border-radius: .5rem;
+    background-color: #9ea1a6;
+    color: #000000;
+    padding: 1rem;
+}

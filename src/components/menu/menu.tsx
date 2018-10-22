@@ -126,7 +126,7 @@ export class Menu extends React.PureComponent<any, any> {
 
 
     render() {
-        const btnClasses = "btn btn-link btn-block";
+        const btnClasses = "btn btn-link btn-block bottom-menu__font-size";
         console.log("this.props.isSubMenuOpen", this.props.isSubMenuOpen);
         return (
             <div className="bottom-menu">

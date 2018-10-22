@@ -3,7 +3,6 @@ import * as React from "react";
 import {connect} from "react-redux";
 import FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import {faArrowRight} from "@fortawesome/fontawesome-free-solid";
-import * as moment from "moment";
 
 import {batchActions} from "redux-batched-actions";
 import {withRouter} from "react-router";
@@ -15,6 +14,9 @@ import {IHistoryMove, lastMoveId, setHistory} from "../history/historyReducers";
 import {setOpeningPosition} from "../openingExplorer/openingExplorerReducers";
 import {NODE_MAP} from "../moveTree/tree";
 import {IHistoryGameResponse} from "./historyListReducers";
+const format = require('date-fns/format');
+
+
 
 
 @connect((state) => ({historyList: state.historyList}))
@@ -48,7 +50,7 @@ export class HistoryList extends React.Component<any, any> {
     }
 
     private formatDate(date: string) {
-        return moment(date).format("D.M.Y");
+        return format(date, "DD.MM.YYYY");
     }
 
     private showMoveNumber(index: number) {

@@ -24,41 +24,12 @@ class SignInPage extends React.Component<ISignInPageProps, any> {
 
     }
 
-    // loadUserData = async (data: Partial<IUser>) => {
-    //     const values: IUser = {
-    //         isLoggedIn: true,
-    //         email: data.email || "",
-    //         name: data.name || "",
-    //         img: data.img || "",
-    //         last_game_id: 0,
-    //     };
-    //
-    //     const game = await ApiManagerService.getLastGame(values.token);
-    //     values.last_game_id = game.id;
-    //
-    //     SessionManagerService.setUser(values);
-    //     store.dispatch(setUser(values));
-    //     store.dispatch(setHistory(game.moves));
-    //
-    //     if (this.props.user.isLoggedIn && this.props.user.token) {
-    //
-    //         console.log("Redirect!!!");
-    //         return location.href = "/";
-    //     }
-    // }
-
     handleOpenPopup = (e) => {
         e.preventDefault();
         this.setState({isLoading: true});
 
         const token = SessionManagerService.getTemporaryToken();
         window.open(`/auth/google-popup?state=${JSON.stringify({token})}`, "google-popup-window", "width=450,height=550");
-
-        // start checking each second if temporary token is valid on the server
-        // if yes redirect to homepage
-        this.timer = setInterval(() => {
-            this.checkTemporaryTokenOnServer();
-        }, 1000)
     }
 
     private async checkTemporaryTokenOnServer() {
@@ -67,7 +38,7 @@ class SignInPage extends React.Component<ISignInPageProps, any> {
             clearInterval(this.timer);
             SessionManagerService.removeTemporaryToken();
             SessionManagerService.setToken(res.token);
-            location.href = '/';
+            location.href = "/";
         } catch (e) {
             console.log(e);
         }
@@ -89,7 +60,7 @@ class SignInPage extends React.Component<ISignInPageProps, any> {
         return (
             <div className="page-log-in container" style={style}>
                 <h2>
-                    Sing in
+                    Sign in
                 </h2>
 
                 <p>
@@ -118,6 +89,18 @@ class SignInPage extends React.Component<ISignInPageProps, any> {
         }
 
         this.setState({isLoading: false});
+
+        // start checking each second if temporary token is valid on the server
+        // if yes redirect to homepage
+        if (SessionManagerService.getTemporaryToken()) {
+            this.timer = setInterval(() => {
+                this.checkTemporaryTokenOnServer();
+            }, 2000);
+        }
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.timer);
     }
 }
 

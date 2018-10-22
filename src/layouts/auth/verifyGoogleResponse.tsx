@@ -2,6 +2,8 @@ import * as React from "react";
 import {ApiManagerService} from "../../services/apiManager";
 import {Log} from "../../libs/logger";
 import * as queryString from "querystring";
+import FontAwesomeIcon from "@fortawesome/react-fontawesome";
+import * as faAngleLeft from "@fortawesome/fontawesome-free-solid/faAngleLeft";
 
 export function VerifyGoogleResponse(props: any) {
 
@@ -12,18 +14,24 @@ export function VerifyGoogleResponse(props: any) {
     const temporaryToken = state.token;
 
     ApiManagerService.pairGoogleTokenAndTemporaryToken(response.id_token, temporaryToken).then((response) => {
-
-
-        // const jwtValues = jwt.decode(response.token);
-        // jwtValues.token = response.token;
-        //
-        // Log.info("VerifyGoogleResponse->window.opener.postMessage", jwtValues, window.location.origin);
-        // Log.info("window.opener", window.opener);
-        // window.opener.postMessage({reload: true}, window.location.origin);
-        // (window.parent as any).refresh();
-        debugger;
         window.close();
     });
 
-    return "Loading ...";
+    const styles = {
+        backgroundColor: "black",
+        padding: "0 7px",
+        color: "#cecece",
+        display: "inline-block",
+        borderRadius: "3px"
+    };
+
+    return (
+        <div className="app">
+            <div className="note">
+                You can now go <b>back</b> to the Chess 2.0 app,
+                by tapping the <span style={styles}><FontAwesomeIcon icon={faAngleLeft}/></span> Chess 2.0 from the
+                top left of your phone's screen.
+            </div>
+        </div>
+    );
 }
