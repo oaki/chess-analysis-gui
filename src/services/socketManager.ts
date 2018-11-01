@@ -3,8 +3,9 @@ import {setEvaluation} from "../actions";
 import {ISyzygy, setSyzygyEvaluation} from "../components/syzygyExplorer/syzygyExplorerReducers";
 import config from "../config";
 import {IWorkerResponse, LINE_MAP} from "../interfaces";
-import store from "../store";
 import {Flash} from "./errorManager";
+import {StockfishService} from "./stocfishService";
+import {parseResult} from "../libs/parseStockfishResults";
 
 const throttle = require("lodash/throttle");
 
@@ -13,20 +14,37 @@ export default class SocketManager {
     private store;
     private signInToken;
     private dispatchResults;
+    private stockfishEngineInterface;
 
     constructor(private config: SocketIoConfig, store) {
         this.store = store;
-        console.log("store", store);
+
         this.dispatchResults = throttle((results) => {
             this.store.dispatch(setEvaluation(results));
-        }, 1000)
+        }, 1000);
+
+        if (!StockfishService.isInit()) {
+            StockfishService.init();
+        }
+
+        this.stockfishEngineInterface = StockfishService;
+
+        this.stockfishEngineInterface.onResult((data, fen) => {
+
+            const result = parseResult(data, fen);
+
+            if (result) {
+                this.handleResult(JSON.stringify(result));
+            }
+
+        })
+
     }
 
     handleResult = (result: string) => {
-        console.log("handleResult->", result);
+
         const arr = JSON.parse(result);
         // for now we are expecting only one result, no more
-
 
         // ignore others @todo disable others results
         const fen = this.store.getState()["fen"];
@@ -39,6 +57,12 @@ export default class SocketManager {
     handleSyzygyResult = (result: ISyzygy) => {
         console.log("handleSyzygyResult", result);
         this.store.dispatch(setSyzygyEvaluation(result))
+    }
+
+    handleOfflineWorker = (fen: string) => {
+        console.log("handleOfflineWorker", fen);
+        this.stockfishEngineInterface.go(fen);
+        // this.store.dispatch(setSyzygyEvaluation(result))
     }
 
 
@@ -76,6 +100,7 @@ export default class SocketManager {
          */
         this.socket.on("workerEvaluation", this.handleResult);
         this.socket.on("syzygyEvaluation", this.handleSyzygyResult);
+        this.socket.on("noWorkerAvailable", this.handleOfflineWorker);
         // this.socket.on('openingMoves', this.handleOpeningMoves);
 
         this.socket.on("disconnect", () => {
@@ -98,15 +123,8 @@ export default class SocketManager {
             return data;
         }
 
-        const newData = {...data};
-        // const arr = newData[LINE_MAP.pv].match(/.{1,4}/g);
-        // if (arr && arr.length) {
-        //     newData[LINE_MAP.pv] = arr.join(' ');
-        // }
-
-        return newData;
+        return {...data};
     }
-
 
 }
 

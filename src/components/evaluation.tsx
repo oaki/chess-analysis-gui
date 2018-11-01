@@ -59,23 +59,38 @@ export class Evaluation extends React.Component<any, any> {
 
     renderLine(evaluation: IEvaluation) {
         return (
-            <div className="evaluation" key={evaluation[LINE_MAP.pv]}>
-                {evaluation && <div className="score">
-                    <span>{this.getScore(evaluation)}</span>
-                    {!evaluation[LINE_MAP.mate] && <span className="fs-xs fw-r">/{evaluation[LINE_MAP.depth]}</span>}
-                </div>}
+            <React.Fragment key={evaluation[LINE_MAP.pv]}>
+                <div className="evaluation">
+                    {evaluation && <div className="score">
+                        <span>{this.getScore(evaluation)}</span>
+                        {!evaluation[LINE_MAP.mate] &&
+                        <span className="fs-xs fw-r">/{evaluation[LINE_MAP.depth]}</span>}
+                    </div>}
 
-                {/*{this.props.evaluation && <span className="nodes">{this.getNodes()}</span>}*/}
-                {evaluation && <div className="c-pv ml-5">
-                    <div className="pv-holder">
-                        {this.prepareEvaluation(evaluation[LINE_MAP.pv], this.props.fen).map((move, index) => {
-                            return (
-                                <span className="pv-holder__move" key={index}>{move}</span>
-                            )
-                        })}
-                    </div>
+                    {evaluation && <div className="c-pv ml-5">
+                        <div className="pv-holder">
+                            {this.prepareEvaluation(evaluation[LINE_MAP.pv], this.props.fen).map((move, index) => {
+                                return (
+                                    <span className="pv-holder__move" key={index}>{move}</span>
+                                )
+                            })}
+                        </div>
+                    </div>}
+                </div>
+
+                {evaluation &&
+                <div className="evaluation-info">
+                    <table>
+                        <tbody>
+                        <tr>
+                            <td className="fs-xs ta-c">Nodes: {this.getNodes(evaluation)}</td>
+                            <td className="fs-xs ta-c">Time: {this.getTime(evaluation)}</td>
+                            <td className="fs-xs ta-c">Tb hits: {this.getTbHits(evaluation)}</td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>}
-            </div>
+            </React.Fragment>
         )
     }
 
@@ -84,14 +99,13 @@ export class Evaluation extends React.Component<any, any> {
         if (this.props.evaluation.length === 0) {
             return null
         }
-        console.log("this.props.evaluation", this.props.evaluation);
-        console.log("this.props.evaluation.fen === props.fen", this.props.evaluation.fen, this.props.fen);
         return this.props.evaluation.map((evaluation) => this.renderLine(evaluation));
     }
 
     componentDidUpdate(prevProps) {
         if (prevProps.fen !== this.props.fen) {
             console.log("setNewPosition");
+
             SocketManagerService.emit("setNewPosition", {
                 FEN: this.props.fen
             });
@@ -116,10 +130,42 @@ export class Evaluation extends React.Component<any, any> {
         return score;
     }
 
-    getNodes() {
-        const nodes = this.props.evaluation[LINE_MAP.nodes];
-        const d = nodes / 1000;
-        return `${d}K`;
+    getNodes(evaluation: IEvaluation) {
+        return this.formatNumber(evaluation[LINE_MAP.nodes]);
+
+    }
+
+    getTime(evaluation: IEvaluation) {
+        if (evaluation[LINE_MAP.time]) {
+            const time = Number(evaluation[LINE_MAP.time]) / 1000;
+            return `${time.toFixed(0)}s`;
+        }
+        return 0;
+
+    }
+
+    getTbHits(evaluation: IEvaluation) {
+        return this.formatNumber(evaluation[LINE_MAP.tbhits]);
+    }
+
+
+    private formatNumber(num: number | string | undefined) {
+        if (num) {
+            const n = Number(num);
+
+            if (n > 1000000) {
+                const d = n / 1000000;
+                return `${d.toFixed(2)}M`;
+            }
+
+            if (n > 1000) {
+                const d = n / 1000;
+                return `${d.toFixed(0)}K`;
+            }
+
+            return n;
+
+        }
     }
 
 }

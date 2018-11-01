@@ -17,7 +17,8 @@ export class ChessboardPage extends React.Component<any, any> {
         const availWidth = window.innerWidth;
         const chessboarcWidth = availWidth - 30/* padding:15*/;
         const chessboarcHeight = chessboarcWidth;
-        const height = availHeight - 40 /* bottom menu height */ - chessboarcHeight;
+        const evaluationHeight = 34;
+        const height = availHeight - 40 /* bottom menu height */ - chessboarcHeight - evaluationHeight;
         console.log({
             availHeight, availWidth, chessboarcWidth, chessboarcHeight, height
         });
@@ -30,8 +31,9 @@ export class ChessboardPage extends React.Component<any, any> {
                         <SmartAwesomeChessboard key="1"/>
                     </div>
                     <div className="col-sm-5">
-                        <div className="ox-a" style={{height}}>
-                            <Pannel/>
+                        <Pannel/>
+
+                        <div className="ox-a" style={{marginLeft: "-15px", marginRight: "-15px", height}}>
                             <History/>
                         </div>
                     </div>

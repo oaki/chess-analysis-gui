@@ -20,6 +20,7 @@ import {historyReducer} from "./components/history/historyReducers";
 import {autoplayReducer, flipBoardReducer, menuReducer} from "./components/menu/menuReducers";
 import {promotionDialogReducer} from "./components/chessboard/promotingDialogReducers";
 import {errorReducers} from "./services/errorManager";
+import {isOnlineReducer} from "./services/onlineIndicator";
 
 export const loadingReducer = (isLoading: boolean = false, action: any) => {
     switch (action.type) {
@@ -151,6 +152,7 @@ export default combineReducers({
     syzygy: syzygyReducer,
     promotionDialog: promotionDialogReducer,
     autoplay: autoplayReducer,
+    isOnline: isOnlineReducer,
 });
 
 export function deepCopy(obj) {

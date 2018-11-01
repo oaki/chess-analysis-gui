@@ -95,7 +95,6 @@ export function loadOpeningBook() {
 
 export function loadEngines() {
     return async (dispatch: (data: any) => {}, getState: any) => {
-        console.log("data", getState());
         const token = SessionManagerService.getToken();
         dispatch(setLoading(true));
 

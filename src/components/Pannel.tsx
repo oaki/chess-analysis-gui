@@ -43,22 +43,21 @@ export class Pannel extends React.Component<any, IPannelState> {
 
     render() {
         return (
-            <div>
+            <React.Fragment>
+                <Evaluation/>
+
                 <SmartOpeningExplorer/>
+
                 <SyzygyExplorerSmart/>
 
                 <div className="app__status">
-
-                    <Evaluation/>
-
                     <div className="app__pgn">{this.state.pgn}</div>
                     <div className="app__fen">{this.state.fen}</div>
                     <div className="app__opening">{this.props.status}</div>
-
                 </div>
 
 
-            </div>
+            </React.Fragment>
         )
 
     }

@@ -19,6 +19,8 @@ import {Flash} from "./services/errorManager";
 import {SocketManagerService} from "./services/socketService";
 import {setHistory} from "./components/history/historyReducers";
 import {Loading} from "./components/Loading";
+import {StockfishService} from "./services/stocfishService";
+import {onlineIndicatorService} from "./services/onlineIndicator";
 
 
 export class App extends React.Component<{}, {}> {
@@ -67,6 +69,8 @@ export class App extends React.Component<{}, {}> {
     componentDidMount() {
         const token = SessionManagerService.getToken();
 
+        onlineIndicatorService.init();
+
         try {
             if (token) {
                 ApiManagerService.getProfile(token).then((res) => {
@@ -81,6 +85,7 @@ export class App extends React.Component<{}, {}> {
                         this.setState({isLoading: false});
                         SocketManagerService.setSignInToken(token);
                         SocketManagerService.connect();
+                        // StockfishService.init();
                     });
 
                 }).catch(() => {

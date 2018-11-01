@@ -9,6 +9,7 @@
     padding: 0 .3rem;
     font-weight: bold;
     height: 1.3rem;
+    font-size: .9rem;
 }
 
 .evaluation .depth {
@@ -33,5 +34,5 @@
 }
 .evaluation .c-pv {
     height: 1.3rem;
-    overflow-y: auto;
+    overflow-y: hidden;
 }
