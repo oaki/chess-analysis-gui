@@ -17,7 +17,7 @@ import {AutoplayService} from "../../libs/autoplayEngine";
 import {setPromotionDialog} from "./promotingDialogReducers";
 import {Log} from "../../libs/logger";
 import {SessionManagerService} from "../../services/sessionManager";
-import {IUser} from "../../reducers";
+import {ILastMove, IUser} from "../../reducers";
 
 const once = require("lodash/once");
 
@@ -31,8 +31,9 @@ const debounce = require("lodash/debounce");
     history: state.history,
     isFlip: state.isFlip,
     lastMoveId: state.lastMoveId,
+    lastMove: state.lastMove,
     promotionDialog: state.promotionDialog,
-
+    evaluation: state.evaluation,
 }))
 export class SmartAwesomeChessboard extends React.Component<any, any> {
 
@@ -74,13 +75,8 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
 
     handlePromotePiece = (e: any) => {
         e.preventDefault();
-        const promotion: string = e.currentTarget.dataset.piece;
-        console.log("handlePromotePiece", e.currentTarget.dataset.piece);
-
-        // store.dispatch(setPosition(e.target.value));
         const propsSetMove = {...store.getState()["promotionDialog"]["requestedParams"]};
-        propsSetMove.promotion = promotion;
-        console.log("propsSetMove", propsSetMove);
+        propsSetMove.promotion = e.currentTarget.dataset.piece;
         store.dispatch(setPromotionDialog({isOpen: false}));
         store.dispatch(setMove(propsSetMove));
     }
@@ -93,22 +89,43 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
         }
 
         if (nextProps.lastMoveId !== this.props.lastMoveId) {
-
+            console.log("nextProps", nextProps);
             const chess = new Chess(nextProps.fen);
-            this.board.set({
+            const options: any = {
                 check: chess.in_check(),
                 turnColor: toColor(chess),
                 highlight: {
-                    check: true
+                    check: true,
+                    lastMove: true,
+                    selected: true,
                 },
                 movable: {
                     color: toColor(chess),
                     dests: toDests(chess)
                 },
-                fen: nextProps.fen
-            });
+                fen: nextProps.fen,
+            };
+
+            if (nextProps.lastMove.from && nextProps.lastMove.to) {
+                options.lastMove = [nextProps.lastMove.from, nextProps.lastMove.to];
+            }
+            this.board.set(options);
             this.board.redrawAll();
             this.updateStatus(chess);
+        }
+
+
+        if (nextProps.evaluation.length > 0) {
+
+            const move = nextProps.evaluation[0].p;
+            const from = move.substring(0, 2);
+            const to = move.substring(2, 4);
+
+            this.board.setShapes([{
+                orig: from,
+                dest: to,
+                brush: "paleGreen"
+            }])
         }
     }
 
@@ -177,7 +194,8 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
         this.board = Chessground(el, {
             orientation: "white",
             highlight: {
-                check: true
+                check: true,
+                lastMove: true
             },
             addPieceZIndex: true,
             movable: {
@@ -228,4 +246,8 @@ interface IChessboardProps {
     history: IHistoryMove[];
     isFlip: boolean;
     lastMoveId: string;
+    lastMove: ILastMove;
+    evaluation: {
+        p: string
+    }[]
 }

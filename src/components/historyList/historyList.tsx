@@ -46,7 +46,6 @@ export class HistoryList extends React.Component<any, any> {
         }
 
         this.props.history.push("/");
-
     }
 
     private formatDate(date: string) {

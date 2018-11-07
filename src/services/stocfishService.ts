@@ -1,7 +1,7 @@
 class StockfishEngineInterface {
     private config = {
         threads: 1,
-        delay: 5 * 1000,
+        delay: 120 * 1000,
         hashSize: 32,
         multiPv: 1
     }
@@ -10,7 +10,7 @@ class StockfishEngineInterface {
     private lastFen: string;
     private onResultCallback: (data: string, fen: string) => {};
 
-    private isInicialied = false;
+    private isInicialized = false;
 
 
     constructor() {
@@ -18,7 +18,7 @@ class StockfishEngineInterface {
     }
 
     isInit() {
-        return this.isInicialied;
+        return this.isInicialized;
     }
 
     init() {
@@ -40,7 +40,7 @@ class StockfishEngineInterface {
         this.send(`setoption name multipv value ${this.config.multiPv}`);
         this.stop();
 
-        this.isInicialied = true;
+        this.isInicialized = true;
 
     }
 

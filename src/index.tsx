@@ -3,7 +3,9 @@ import * as ReactDOM from "react-dom";
 import App from "./App";
 import registerServiceWorker from "./registerServiceWorker";
 import "./assets/css/index.css";
+import onlineIndicator from "./services/onlineIndicator";
 
+onlineIndicator();
 
 ReactDOM.render(
     <App/>,

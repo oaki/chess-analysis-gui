@@ -5,6 +5,7 @@ import {
     ON_MOVE,
     SET_EVALUATION,
     SET_LAST_MOVE,
+    SET_LAST_MOVE_ID,
     SET_POSITION,
     SET_STATUS,
     SET_WORKER_LIST,
@@ -17,10 +18,11 @@ import {syzygyReducer} from "./components/syzygyExplorer/syzygyExplorerReducers"
 import {IAction, IWorkerResponse} from "./interfaces";
 
 import {historyReducer} from "./components/history/historyReducers";
-import {autoplayReducer, flipBoardReducer, menuReducer} from "./components/menu/menuReducers";
+import {autoplayReducer, flipBoardReducer, menuReducer, pgnDialogReducer} from "./components/menu/menuReducers";
 import {promotionDialogReducer} from "./components/chessboard/promotingDialogReducers";
 import {errorReducers} from "./services/errorManager";
 import {isOnlineReducer} from "./services/onlineIndicator";
+import {settingsReducer} from "./layouts/settingPage";
 
 export const loadingReducer = (isLoading: boolean = false, action: any) => {
     switch (action.type) {
@@ -76,9 +78,9 @@ export const evaluationReducer = (evaluation: IWorkerResponse | IOpeningMove[] =
 ;
 
 
-export const lastMoveReducer = (state: number = -1, action: any) => {
+export const lastMoveIdReducer = (state: number = -1, action: any) => {
     switch (action.type) {
-        case SET_LAST_MOVE:
+        case SET_LAST_MOVE_ID:
             return action.id;
 
         default:
@@ -86,6 +88,21 @@ export const lastMoveReducer = (state: number = -1, action: any) => {
     }
 };
 
+
+export const lastMoveReducer = (state: ILastMove = {from: "", to: ""}, action: IAction<ILastMove>) => {
+    switch (action.type) {
+        case SET_LAST_MOVE:
+            return action.payload;
+
+        default:
+            return state;
+    }
+};
+
+export interface ILastMove {
+    from: string,
+    to: string
+}
 export interface IUser {
     isLoggedIn: boolean;
     email?: string;
@@ -144,7 +161,8 @@ export default combineReducers({
     history: historyReducer,
     status: statusReducer,
     isFlip: flipBoardReducer,
-    lastMoveId: lastMoveReducer,
+    lastMoveId: lastMoveIdReducer,
+    lastMove: lastMoveReducer,
     menu: menuReducer,
     workers: workerReducer,
     onMove: onMoveReducer,
@@ -153,6 +171,8 @@ export default combineReducers({
     promotionDialog: promotionDialogReducer,
     autoplay: autoplayReducer,
     isOnline: isOnlineReducer,
+    settings: settingsReducer,
+    pgnDialog: pgnDialogReducer,
 });
 
 export function deepCopy(obj) {

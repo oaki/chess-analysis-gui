@@ -1,6 +1,7 @@
 import {IAction} from "../../interfaces";
 
 export const MENU_TOGGLE_OPEN = "MENU_TOGGLE_OPEN";
+export const MENU_OPEN_PGN_DIALOG = "MENU_OPEN_PGN_DIALOG";
 export const FLIP_BOARD = "FLIP_BOARD";
 export const AUTOPLAY = "AUTOPLAY";
 
@@ -22,6 +23,13 @@ export function toogleOpenMenu(isOpen: boolean | null = null) {
     return {
         payload: {isOpen},
         type: MENU_TOGGLE_OPEN
+    };
+}
+
+export function openPgnDialog(isOpen: boolean = false) {
+    return {
+        payload: isOpen,
+        type: MENU_OPEN_PGN_DIALOG
     };
 }
 
@@ -68,5 +76,16 @@ export const menuReducer = (menu: IMenu = {isOpen: false}, action: IAction<Parti
 
         default:
             return menu;
+    }
+};
+
+
+export const pgnDialogReducer = (isOpen: boolean = false, action: IAction<boolean>) => {
+    switch (action.type) {
+        case MENU_OPEN_PGN_DIALOG:
+            return action.payload;
+
+        default:
+            return isOpen;
     }
 };

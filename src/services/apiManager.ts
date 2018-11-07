@@ -45,6 +45,18 @@ class ApiManager {
         return await this.fetch(`/user/history/${Number(lastGameId)}`, fetchData);
     }
 
+    async importGameFromPgn(pgn: string, token: string) {
+        const fetchData = {
+            headers: new Headers({
+                Authorization: `Bearer ${token}`
+            }),
+            method: "POST",
+            body: JSON.stringify({pgn: pgn})
+        };
+
+        return await this.fetch(`/user/history/import-pgn`, fetchData);
+    }
+
     async getUserBasedOnGoogleToken(token: string) {
 
         const fetchData = {

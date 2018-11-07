@@ -1,5 +1,6 @@
 @import 'bootstrap/bootstrap-reboot.css';
 @import 'bootstrap/bootstrap-grid.css';
+@import 'bootstrap/bootstrap-custom-modal.css';
 @import './react-toggle.css';
 @import './criticalCss.css';
 @import './colors.css';

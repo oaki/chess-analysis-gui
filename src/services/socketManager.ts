@@ -6,21 +6,20 @@ import {IWorkerResponse, LINE_MAP} from "../interfaces";
 import {Flash} from "./errorManager";
 import {StockfishService} from "./stocfishService";
 import {parseResult} from "../libs/parseStockfishResults";
+import store from "../store";
 
 const throttle = require("lodash/throttle");
 
 export default class SocketManager {
     private socket;
-    private store;
     private signInToken;
     private dispatchResults;
     private stockfishEngineInterface;
 
-    constructor(private config: SocketIoConfig, store) {
-        this.store = store;
+    constructor(private config: SocketIoConfig) {
 
         this.dispatchResults = throttle((results) => {
-            this.store.dispatch(setEvaluation(results));
+            store.dispatch(setEvaluation(results));
         }, 1000);
 
         if (!StockfishService.isInit()) {
@@ -47,7 +46,7 @@ export default class SocketManager {
         // for now we are expecting only one result, no more
 
         // ignore others @todo disable others results
-        const fen = this.store.getState()["fen"];
+        const fen = store.getState()["fen"];
         const results = arr.filter((data) => data.fen === fen).map((data) => this.prepareEvaluation(data));
         if (results && results.length > 0) {
             this.dispatchResults(results);
@@ -56,13 +55,13 @@ export default class SocketManager {
 
     handleSyzygyResult = (result: ISyzygy) => {
         console.log("handleSyzygyResult", result);
-        this.store.dispatch(setSyzygyEvaluation(result))
+        store.dispatch(setSyzygyEvaluation(result))
     }
 
     handleOfflineWorker = (fen: string) => {
         console.log("handleOfflineWorker", fen);
         this.stockfishEngineInterface.go(fen);
-        // this.store.dispatch(setSyzygyEvaluation(result))
+        // store.dispatch(setSyzygyEvaluation(result))
     }
 
 
@@ -73,7 +72,7 @@ export default class SocketManager {
     // handleOpeningMoves = (result: { data: IWorkerResponse, fen: string }) => {
     //     console.log('handleOpeningMoves->', result);
     //
-    //     this.store.dispatch(setOpeningMoves(result.data));
+    //     store.dispatch(setOpeningMoves(result.data));
     // }
 
     connect() {
@@ -104,17 +103,30 @@ export default class SocketManager {
         // this.socket.on('openingMoves', this.handleOpeningMoves);
 
         this.socket.on("disconnect", () => {
-            Flash.error({msg: "Chess engine disconnect", identifier: "socket"});
+            Flash.error({msg: "Cloud engine disconnect", identifier: "socket"});
         });
 
         this.socket.on("connect_timeout", (timeout) => {
-            Flash.error({msg: "Chess engine connection timeout", identifier: "socket"});
+            Flash.error({msg: "Cloud engine connection timeout", identifier: "socket"});
         });
     }
 
-    emit(name: string, props: any) {
+    public setNewPosition(fen: string, isOnline: boolean) {
+        if (isOnline) {
+            this.emit("setNewPosition", {
+                FEN: fen
+            })
+        } else {
+            this.stockfishEngineInterface.go(fen);
+        }
+
+    }
+
+    private emit(name: string, props: any) {
         if (this.socket) {
             this.socket.emit(name, props);
+        } else {
+            console.error("Socket is not ready");
         }
     }
 

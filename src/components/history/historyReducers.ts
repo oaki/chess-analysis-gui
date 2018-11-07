@@ -1,7 +1,15 @@
 import {Node, NODE_MAP, treeService} from "../moveTree/tree";
 import {isPromoting} from "../chessboard/promotingDialog";
 import {setOpeningPosition} from "../openingExplorer/openingExplorerReducers";
-import {ISetMoveProps, SET_HISTORY, SET_HISTORY_MOVE, SET_LAST_MOVE, setEvaluation, setPosition} from "../../actions";
+import {
+    ISetMoveProps,
+    SET_HISTORY,
+    SET_HISTORY_MOVE,
+    SET_LAST_MOVE,
+    SET_LAST_MOVE_ID,
+    setEvaluation,
+    setPosition
+} from "../../actions";
 import {batchActions} from "redux-batched-actions";
 import store from "../../store";
 import {IAction} from "../../interfaces";
@@ -61,7 +69,8 @@ export function setMove(props: ISetMoveProps) {
             setOpeningPosition([]),
             setEvaluation([]),
             setPosition(newFen),
-            setSyzygyEvaluation(null)
+            setSyzygyEvaluation(null),
+            lastMove(from, to)
         ];
 
         if (nextMoveId) {
@@ -114,6 +123,16 @@ export function setHistory(payload: any) {
 export function lastMoveId(id: number | null) {
     return {
         id,
+        type: SET_LAST_MOVE_ID
+    };
+}
+
+export function lastMove(from: string, to: string) {
+    return {
+        payload: {
+            from,
+            to,
+        },
         type: SET_LAST_MOVE
     };
 }

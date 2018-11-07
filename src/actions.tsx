@@ -13,6 +13,7 @@ export const SET_STATUS = "SET_STATUS";
 export const SET_EVALUATION = "SET_EVALUATION";
 export const SET_HISTORY_MOVE = "SET_HISTORY_MOVE";
 export const SET_HISTORY = "SET_HISTORY";
+export const SET_LAST_MOVE_ID = "SET_LAST_MOVE_ID";
 export const SET_LAST_MOVE = "SET_LAST_MOVE";
 export const USER_SIGN_IN = "USER_SIGN_IN";
 export const SET_PROMOTION_DIALOG = "SET_PROMOTION_DIALOG";

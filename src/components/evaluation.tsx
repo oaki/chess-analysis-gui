@@ -5,6 +5,9 @@ import {connect} from "react-redux";
 import {IEvaluation, LINE_MAP} from "../interfaces";
 import {SocketManagerService} from "../services/socketService";
 import {isYourMove} from "../libs/isYourMove";
+import FontAwesomeIcon from "@fortawesome/react-fontawesome";
+import * as faSignal from "@fortawesome/fontawesome-free-solid/faSignal";
+import * as faMicrophoneSlash from "@fortawesome/fontawesome-free-solid/faMicrophoneSlash";
 
 export interface Evaluation {
     score: string;
@@ -22,7 +25,9 @@ interface SocketIoProviderProps {
     fen: state.fen,
     evaluation: state.evaluation,
     onMove: state.onMove,
-    isFlip: state.isFlip
+    isFlip: state.isFlip,
+    isOnline: state.isOnline,
+    settings: state.settings
 }))
 export class Evaluation extends React.Component<any, any> {
 
@@ -83,6 +88,10 @@ export class Evaluation extends React.Component<any, any> {
                     <table>
                         <tbody>
                         <tr>
+                            <td className="fs-xs ta-c">
+                                {this.props.isOnline && <FontAwesomeIcon className="c-green" icon={faSignal}/>}
+                                {!this.props.isOnline && <FontAwesomeIcon icon={faMicrophoneSlash}/>}
+                            </td>
                             <td className="fs-xs ta-c">Nodes: {this.getNodes(evaluation)}</td>
                             <td className="fs-xs ta-c">Time: {this.getTime(evaluation)}</td>
                             <td className="fs-xs ta-c">Tb hits: {this.getTbHits(evaluation)}</td>
@@ -96,7 +105,8 @@ export class Evaluation extends React.Component<any, any> {
 
     render() {
 
-        if (this.props.evaluation.length === 0) {
+
+        if (this.props.evaluation.length === 0 || !this.props.settings.showEvaluation) {
             return null
         }
         return this.props.evaluation.map((evaluation) => this.renderLine(evaluation));
@@ -104,11 +114,7 @@ export class Evaluation extends React.Component<any, any> {
 
     componentDidUpdate(prevProps) {
         if (prevProps.fen !== this.props.fen) {
-            console.log("setNewPosition");
-
-            SocketManagerService.emit("setNewPosition", {
-                FEN: this.props.fen
-            });
+            SocketManagerService.setNewPosition(this.props.fen, this.props.isOnline);
         }
     }
 
@@ -152,6 +158,12 @@ export class Evaluation extends React.Component<any, any> {
     private formatNumber(num: number | string | undefined) {
         if (num) {
             const n = Number(num);
+
+            let _num = 1000000 * 1000;
+            if (n > _num) {
+                const d = n / _num;
+                return `${d.toFixed(2)}B`;
+            }
 
             if (n > 1000000) {
                 const d = n / 1000000;
