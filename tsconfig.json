@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "baseUrl": "https://chess-analysis.com/",
+    "baseUrl": "https://www.chess-analysis.com/",
     "experimentalDecorators": true,
     "noUnusedParameters": false,
-    "outDir": "build/dist",
+    "outDir": "build",
     "module": "esnext",
     "target": "es5",
     "lib": [

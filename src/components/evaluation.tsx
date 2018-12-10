@@ -67,37 +67,37 @@ export class Evaluation extends React.Component<any, any> {
             <React.Fragment key={evaluation[LINE_MAP.pv]}>
                 <div className="evaluation">
                     {evaluation && <div className="score">
-                        <span>{this.getScore(evaluation)}</span>
+                      <span>{this.getScore(evaluation)}</span>
                         {!evaluation[LINE_MAP.mate] &&
                         <span className="fs-xs fw-r">/{evaluation[LINE_MAP.depth]}</span>}
                     </div>}
 
                     {evaluation && <div className="c-pv ml-5">
-                        <div className="pv-holder">
-                            {this.prepareEvaluation(evaluation[LINE_MAP.pv], this.props.fen).map((move, index) => {
-                                return (
-                                    <span className="pv-holder__move" key={index}>{move}</span>
-                                )
-                            })}
-                        </div>
+                      <div className="pv-holder">
+                          {this.prepareEvaluation(evaluation[LINE_MAP.pv], this.props.fen).map((move, index) => {
+                              return (
+                                  <span className="pv-holder__move" key={index}>{move}</span>
+                              )
+                          })}
+                      </div>
                     </div>}
                 </div>
 
                 {evaluation &&
                 <div className="evaluation-info">
-                    <table>
-                        <tbody>
-                        <tr>
-                            <td className="fs-xs ta-c">
-                                {this.props.isOnline && <FontAwesomeIcon className="c-green" icon={faSignal}/>}
-                                {!this.props.isOnline && <FontAwesomeIcon icon={faMicrophoneSlash}/>}
-                            </td>
-                            <td className="fs-xs ta-c">Nodes: {this.getNodes(evaluation)}</td>
-                            <td className="fs-xs ta-c">Time: {this.getTime(evaluation)}</td>
-                            <td className="fs-xs ta-c">Tb hits: {this.getTbHits(evaluation)}</td>
-                        </tr>
-                        </tbody>
-                    </table>
+                  <table>
+                    <tbody>
+                    <tr>
+                      <td className="fs-xs ta-c">
+                          {this.props.isOnline && <FontAwesomeIcon className="c-green" icon={faSignal}/>}
+                          {!this.props.isOnline && <FontAwesomeIcon icon={faMicrophoneSlash}/>}
+                      </td>
+                      <td className="fs-xs ta-c">Nodes: {this.getNodes(evaluation)}</td>
+                      <td className="fs-xs ta-c">Time: {this.getTime(evaluation)}</td>
+                      <td className="fs-xs ta-c">Tb hits: {this.getTbHits(evaluation)}</td>
+                    </tr>
+                    </tbody>
+                  </table>
                 </div>}
             </React.Fragment>
         )
@@ -178,6 +178,7 @@ export class Evaluation extends React.Component<any, any> {
             return n;
 
         }
+        return 0;
     }
 
 }

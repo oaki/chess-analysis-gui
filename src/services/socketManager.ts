@@ -44,7 +44,7 @@ export default class SocketManager {
 
         const arr = JSON.parse(result);
         // for now we are expecting only one result, no more
-
+        console.log({arr});
         // ignore others @todo disable others results
         const fen = store.getState()["fen"];
         const results = arr.filter((data) => data.fen === fen).map((data) => this.prepareEvaluation(data));

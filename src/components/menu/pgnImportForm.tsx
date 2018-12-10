@@ -9,12 +9,13 @@ import {lastMoveId, setHistory} from "../history/historyReducers";
 import {setSyzygyEvaluation} from "../syzygyExplorer/syzygyExplorerReducers";
 import {setOpeningPosition} from "../openingExplorer/openingExplorerReducers";
 import {SmartAwesomeChessboard} from "../chessboard/chessboard";
+import {SmallLoading} from "../Loading";
 
 export default class PgnImportForm extends React.PureComponent<any, any> {
 
     constructor(props) {
         super(props);
-        this.state = {value: ""};
+        this.state = {value: "", isLoading: false};
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -29,20 +30,29 @@ export default class PgnImportForm extends React.PureComponent<any, any> {
         const pgn = this.state.value;
         event.preventDefault();
 
-        ApiManagerService.importGameFromPgn(pgn, SessionManagerService.getToken()).then((res: any) => {
-            console.log(res);
-            store.dispatch(openPgnDialog(false));
+        this.setState({isLoading: true});
+        try {
+            ApiManagerService.importGameFromPgn(pgn, SessionManagerService.getToken()).then((res: any) => {
 
-            const moves = JSON.parse(res.moves);
-            store.dispatch(batchActions([
-                setHistory(moves),
-                lastMoveId(null),
-                setPosition(SmartAwesomeChessboard.FIRST_POSITION),
-                setOpeningPosition([]),
-                setEvaluation([]),
-                setSyzygyEvaluation(null),
-            ]));
-        });
+                this.setState({isLoading: false});
+
+                store.dispatch(openPgnDialog(false));
+
+                const moves = JSON.parse(res.moves);
+                store.dispatch(batchActions([
+                    setHistory(moves),
+                    lastMoveId(null),
+                    setPosition(SmartAwesomeChessboard.FIRST_POSITION),
+                    setOpeningPosition([]),
+                    setEvaluation([]),
+                    setSyzygyEvaluation(null),
+                ]));
+            });
+        } catch (e) {
+            console.log(e);
+
+            this.setState({isLoading: false});
+        }
     }
 
     handleCloseModal() {
@@ -74,6 +84,7 @@ export default class PgnImportForm extends React.PureComponent<any, any> {
                         />
                     </div>
                     <div className="modal-footer">
+                        <SmallLoading isLoading={this.state.isLoading}/>
                         <button type="submit" className="btn btn-primary">Import</button>
                         <button
                             type="button"

@@ -19,3 +19,14 @@ export class Loading extends React.Component<ILoadingProps, any> {
         return null;
     }
 }
+
+export class SmallLoading extends React.Component<ILoadingProps, any> {
+    render() {
+        if (this.props.isLoading) {
+            return (
+                <span className="small-loading">Loadding....</span>
+            )
+        }
+        return null;
+    }
+}

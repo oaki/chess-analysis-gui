@@ -253,7 +253,7 @@ export class Menu extends React.PureComponent<any, any> {
                         </li>
 
                         <li className="sub-menu__version">
-                            version 1.2.3
+                            version 1.5.0
                         </li>
                     </ul>
                 </div>
