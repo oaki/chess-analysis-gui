@@ -5,6 +5,7 @@ import store from "../store";
 import {loadOpeningBook} from "../actions";
 import {Evaluation} from "./evaluation";
 import {SyzygyExplorerSmart} from "./syzygyExplorer/syzygyExplorer";
+import {SmartGamesDatabaseExplorer} from "./gamesDatabaseExplorer/gamesDatabaseExplorer";
 
 interface IPannelProps {
     status: string;
@@ -47,6 +48,7 @@ export class Pannel extends React.Component<any, IPannelState> {
                 <Evaluation/>
 
                 <SmartOpeningExplorer/>
+                <SmartGamesDatabaseExplorer/>
 
                 <SyzygyExplorerSmart/>
 
