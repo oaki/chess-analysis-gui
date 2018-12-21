@@ -43,7 +43,7 @@
     "redux-batched-actions": "^0.3.0",
     "redux-thunk": "2.2.0",
     "redux-worker-middleware": "^1.0.0",
-    "socket.io-client": "^2.0.4",
+    "socket.io-client": "2.2.0",
     "stacktrace-js": "^2.0.0",
     "sw-precache": "^5.2.1",
     "tree": "^0.1.3",
