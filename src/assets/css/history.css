@@ -46,12 +46,7 @@
 }
 
 .history__slider {
-
     padding: 0 .8rem;
-    -webkit-overflow-scrolling: touch;
-    overflow-scrolling: touch;
-    overflow-y: auto;
-
 }
 
 .history__slider__holder {

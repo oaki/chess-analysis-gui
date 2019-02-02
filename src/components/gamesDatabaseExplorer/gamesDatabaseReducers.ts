@@ -1,35 +1,37 @@
 import {setLoading} from "../../actions";
 import config from "../../config";
 import {Flash} from "../../services/errorManager";
+import {IAction} from "../../interfaces";
 
 
 export interface IGames {
-    "id": string;
-    "white": string;
-    "black": string;
-    "whiteElo": number;
-    "blackElo": number;
-    "pgn": string;
-    "result": string;
+    id: string;
+    white: string;
+    black: string;
+    whiteElo: number;
+    blackElo: number;
+    pgn: string;
+    result: string;
+    fewNextMove: string[];
 }
 
-export interface IGamesList {
-    "id": number;
-    "fen": string;
-    "data": any;
-    "games": IGames[];
+export interface IGameDatabase {
+    id: number;
+    fen: string;
+    data: any;
+    games: IGames[];
 }
 
 export interface IGamesDatabaseProps {
-    gamesList: IGamesList,
+    gameDatabase: IGameDatabase,
     fen: string,
     handleMove: (move: string, fen: string) => {}
 }
 
 
-export function loadGames(fen: string) {
+export function loadGamesFromDatabase(fen: string) {
     return async (dispatch: (data: any) => {}) => {
-        console.log("loadGames", fen);
+
         dispatch(setLoading(true));
 
         const url = `${config.apiHost}/games-database?fen=${fen}`;
@@ -43,15 +45,18 @@ export function loadGames(fen: string) {
         try {
             const response = await fetch(url, headers);
             if (response.ok) {
-                const moves: any = await response.json();
-                console.log(moves);
-                dispatch(setGamesDatabase(moves));
+                const gameList: IGameDatabase = await response.json();
+
+                if (gameList) {
+                    dispatch(setGamesDatabase(gameList));
+                }
+
             } else {
-                dispatch(setGamesDatabase([]));
+                dispatch(setGamesDatabase(null));
             }
 
         } catch (e) {
-            Flash.error({msg: "opening book failed", identifier: "openingExplorer"});
+            Flash.error({msg: "games-database failed", identifier: "gamesDatabase"});
             console.log(e);
         }
 
@@ -60,22 +65,28 @@ export function loadGames(fen: string) {
 
 }
 
-export function setGamesDatabase(gamesList: IGamesList[]) {
+export function setGamesDatabase(gameDatabase: IGameDatabase | null) {
     return {
-        gamesList,
+        payload: {
+            gameDatabase: gameDatabase
+        },
         type: SET_GAMES
     };
 }
 
 export const SET_GAMES = "SET_GAMES";
 
-export function gamesDatabaseReducer(gamesList: IGamesList[] = [], action: any) {
+export interface IGamesDatabaseAction {
+    gameDatabase: IGameDatabase;
+}
+
+export function gamesDatabaseReducer(gameDatabase: IGameDatabase | null = null, action: IAction<IGamesDatabaseAction>) {
 
     switch (action.type) {
         case SET_GAMES:
-            return action.gamesList;
+            return action.payload.gameDatabase;
 
         default:
-            return gamesList;
+            return gameDatabase;
     }
 };

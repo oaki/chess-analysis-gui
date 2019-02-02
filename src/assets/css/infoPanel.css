@@ -1,0 +1,21 @@
+.info-panel {
+    display: flex;
+    font-size: .8rem;
+}
+
+.info-panel__score-container {
+    padding: .2rem .4rem;
+}
+
+.info-panel__score {
+    background-color: black;
+    color: white;
+}
+
+.info-panel__score,
+.info-panel__time,
+.info-panel__nodes,
+.info-panel__tbhits {
+    display: inline-block;
+    padding: 0 .5rem;
+}

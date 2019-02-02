@@ -6,6 +6,8 @@ import {loadOpeningBook} from "../actions";
 import {Evaluation} from "./evaluation";
 import {SyzygyExplorerSmart} from "./syzygyExplorer/syzygyExplorer";
 import {SmartGamesDatabaseExplorer} from "./gamesDatabaseExplorer/gamesDatabaseExplorer";
+import {History} from "./history/history";
+import {PanelTabType} from "./infoPanel/infoPanelReducers";
 
 interface IPannelProps {
     status: string;
@@ -26,7 +28,10 @@ interface IPannelState {
     fen?: string;
 }
 
-@connect((state) => ({status: state.status}))
+@connect((state) => ({
+    status: state.status,
+    panelTab: state.panelTab
+}))
 export class Pannel extends React.Component<any, IPannelState> {
 
     constructor(props: IPannelProps) {
@@ -45,12 +50,18 @@ export class Pannel extends React.Component<any, IPannelState> {
     render() {
         return (
             <React.Fragment>
-                <Evaluation/>
 
-                <SmartOpeningExplorer/>
-                <SmartGamesDatabaseExplorer/>
+                {this.props.panelTab === PanelTabType.INFO_TAB && <History/>}
+                {this.props.panelTab === PanelTabType.EVALUATION_TAB && <Evaluation/>}
+                {this.props.panelTab === PanelTabType.BOOK_TAB && (
+                    <React.Fragment>
+                        <SmartOpeningExplorer/>
+                        <SmartGamesDatabaseExplorer/>
+                        <SyzygyExplorerSmart/>
+                    </React.Fragment>
+                )}
 
-                <SyzygyExplorerSmart/>
+
 
                 <div className="app__status">
                     <div className="app__pgn">{this.state.pgn}</div>

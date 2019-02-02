@@ -3,11 +3,11 @@ import * as Chess from "chess.js";
 import {connect} from "react-redux";
 
 import {IEvaluation, LINE_MAP} from "../interfaces";
-import {SocketManagerService} from "../services/socketService";
 import {isYourMove} from "../libs/isYourMove";
 import FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import * as faSignal from "@fortawesome/fontawesome-free-solid/faSignal";
 import * as faMicrophoneSlash from "@fortawesome/fontawesome-free-solid/faMicrophoneSlash";
+import {IOnMove} from "../actions";
 
 export interface Evaluation {
     score: string;
@@ -67,19 +67,9 @@ export class Evaluation extends React.Component<any, any> {
             <React.Fragment key={evaluation[LINE_MAP.pv]}>
                 <div className="evaluation">
                     {evaluation && <div className="score">
-                      <span>{this.getScore(evaluation)}</span>
+                      <span>{Evaluation.getScore(evaluation, this.props.onMove, this.props.isFlip)}</span>
                         {!evaluation[LINE_MAP.mate] &&
                         <span className="fs-xs fw-r">/{evaluation[LINE_MAP.depth]}</span>}
-                    </div>}
-
-                    {evaluation && <div className="c-pv ml-5">
-                      <div className="pv-holder">
-                          {this.prepareEvaluation(evaluation[LINE_MAP.pv], this.props.fen).map((move, index) => {
-                              return (
-                                  <span className="pv-holder__move" key={index}>{move}</span>
-                              )
-                          })}
-                      </div>
                     </div>}
                 </div>
 
@@ -92,13 +82,23 @@ export class Evaluation extends React.Component<any, any> {
                           {this.props.isOnline && <FontAwesomeIcon className="c-green" icon={faSignal}/>}
                           {!this.props.isOnline && <FontAwesomeIcon icon={faMicrophoneSlash}/>}
                       </td>
-                      <td className="fs-xs ta-c">Nodes: {this.getNodes(evaluation)}</td>
-                      <td className="fs-xs ta-c">Time: {this.getTime(evaluation)}</td>
-                      <td className="fs-xs ta-c">Tb hits: {this.getTbHits(evaluation)}</td>
+                      <td className="fs-xs ta-c">Nodes: {Evaluation.getNodes(evaluation)}</td>
+                      <td className="fs-xs ta-c">Time: {Evaluation.getTime(evaluation)}</td>
+                      <td className="fs-xs ta-c">Tb hits: {Evaluation.getTbHits(evaluation)}</td>
                     </tr>
                     </tbody>
                   </table>
                 </div>}
+
+                {evaluation &&
+                <div className="pv-holder">
+                    {this.prepareEvaluation(evaluation[LINE_MAP.pv], this.props.fen).map((move, index) => {
+                        return (
+                            <span className="pv-holder__move" key={index}>{move}</span>
+                        )
+                    })}
+                </div>
+                }
             </React.Fragment>
         )
     }
@@ -112,20 +112,15 @@ export class Evaluation extends React.Component<any, any> {
         return this.props.evaluation.map((evaluation) => this.renderLine(evaluation));
     }
 
-    componentDidUpdate(prevProps) {
-        if (prevProps.fen !== this.props.fen) {
-            SocketManagerService.setNewPosition(this.props.fen, this.props.isOnline);
-        }
-    }
 
-    getScore(evaluation: IEvaluation) {
+    static getScore(evaluation: IEvaluation, onMove: IOnMove, isFlip: boolean) {
         let score = Number(evaluation[LINE_MAP.score]);
 
         if (evaluation[LINE_MAP.mate]) {
             return `#${Number(evaluation[LINE_MAP.mate])}`;
         }
 
-        if (!isYourMove(this.props.onMove, this.props.isFlip)) {
+        if (!isYourMove(onMove, isFlip)) {
             score *= (-1);
         }
 
@@ -136,12 +131,12 @@ export class Evaluation extends React.Component<any, any> {
         return score;
     }
 
-    getNodes(evaluation: IEvaluation) {
-        return this.formatNumber(evaluation[LINE_MAP.nodes]);
+    static getNodes(evaluation: IEvaluation) {
+        return Evaluation.formatNumber(evaluation[LINE_MAP.nodes]);
 
     }
 
-    getTime(evaluation: IEvaluation) {
+    static getTime(evaluation: IEvaluation) {
         if (evaluation[LINE_MAP.time]) {
             const time = Number(evaluation[LINE_MAP.time]) / 1000;
             return `${time.toFixed(0)}s`;
@@ -150,12 +145,12 @@ export class Evaluation extends React.Component<any, any> {
 
     }
 
-    getTbHits(evaluation: IEvaluation) {
-        return this.formatNumber(evaluation[LINE_MAP.tbhits]);
+    static getTbHits(evaluation: IEvaluation) {
+        return Evaluation.formatNumber(evaluation[LINE_MAP.tbhits]);
     }
 
 
-    private formatNumber(num: number | string | undefined) {
+    static formatNumber(num: number | string | undefined) {
         if (num) {
             const n = Number(num);
 

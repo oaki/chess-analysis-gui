@@ -4,8 +4,8 @@ import {Pannel} from "../components/Pannel";
 import {Route, Router, Switch} from "react-router"
 import {BrowserRouter} from "react-router-dom"
 import {MenuWithRouter} from "../components/menu/menu";
-import {History} from "../components/history/history";
 import {SmartAwesomeChessboard} from "../components/chessboard/chessboard";
+import {InfoPanel} from "../components/infoPanel/infoPanel";
 
 
 export class ChessboardPage extends React.Component<any, any> {
@@ -13,12 +13,13 @@ export class ChessboardPage extends React.Component<any, any> {
     render() {
 
         // calculate height for
-        const availHeight = window.innerHeight;
         const availWidth = window.innerWidth;
+        const availHeight = window.innerHeight;
+
         const chessboarcWidth = availWidth - 30/* padding:15*/;
         const chessboarcHeight = chessboarcWidth;
-        const evaluationHeight = 34;
-        const height = availHeight - 40 /* bottom menu height */ - chessboarcHeight - evaluationHeight;
+        const infoPanelHeight = 20;
+        const height = availHeight - 40 /* bottom menu height */ - chessboarcHeight - infoPanelHeight;
         console.log({
             availHeight, availWidth, chessboarcWidth, chessboarcHeight, height
         });
@@ -30,12 +31,13 @@ export class ChessboardPage extends React.Component<any, any> {
                     <div className="col-sm-7">
                         <SmartAwesomeChessboard key="1"/>
                     </div>
-                    <div className="col-sm-5">
-                        <Pannel/>
+                    <div className="col-sm-5 ">
+                        <InfoPanel/>
 
-                        <div className="ox-a" style={{marginLeft: "-15px", marginRight: "-15px", height}}>
-                            <History/>
+                        <div className="ox-a" style={{height}}>
+                            <Pannel/>
                         </div>
+
                     </div>
                 </div>
 

@@ -1,6 +1,6 @@
 import {setLoading} from "../../actions";
 import config from "../../config";
-import {addError, Flash} from "../../services/errorManager";
+import {Flash} from "../../services/errorManager";
 
 
 export interface IOpeningMove {
@@ -23,6 +23,7 @@ export interface IOpeningExplorerState {
 export function loadOpeningPosition(fen: string) {
     return async (dispatch: (data: any) => {}) => {
         console.log("loadOpeningPosition", fen);
+
         dispatch(setLoading(true));
 
         const url = `${config.apiHost}/opening-book?fen=${fen}`;

@@ -7,9 +7,11 @@ import {setEvaluation, setPosition} from "../../actions";
 import {batchActions} from "redux-batched-actions";
 import {lastMoveId, setHistory} from "../history/historyReducers";
 import {setSyzygyEvaluation} from "../syzygyExplorer/syzygyExplorerReducers";
-import {setOpeningPosition} from "../openingExplorer/openingExplorerReducers";
+import {loadOpeningPosition, setOpeningPosition} from "../openingExplorer/openingExplorerReducers";
 import {SmartAwesomeChessboard} from "../chessboard/chessboard";
 import {SmallLoading} from "../Loading";
+import {emitPosition} from "../../services/sockets/actions";
+import {loadGamesFromDatabase} from "../gamesDatabaseExplorer/gamesDatabaseReducers";
 
 export default class PgnImportForm extends React.PureComponent<any, any> {
 
@@ -47,6 +49,10 @@ export default class PgnImportForm extends React.PureComponent<any, any> {
                     setEvaluation([]),
                     setSyzygyEvaluation(null),
                 ]));
+
+                store.dispatch(emitPosition(SmartAwesomeChessboard.FIRST_POSITION));
+                store.dispatch(loadOpeningPosition(SmartAwesomeChessboard.FIRST_POSITION));
+                store.dispatch(loadGamesFromDatabase(SmartAwesomeChessboard.FIRST_POSITION));
             });
         } catch (e) {
             console.log(e);

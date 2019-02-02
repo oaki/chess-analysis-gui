@@ -1,6 +1,6 @@
 import {Node, NODE_MAP, treeService} from "../moveTree/tree";
 import {isPromoting} from "../chessboard/promotingDialog";
-import {setOpeningPosition} from "../openingExplorer/openingExplorerReducers";
+import {loadOpeningPosition, setOpeningPosition} from "../openingExplorer/openingExplorerReducers";
 import {
     ISetMoveProps,
     SET_HISTORY,
@@ -16,6 +16,8 @@ import {IAction} from "../../interfaces";
 import * as Chess from "chess.js";
 import {setSyzygyEvaluation} from "../syzygyExplorer/syzygyExplorerReducers";
 import {setPromotionDialog} from "../chessboard/promotingDialogReducers";
+import {emitPosition} from "../../services/sockets/actions";
+import {loadGamesFromDatabase} from "../gamesDatabaseExplorer/gamesDatabaseReducers";
 
 
 export interface IHistoryMove {
@@ -91,6 +93,12 @@ export function setMove(props: ISetMoveProps) {
                 }),
             );
         }
+
+        actions.push(emitPosition(newFen));
+
+
+        store.dispatch(loadOpeningPosition(newFen));
+        store.dispatch(loadGamesFromDatabase(newFen));
 
         return batchActions(actions);
     }

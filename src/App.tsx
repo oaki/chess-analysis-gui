@@ -16,9 +16,9 @@ import {setUser} from "./actions";
 import {ApiManagerService} from "./services/apiManager";
 import {IUser} from "./reducers";
 import {Flash} from "./services/errorManager";
-import {SocketManagerService} from "./services/socketService";
 import {setHistory} from "./components/history/historyReducers";
 import {Loading} from "./components/Loading";
+import {connectSocket} from "./services/sockets/actions";
 
 
 export class App extends React.Component<{}, {}> {
@@ -79,8 +79,12 @@ export class App extends React.Component<{}, {}> {
                         user.lastGameId = game.id;
                         store.dispatch(setUser(user));
                         this.setState({isLoading: false});
-                        SocketManagerService.setSignInToken(token);
-                        SocketManagerService.connect();
+
+                        store.dispatch(setUser(user));
+                        store.dispatch(connectSocket(token));
+
+                        // SocketManagerService.setSignInToken(token);
+                        // SocketManagerService.connect();
                         // StockfishService.init();
                     });
 

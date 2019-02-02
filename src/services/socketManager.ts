@@ -7,8 +7,7 @@ import {Flash} from "./errorManager";
 import {StockfishService} from "./stocfishService";
 import {parseResult} from "../libs/parseStockfishResults";
 import store from "../store";
-
-const throttle = require("lodash/throttle");
+import {socketConnect} from "./sockets/actions";
 
 export default class SocketManager {
     private socket;
@@ -17,17 +16,15 @@ export default class SocketManager {
     private stockfishEngineInterface;
 
     constructor(private config: SocketIoConfig) {
+        this.initOfflineStockfish();
+    }
 
-        this.dispatchResults = throttle((results) => {
-            store.dispatch(setEvaluation(results));
-        }, 1000);
-
+    private initOfflineStockfish() {
         if (!StockfishService.isInit()) {
             StockfishService.init();
         }
 
         this.stockfishEngineInterface = StockfishService;
-
         this.stockfishEngineInterface.onResult((data, fen) => {
 
             const result = parseResult(data, fen);
@@ -35,9 +32,7 @@ export default class SocketManager {
             if (result) {
                 this.handleResult(JSON.stringify(result));
             }
-
         })
-
     }
 
     handleResult = (result: string) => {
@@ -49,7 +44,7 @@ export default class SocketManager {
         const fen = store.getState()["fen"];
         const results = arr.filter((data) => data.fen === fen).map((data) => this.prepareEvaluation(data));
         if (results && results.length > 0) {
-            this.dispatchResults(results);
+            store.dispatch(setEvaluation(results));
         }
     }
 
@@ -89,9 +84,8 @@ export default class SocketManager {
         });
 
         this.socket.on("connect", () => {
-
+            store.dispatch(socketConnect());
             Flash.info({msg: "Chess engine connected", identifier: "socket"});
-            console.log(`socket connected to ${this.config.socketIo.host}`);
         });
 
         /**
@@ -103,16 +97,19 @@ export default class SocketManager {
         // this.socket.on('openingMoves', this.handleOpeningMoves);
 
         this.socket.on("disconnect", () => {
+            store.dispatch(socketConnect(false));
             Flash.error({msg: "Cloud engine disconnect", identifier: "socket"});
         });
 
         this.socket.on("connect_timeout", (timeout) => {
+            store.dispatch(socketConnect(false));
             Flash.error({msg: "Cloud engine connection timeout", identifier: "socket"});
         });
     }
 
     public setNewPosition(fen: string, isOnline: boolean) {
         if (isOnline) {
+            console.log("setNewPosition", fen);
             this.emit("setNewPosition", {
                 FEN: fen
             })

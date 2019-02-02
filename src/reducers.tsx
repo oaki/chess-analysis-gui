@@ -23,6 +23,9 @@ import {promotionDialogReducer} from "./components/chessboard/promotingDialogRed
 import {errorReducers} from "./services/errorManager";
 import {isOnlineReducer} from "./services/onlineIndicator";
 import {settingsReducer} from "./layouts/settingPage";
+import {panelTabReducer} from "./components/infoPanel/infoPanelReducers";
+import {socketReducer} from "./services/socketService";
+import {gamesDatabaseReducer} from "./components/gamesDatabaseExplorer/gamesDatabaseReducers";
 
 export const loadingReducer = (isLoading: boolean = false, action: any) => {
     switch (action.type) {
@@ -173,6 +176,9 @@ export default combineReducers({
     isOnline: isOnlineReducer,
     settings: settingsReducer,
     pgnDialog: pgnDialogReducer,
+    panelTab: panelTabReducer,
+    socket: socketReducer,
+    gameDatabase: gamesDatabaseReducer
 });
 
 export function deepCopy(obj) {

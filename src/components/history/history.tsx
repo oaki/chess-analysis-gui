@@ -6,8 +6,10 @@ import {batchActions} from "redux-batched-actions";
 import {setSyzygyEvaluation} from "../syzygyExplorer/syzygyExplorerReducers";
 import {NODE_MAP, treeService} from "../moveTree/tree";
 import {IMoves, Moves} from "./moves";
-import {setOpeningPosition} from "../openingExplorer/openingExplorerReducers";
+import {loadOpeningPosition, setOpeningPosition} from "../openingExplorer/openingExplorerReducers";
 import {lastMoveId} from "./historyReducers";
+import {emitPosition} from "../../services/sockets/actions";
+import {loadGamesFromDatabase} from "../gamesDatabaseExplorer/gamesDatabaseReducers";
 
 const classNames = require("classnames");
 
@@ -31,13 +33,18 @@ export class History extends React.Component<any, any> {
         const ref = treeService.getReference(id);
 
         if (ref && ref.node) {
+            const fen: string = ref.node[NODE_MAP.fen];
             store.dispatch(batchActions([
                 lastMoveId(ref.node[NODE_MAP.id]),
-                setPosition(ref.node[NODE_MAP.fen]),
+                setPosition(fen),
                 setEvaluation([]),
                 setSyzygyEvaluation(null),
                 setOpeningPosition([])
             ]));
+
+            store.dispatch(emitPosition(fen));
+            store.dispatch(loadOpeningPosition(fen));
+            store.dispatch(loadGamesFromDatabase(fen));
         }
     }
 
@@ -58,9 +65,7 @@ export class History extends React.Component<any, any> {
             <div className="history">
 
                 <div className="history__slider">
-                    <div className="history__slider__holder">
-                        <Moves {...this.prepareMovesProps()}/>
-                    </div>
+                    <Moves {...this.prepareMovesProps()}/>
                 </div>
             </div>
         )

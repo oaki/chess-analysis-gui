@@ -1,3 +1,24 @@
 .games-database-explorer{
-    font-size: 9px;
+    font-size: 0.8rem;
+}
+
+.games-database-explorer th {
+    padding: .2rem .5rem;
+    font-size: 12px;
+}
+
+.games-database-explorer td {
+    padding: .2rem .5rem;
+}
+
+.games-database-explorer tbody tr:nth-child(odd) {
+    background: #4b4b4b;
+}
+
+.games-database-explorer tbody tr:hover {
+    background: #7c7c7c;
+}
+
+.games-database-explorer__results {
+    text-align: right;
 }

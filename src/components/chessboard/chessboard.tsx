@@ -18,6 +18,9 @@ import {setPromotionDialog} from "./promotingDialogReducers";
 import {Log} from "../../libs/logger";
 import {SessionManagerService} from "../../services/sessionManager";
 import {ILastMove, IUser} from "../../reducers";
+import {emitPosition} from "../../services/sockets/actions";
+import {loadOpeningPosition} from "../openingExplorer/openingExplorerReducers";
+import {loadGamesFromDatabase} from "../gamesDatabaseExplorer/gamesDatabaseReducers";
 
 const once = require("lodash/once");
 
@@ -70,7 +73,13 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
 
     handleFenChange = (e: any) => {
         console.log("handleFenChange");
-        store.dispatch(setPosition(e.target.value));
+        const fen: string = e.target.value;
+
+        store.dispatch(setPosition(fen));
+        store.dispatch(emitPosition(fen));
+        store.dispatch(loadOpeningPosition(fen));
+        store.dispatch(loadGamesFromDatabase(fen));
+
     }
 
     handlePromotePiece = (e: any) => {

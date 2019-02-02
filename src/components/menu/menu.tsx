@@ -17,10 +17,12 @@ import {Node, NODE_MAP, treeService} from "../moveTree/tree";
 import {lastMoveId, setHistory} from "../history/historyReducers";
 import {SmartAwesomeChessboard} from "../chessboard/chessboard";
 import {faPause} from "@fortawesome/fontawesome-free-solid";
-import {setOpeningPosition} from "../openingExplorer/openingExplorerReducers";
+import {loadOpeningPosition, setOpeningPosition} from "../openingExplorer/openingExplorerReducers";
 import {flipBoard, openPgnDialog, toggleAutoplay, toogleOpenMenu} from "./menuReducers";
 import {setSyzygyEvaluation} from "../syzygyExplorer/syzygyExplorerReducers";
 import PgnImportForm from "./pgnImportForm";
+import {emitPosition} from "../../services/sockets/actions";
+import {loadGamesFromDatabase} from "../gamesDatabaseExplorer/gamesDatabaseReducers";
 
 
 interface IMenuProps {
@@ -58,13 +60,19 @@ export class Menu extends React.PureComponent<any, any> {
         if (previousMove && previousMove[NODE_MAP.id]) {
             id = (previousMove[NODE_MAP.id] as number);
         }
+
+        const fen: string = previousMove ? previousMove[NODE_MAP.fen] : SmartAwesomeChessboard.FIRST_POSITION;
         store.dispatch(batchActions([
             toggleAutoplay(false),
             lastMoveId(id),
-            setPosition(previousMove ? previousMove[NODE_MAP.fen] : SmartAwesomeChessboard.FIRST_POSITION),
+            setPosition(fen),
             setOpeningPosition([]),
             setEvaluation([]),
         ]));
+
+        store.dispatch(emitPosition(fen));
+        store.dispatch(loadOpeningPosition(fen));
+        store.dispatch(loadGamesFromDatabase(fen));
     }
 
     handleRedo() {
@@ -73,6 +81,7 @@ export class Menu extends React.PureComponent<any, any> {
         const nextMove: Node | undefined = treeService.getNextMove(lastId);
 
         if (nextMove && nextMove[NODE_MAP.id]) {
+            const fen: string = nextMove[NODE_MAP.fen];
             store.dispatch(batchActions([
                 toggleAutoplay(false),
                 lastMoveId((nextMove[NODE_MAP.id] as number)),
@@ -80,6 +89,10 @@ export class Menu extends React.PureComponent<any, any> {
                 setOpeningPosition([]),
                 setEvaluation([]),
             ]));
+
+            store.dispatch(emitPosition(fen));
+            store.dispatch(loadOpeningPosition(fen));
+            store.dispatch(loadGamesFromDatabase(fen));
         }
     }
 
@@ -106,6 +119,10 @@ export class Menu extends React.PureComponent<any, any> {
                 setOpeningPosition([]),
                 setHistory([])
             ]));
+
+            store.dispatch(emitPosition(SmartAwesomeChessboard.FIRST_POSITION));
+            store.dispatch(loadOpeningPosition(SmartAwesomeChessboard.FIRST_POSITION));
+            store.dispatch(loadGamesFromDatabase(SmartAwesomeChessboard.FIRST_POSITION));
             console.log("id", id);
         }));
     };
@@ -123,6 +140,10 @@ export class Menu extends React.PureComponent<any, any> {
                 setOpeningPosition([]),
                 setHistory([])
             ]));
+
+            store.dispatch(emitPosition(SmartAwesomeChessboard.FIRST_POSITION));
+            store.dispatch(loadOpeningPosition(SmartAwesomeChessboard.FIRST_POSITION));
+            store.dispatch(loadGamesFromDatabase(SmartAwesomeChessboard.FIRST_POSITION));
             console.log("id", id);
         }));
     };
@@ -154,7 +175,7 @@ export class Menu extends React.PureComponent<any, any> {
 
     renderPgnDialog() {
         return (
-            <div className="modal" style={{display: "block", backgroundColor: '#3c3c3cb5'}} role="dialog">
+            <div className="modal" style={{display: "block", backgroundColor: "#3c3c3cb5"}} role="dialog">
                 <div className="modal-dialog" role="document">
                     <div className="modal-content">
                         <PgnImportForm/>
@@ -177,46 +198,46 @@ export class Menu extends React.PureComponent<any, any> {
                 <ul className="main">
                     {this.props.showMainMenu &&
                     <li>
-                        <button
-                            className={btnClasses}
-                            onClick={this.handleToggleSubMenu}
-                        ><FontAwesomeIcon icon={faBars}/>
-                        </button>
+                      <button
+                        className={btnClasses}
+                        onClick={this.handleToggleSubMenu}
+                      ><FontAwesomeIcon icon={faBars}/>
+                      </button>
                     </li>}
                     {this.props.showFlip &&
                     <li>
-                        <button
-                            className={btnClasses}
-                            onClick={this.handleFlipBoard}
-                        >
-                            <FontAwesomeIcon icon={faRetweet}/>
-                        </button>
+                      <button
+                        className={btnClasses}
+                        onClick={this.handleFlipBoard}
+                      >
+                        <FontAwesomeIcon icon={faRetweet}/>
+                      </button>
                     </li>}
                     {this.props.showAutoplay &&
                     <li>
-                        <button
-                            className={btnClasses}
-                            onClick={this.toggleAutoplay}
-                        >
-                            {!this.props.autoplay && <FontAwesomeIcon icon={faPlay}/>}
-                            {this.props.autoplay && <FontAwesomeIcon icon={faPause}/>}
-                        </button>
+                      <button
+                        className={btnClasses}
+                        onClick={this.toggleAutoplay}
+                      >
+                          {!this.props.autoplay && <FontAwesomeIcon icon={faPlay}/>}
+                          {this.props.autoplay && <FontAwesomeIcon icon={faPause}/>}
+                      </button>
                     </li>}
                     {this.props.showUndo &&
                     <li>
-                        <button
-                            className={btnClasses}
-                            onClick={this.handleUndo}
-                        ><FontAwesomeIcon icon={faAngleDoubleLeft}/>
-                        </button>
+                      <button
+                        className={btnClasses}
+                        onClick={this.handleUndo}
+                      ><FontAwesomeIcon icon={faAngleDoubleLeft}/>
+                      </button>
                     </li>}
                     {this.props.showRedo &&
                     <li>
-                        <button
-                            className={btnClasses}
-                            onClick={this.handleRedo}
-                        ><FontAwesomeIcon icon={faAngleDoubleRight}/>
-                        </button>
+                      <button
+                        className={btnClasses}
+                        onClick={this.handleRedo}
+                      ><FontAwesomeIcon icon={faAngleDoubleRight}/>
+                      </button>
                     </li>}
                 </ul>
             </div>

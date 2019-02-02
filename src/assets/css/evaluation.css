@@ -18,21 +18,14 @@
     min-width: 3.8rem;
 }
 
-.evaluation .pv-holder {
+.pv-holder {
     color: #d6d6d6;
-    font-size: .6rem;
+    font-size: .8rem;
     padding-top: .4rem;
-    flex-wrap: nowrap;
-    display: flex;
     margin-left: .4rem;
-    height: 1.3rem;
 }
 
-.evaluation .pv-holder__move{
+.pv-holder__move {
     padding-right: .3rem;
-    white-space: nowrap;
-}
-.evaluation .c-pv {
-    height: 1.3rem;
-    overflow-y: hidden;
+    display: inline-block;
 }

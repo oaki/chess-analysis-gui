@@ -10,8 +10,9 @@ const store = createStore(
     // workerMiddleware,
     enableBatching(reducers),
     composeWithDevTools(
-        applyMiddleware(thunk)
+        applyMiddleware(thunk),
     ),
 );
-console.log("ourAwesameStore", store);
+
+
 export default store;
