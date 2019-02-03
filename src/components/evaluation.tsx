@@ -65,13 +65,7 @@ export class Evaluation extends React.Component<any, any> {
     renderLine(evaluation: IEvaluation) {
         return (
             <React.Fragment key={evaluation[LINE_MAP.pv]}>
-                <div className="evaluation">
-                    {evaluation && <div className="score">
-                      <span>{Evaluation.getScore(evaluation, this.props.onMove, this.props.isFlip)}</span>
-                        {!evaluation[LINE_MAP.mate] &&
-                        <span className="fs-xs fw-r">/{evaluation[LINE_MAP.depth]}</span>}
-                    </div>}
-                </div>
+
 
                 {evaluation &&
                 <div className="evaluation-info">

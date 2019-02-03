@@ -49,3 +49,13 @@
     display: block;
     width: 100%;
 }
+
+.btn-panel {
+    color: #fff;
+    background-color: #2b2b2b;
+    border: 0 none;
+}
+
+.btn-panel.is_active {
+    background-color: #4a4a4a;
+}
