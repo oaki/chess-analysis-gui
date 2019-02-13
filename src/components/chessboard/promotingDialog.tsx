@@ -2,7 +2,6 @@ import * as React from "react";
 import {IOnMove} from "../../actions";
 import {IPromotingDialogProps} from "./promotingDialogReducers";
 
-const classNames = require("classnames");
 declare global {
     namespace JSX {
         interface IntrinsicElements {
@@ -13,7 +12,6 @@ declare global {
 
 
 export const PromotingDialog = (props: IPromotingDialogProps) => {
-    console.log("props", props);
     if (!props.isOpen) {
         return null;
     }

@@ -52,14 +52,19 @@ export class AutoplayService {
     private dispatchEngineMove(evaluation: IEvaluation, fen: string) {
 
         const isImported = evaluation[LINE_MAP.import];
+        const isMate = evaluation[LINE_MAP.mate];
         const pv = evaluation[LINE_MAP.pv];
         const time = Number(evaluation[LINE_MAP.time]);
         const requiredTime = 20 * 1000;// @todo based on level
-        if (isImported === 1 || time > requiredTime) {
+        const mateTime = 3 * 1000;// @todo based on level
+
+        // console.log({evaluation});
+        if (isImported === 1 || time > requiredTime || (isMate && mateTime > time)) {
 
             const moves = Evaluation.splitPv(pv);
             const firstMove = moves[0];
 
+            // console.log("dispatchEngineMove", {firstMove, time});
             const moveObj = getMoveFen(fen, firstMove);
 
             this.store.dispatch(setMove({
