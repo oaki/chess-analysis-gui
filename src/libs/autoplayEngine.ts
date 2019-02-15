@@ -52,43 +52,43 @@ export class AutoplayService {
 
     private isScoreHigh(evaluation: IEvaluation) {
 
-        const time = Number(evaluation[LINE_MAP.time]);
+        const time = Number(evaluation[LINE_MAP.time]) / 1000;
         const score = Number(evaluation[LINE_MAP.score]);
         const toMate = Math.abs(Number(evaluation[LINE_MAP.mate]));
 
-        if (score > 8 && time > 3 * 1000) {
+        if (score > 8 && time > 3) {
             return true;
         }
 
-        if (score > 7 && time > 4 * 1000) {
+        if (score > 7 && time > 4) {
             return true;
         }
 
-        if (score > 6 && time > 5 * 1000) {
+        if (score > 6 && time > 5) {
             return true;
         }
 
-        if (score > 5 && time > 7 * 1000) {
+        if (score > 5 && time > 7) {
             return true;
         }
 
-        if (score > 4 && time > 8 * 1000) {
+        if (score > 4 && time > 8) {
             return true;
         }
 
-        if (score > 3 && time > 10 * 1000) {
+        if (score > 3 && time > 10) {
             return true;
         }
 
-        if (toMate < 6) {
+        if (toMate > 0 && toMate < 6) {
             return true;
         }
 
-        if (toMate < 11 && time > 3 * 1000) {
+        if (toMate > 0 && toMate < 11 && time > 3) {
             return true;
         }
 
-        if (toMate < 18 && time > 6 * 1000) {
+        if (toMate > 0 && toMate < 18 && time > 6) {
             return true;
         }
 
@@ -103,6 +103,9 @@ export class AutoplayService {
         const time = Number(evaluation[LINE_MAP.time]);
         const requiredTime = 20 * 1000;// @todo based on level
 
+        if (this.isScoreHigh(evaluation)) {
+            console.log("isScoreHigh", {evaluation});
+        }
 
         // console.log({evaluation});
         if (isImported === 1
