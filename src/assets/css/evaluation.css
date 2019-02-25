@@ -29,3 +29,8 @@
     padding-right: .3rem;
     display: inline-block;
 }
+
+.fen-info {
+    text-align: center;
+    font-size: .8rem;
+}

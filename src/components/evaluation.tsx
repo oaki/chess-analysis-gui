@@ -84,6 +84,7 @@ export class Evaluation extends React.Component<any, any> {
                   </table>
                 </div>}
 
+
                 {evaluation &&
                 <div className="pv-holder">
                     {this.prepareEvaluation(evaluation[LINE_MAP.pv], this.props.fen).map((move, index) => {
@@ -93,6 +94,11 @@ export class Evaluation extends React.Component<any, any> {
                     })}
                 </div>
                 }
+                <div className="fen-info">
+                    FEN<br/>
+                    <input value={this.props.fen}/>
+                </div>
+
             </React.Fragment>
         )
     }

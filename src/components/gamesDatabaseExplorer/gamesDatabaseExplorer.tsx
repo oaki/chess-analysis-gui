@@ -8,16 +8,6 @@ import {IGamesDatabaseProps} from "./gamesDatabaseReducers";
 
 export class GamesDatabaseExplorer extends React.Component<IGamesDatabaseProps, undefined> {
 
-
-    handleClick = (e) => {
-        e.preventDefault();
-        this.props.handleMove(e.currentTarget.dataset.move, e.currentTarget.dataset.fen);
-    }
-
-    renderGameLine(pgn: string, fen: string) {
-        console.log();
-    }
-
     renderRow() {
         return this.props.gameDatabase && this.props.gameDatabase.games.map((game, index) => {
             return (
