@@ -5,6 +5,7 @@ import {Flash} from "./services/errorManager";
 import {SessionManagerService} from "./services/sessionManager";
 
 export const UPDATE_LOADING = "UPDATE_LOADING";
+export const GAME_DATABASE_UPDATE_LOADING = "GAME_DATABASE_UPDATE_LOADING";
 export const SET_POSITION = "SET_POSITION";
 
 export const SET_WORKER_LIST = "SET_WORKER_LIST";
@@ -36,6 +37,13 @@ export function setLoading(isLoading: boolean) {
     return {
         isLoading,
         type: UPDATE_LOADING
+    };
+}
+
+export function gameDatabaseSetLoading(isLoading: boolean) {
+    return {
+        payload: {isLoading: isLoading},
+        type: GAME_DATABASE_UPDATE_LOADING
     };
 }
 

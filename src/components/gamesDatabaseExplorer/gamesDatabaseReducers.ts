@@ -1,8 +1,9 @@
-import {setLoading} from "../../actions";
+import {GAME_DATABASE_UPDATE_LOADING, gameDatabaseSetLoading} from "../../actions";
 import config from "../../config";
 import {Flash} from "../../services/errorManager";
-import {IAction} from "../../interfaces";
+import {GameDatabase, IAction} from "../../interfaces";
 
+const debounce = require("lodash/debounce");
 
 export interface IGames {
     id: string;
@@ -23,52 +24,57 @@ export interface IGameDatabase {
 }
 
 export interface IGamesDatabaseProps {
-    gameDatabase: IGameDatabase,
-    fen: string,
+    response: IGameDatabase;
+    fen: string;
+    isLoading: boolean;
     handleMove: (move: string, fen: string) => {}
 }
 
 
-export function loadGamesFromDatabase(fen: string) {
-    return async (dispatch: (data: any) => {}) => {
+const loadGamesFromDatabaseDebounce = debounce(async (dispatch: (data: any) => {}, fen) => {
 
-        dispatch(setLoading(true));
+    const url = `${config.apiHost}/games-database?fen=${fen}`;
+    const headers: RequestInit = {
+        method: "GET",
+        headers: new Headers({
+            "Content-Type": "application/json"
+        })
+    };
 
-        const url = `${config.apiHost}/games-database?fen=${fen}`;
-        const headers: RequestInit = {
-            method: "GET",
-            headers: new Headers({
-                "Content-Type": "application/json"
-            })
-        };
+    try {
+        const response = await fetch(url, headers);
+        if (response.ok) {
+            const gameList: IGameDatabase = await response.json();
 
-        try {
-            const response = await fetch(url, headers);
-            if (response.ok) {
-                const gameList: IGameDatabase = await response.json();
-
-                if (gameList) {
-                    dispatch(setGamesDatabase(gameList));
-                }
-
-            } else {
-                dispatch(setGamesDatabase(null));
+            if (gameList) {
+                dispatch(setGamesDatabase(gameList));
             }
 
-        } catch (e) {
-            Flash.error({msg: "games-database failed", identifier: "gamesDatabase"});
-            console.log(e);
+        } else {
+            dispatch(setGamesDatabase(null));
         }
 
-        dispatch(setLoading(false));
+    } catch (e) {
+        Flash.error({msg: "games-database failed", identifier: "gamesDatabase"});
+        console.log(e);
+    }
+
+    dispatch(gameDatabaseSetLoading(false));
+}, 1000);
+
+export function loadGamesFromDatabase(fen: string) {
+    return async (dispatch: (data: any) => {}) => {
+        console.log("try to load");
+        dispatch(gameDatabaseSetLoading(true));
+        return loadGamesFromDatabaseDebounce(dispatch, fen);
     }
 
 }
 
-export function setGamesDatabase(gameDatabase: IGameDatabase | null) {
+export function setGamesDatabase(response: IGameDatabase | null) {
     return {
         payload: {
-            gameDatabase: gameDatabase
+            response: response
         },
         type: SET_GAMES
     };
@@ -77,16 +83,23 @@ export function setGamesDatabase(gameDatabase: IGameDatabase | null) {
 export const SET_GAMES = "SET_GAMES";
 
 export interface IGamesDatabaseAction {
-    gameDatabase: IGameDatabase;
+    response: IGameDatabase;
+    isLoading: IGameDatabase;
 }
 
-export function gamesDatabaseReducer(gameDatabase: IGameDatabase | null = null, action: IAction<IGamesDatabaseAction>) {
+export function gamesDatabaseReducer(state: GameDatabase = {
+    response: null,
+    isLoading: false
+}, action: IAction<IGamesDatabaseAction>) {
 
     switch (action.type) {
         case SET_GAMES:
-            return action.payload.gameDatabase;
+            return {...state, response: action.payload.response};
+
+        case GAME_DATABASE_UPDATE_LOADING:
+            return {...state, isLoading: action.payload.isLoading};
 
         default:
-            return gameDatabase;
+            return state;
     }
 };

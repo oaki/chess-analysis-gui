@@ -4,12 +4,14 @@ import store from "../../store";
 import {setMove} from "../history/historyReducers";
 import {treeService} from "../moveTree/tree";
 import {IGamesDatabaseProps} from "./gamesDatabaseReducers";
+import {IState} from "../../interfaces";
+import {SmallLoading} from "../Loading";
 
 
-export class GamesDatabaseExplorer extends React.Component<IGamesDatabaseProps, undefined> {
+export class GamesDatabaseExplorer extends React.PureComponent<IGamesDatabaseProps> {
 
     renderRow() {
-        return this.props.gameDatabase && this.props.gameDatabase.games.map((game, index) => {
+        return this.props.response && this.props.response.games.map((game, index) => {
             return (
                 <tr key={index}>
 
@@ -33,7 +35,9 @@ export class GamesDatabaseExplorer extends React.Component<IGamesDatabaseProps, 
         return (
             <div className="games-database-box">
 
-                {this.props.gameDatabase &&
+                <SmallLoading isLoading={this.props.isLoading}/>
+
+                {this.props.response &&
                 <table className="games-database-explorer">
                   <thead>
                   <tr>
@@ -46,7 +50,7 @@ export class GamesDatabaseExplorer extends React.Component<IGamesDatabaseProps, 
                 </table>
                 }
 
-                {!this.props.gameDatabase && <div>
+                {!this.props.isLoading && !this.props.response && <div>
                   No games in database.
                 </div>}
             </div>
@@ -54,10 +58,11 @@ export class GamesDatabaseExplorer extends React.Component<IGamesDatabaseProps, 
     }
 }
 
-function mapStateToProps(state: any) {
+function mapStateToProps(state: IState) {
     return {
-        gameDatabase: state.gameDatabase,
-        fen: state.fen
+        response: state.gameDatabase.response,
+        isLoading: state.gameDatabase.isLoading,
+        fen: state.fen,
     }
 }
 

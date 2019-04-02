@@ -4,20 +4,15 @@ import store from "../../store";
 import {setMove} from "../history/historyReducers";
 import {treeService} from "../moveTree/tree";
 import "../../assets/css/explorerBox.css";
-import {
-    IOpeningExplorerProps,
-    IOpeningExplorerState,
-    IOpeningMove,
-    loadOpeningPosition
-} from "./openingExplorerReducers";
+import {IOpeningExplorerProps, IOpeningExplorerState, IOpeningMove} from "./openingExplorerReducers";
 
 export class OpeningExplorer extends React.Component<IOpeningExplorerProps, IOpeningExplorerState> {
 
-    componentDidUpdate(prevProps) {
-        if (prevProps.fen !== this.props.fen) {
-            store.dispatch(loadOpeningPosition(this.props.fen));
-        }
-    }
+    // componentDidUpdate(prevProps) {
+    //     if (prevProps.fen !== this.props.fen) {
+    //         store.dispatch(loadOpeningPosition(this.props.fen));
+    //     }
+    // }
 
     handleClick = (e) => {
         e.preventDefault();

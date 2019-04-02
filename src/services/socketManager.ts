@@ -4,7 +4,7 @@ import {ISyzygy, setSyzygyEvaluation} from "../components/syzygyExplorer/syzygyE
 import config from "../config";
 import {IWorkerResponse, LINE_MAP} from "../interfaces";
 import {Flash} from "./errorManager";
-import {StockfishService} from "./stocfishService";
+import {StockfishService} from "./stockfishService";
 import {parseResult} from "../libs/parseStockfishResults";
 import store from "../store";
 import {socketConnect} from "./sockets/actions";
