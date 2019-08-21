@@ -1,4 +1,4 @@
-import guid from "./uuid";
+import guid from "../tools/uuid";
 import {ApiManagerService} from "../services/apiManager";
 
 const StackTrace = require("stacktrace-js");

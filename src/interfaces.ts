@@ -8,14 +8,14 @@ export enum LINE_MAP {
     multipv = "u",
     nodes = "n",
     time = "t",
-    nps = "c", //
+    nps = "c",
     tbhits = "h",
     import = "i",
     fen = "f",
 }
 
 export interface IWorkerResponse extends IEvaluation {
-    fen: string
+    fen: string;
 }
 
 export interface IEvaluation {

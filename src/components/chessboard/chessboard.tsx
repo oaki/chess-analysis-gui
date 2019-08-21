@@ -4,7 +4,7 @@ import store from "../../store";
 import {Chessground} from "chessground";
 import * as Chess from "chess.js";
 
-import {IOnMove, setPosition, setStatus, setWhoIsOnMove} from "../../actions";
+import {IOnMove, setStatus, setWhoIsOnMove} from "../../actions";
 
 import {Api} from "chessground/api";
 import {toColor, toDests} from "../../libs/chessboardUtils";
@@ -18,11 +18,6 @@ import {setPromotionDialog} from "./promotingDialogReducers";
 import {Log} from "../../libs/logger";
 import {SessionManagerService} from "../../services/sessionManager";
 import {ILastMove, IUser} from "../../reducers";
-import {emitPosition} from "../../services/sockets/actions";
-import {loadOpeningPosition} from "../openingExplorer/openingExplorerReducers";
-import {loadGamesFromDatabase} from "../gamesDatabaseExplorer/gamesDatabaseReducers";
-
-const once = require("lodash/once");
 
 const throttle = require("lodash/throttle");
 const debounce = require("lodash/debounce");
@@ -69,17 +64,6 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
 
             </div>
         );
-    }
-
-    handleFenChange = (e: any) => {
-        console.log("handleFenChange");
-        const fen: string = e.target.value;
-
-        store.dispatch(setPosition(fen));
-        store.dispatch(emitPosition(fen));
-        store.dispatch(loadOpeningPosition(fen));
-        store.dispatch(loadGamesFromDatabase(fen));
-
     }
 
     handlePromotePiece = (e: any) => {
@@ -162,7 +146,7 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
 
     private playOtherSide(cg: Api) {
         return (orig, dest) => {
-
+            console.log("playOtherSide");
             store.dispatch(setMove({
                 from: orig,
                 to: dest,

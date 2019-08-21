@@ -50,7 +50,7 @@ export default class PgnImportForm extends React.PureComponent<any, any> {
                     setSyzygyEvaluation(null),
                 ]));
 
-                store.dispatch(emitPosition(SmartAwesomeChessboard.FIRST_POSITION));
+                store.dispatch(emitPosition(SmartAwesomeChessboard.FIRST_POSITION, "", null));
                 store.dispatch(loadOpeningPosition(SmartAwesomeChessboard.FIRST_POSITION));
                 store.dispatch(loadGamesFromDatabase(SmartAwesomeChessboard.FIRST_POSITION));
             });

@@ -3,20 +3,15 @@ import * as React from "react";
 import {connect} from "react-redux";
 import FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import {faArrowRight} from "@fortawesome/fontawesome-free-solid";
-
 import {batchActions} from "redux-batched-actions";
-import {withRouter} from "react-router";
-
 import {setEvaluation, setPosition, setUser} from "../../actions";
-import {Link} from "react-router-dom"
 import {setSyzygyEvaluation} from "../syzygyExplorer/syzygyExplorerReducers";
 import {IHistoryMove, lastMoveId, setHistory} from "../history/historyReducers";
 import {setOpeningPosition} from "../openingExplorer/openingExplorerReducers";
 import {NODE_MAP} from "../moveTree/tree";
 import {IHistoryGameResponse} from "./historyListReducers";
-const format = require('date-fns/format');
 
-
+const format = require("date-fns/format");
 
 
 @connect((state) => ({historyList: state.historyList}))

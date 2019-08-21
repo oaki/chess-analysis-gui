@@ -57,17 +57,17 @@ class ApiManager {
         return await this.fetch(`/user/history/import-pgn`, fetchData);
     }
 
-    async getUserBasedOnGoogleToken(token: string) {
+    async getUserBasedOnGoogleToken(googleToken: string) {
 
         const fetchData = {
             headers: new Headers(),
             method: "POST",
             body: JSON.stringify({
-                jwt_token: token
+                jwt_token: googleToken
             }),
         };
 
-        return await this.fetch("/auth/register", fetchData);
+        return this.fetch("/auth/register", fetchData);
     }
 
     async saveLog(data: any[]) {

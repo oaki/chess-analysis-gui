@@ -1,12 +1,10 @@
 import * as React from "react";
-import {connect, Provider} from "react-redux";
+import {connect} from "react-redux";
 import store from "../store";
-import {Route, Router, Switch} from "react-router"
-import {BrowserRouter} from "react-router-dom"
 import {addWorker, deleteWorker, loadEngines} from "../actions";
 import {IWorker} from "../reducers";
 
-import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import * as faPlus from "@fortawesome/fontawesome-free-solid/faPlus";
 import * as faTrash from "@fortawesome/fontawesome-free-solid/faTrash";
 import {faMicrophoneSlash, faSignal} from "@fortawesome/fontawesome-free-solid";

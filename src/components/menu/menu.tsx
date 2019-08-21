@@ -23,18 +23,8 @@ import {setSyzygyEvaluation} from "../syzygyExplorer/syzygyExplorerReducers";
 import PgnImportForm from "./pgnImportForm";
 import {emitPosition} from "../../services/sockets/actions";
 import {loadGamesFromDatabase} from "../gamesDatabaseExplorer/gamesDatabaseReducers";
-
-
-interface IMenuProps {
-    showMainMenu: boolean;
-    showFlip: boolean;
-    showAutoplay: boolean;
-    showUndo: boolean;
-    showRedo: boolean;
-
-    history: any;
-    isOpen: boolean;
-}
+import {VERSION} from "../../libs/version";
+import {IEvaluation} from "../../interfaces";
 
 @connect((state) => ({
     isOpen: state.menu.isOpen,
@@ -70,7 +60,12 @@ export class Menu extends React.PureComponent<any, any> {
             setEvaluation([]),
         ]));
 
-        store.dispatch(emitPosition(fen));
+        let previousEvaluation: IEvaluation | null = null;
+        const evaluations = previousMove[NODE_MAP.evaluation];
+        if (evaluations && evaluations[0]) {
+            previousEvaluation = evaluations[0];
+        }
+        store.dispatch(emitPosition(fen, previousMove[NODE_MAP.move], previousEvaluation));
         store.dispatch(loadOpeningPosition(fen));
         store.dispatch(loadGamesFromDatabase(fen));
     }
@@ -90,7 +85,15 @@ export class Menu extends React.PureComponent<any, any> {
                 setEvaluation([]),
             ]));
 
-            store.dispatch(emitPosition(fen));
+            //todo send previous evaluation
+            let previousEvaluation: IEvaluation | null = null;
+            const evaluations = nextMove[NODE_MAP.evaluation];
+            if (evaluations && evaluations[0]) {
+                previousEvaluation = evaluations[0];
+            }
+
+            store.dispatch(emitPosition(fen, nextMove[NODE_MAP.move], previousEvaluation));
+
             store.dispatch(loadOpeningPosition(fen));
             store.dispatch(loadGamesFromDatabase(fen));
         }
@@ -120,7 +123,7 @@ export class Menu extends React.PureComponent<any, any> {
                 setHistory([])
             ]));
 
-            store.dispatch(emitPosition(SmartAwesomeChessboard.FIRST_POSITION));
+            store.dispatch(emitPosition(SmartAwesomeChessboard.FIRST_POSITION, "", null));
             store.dispatch(loadOpeningPosition(SmartAwesomeChessboard.FIRST_POSITION));
             store.dispatch(loadGamesFromDatabase(SmartAwesomeChessboard.FIRST_POSITION));
             console.log("id", id);
@@ -141,7 +144,7 @@ export class Menu extends React.PureComponent<any, any> {
                 setHistory([])
             ]));
 
-            store.dispatch(emitPosition(SmartAwesomeChessboard.FIRST_POSITION));
+            store.dispatch(emitPosition(SmartAwesomeChessboard.FIRST_POSITION, "", null));
             store.dispatch(loadOpeningPosition(SmartAwesomeChessboard.FIRST_POSITION));
             store.dispatch(loadGamesFromDatabase(SmartAwesomeChessboard.FIRST_POSITION));
             console.log("id", id);
@@ -274,7 +277,7 @@ export class Menu extends React.PureComponent<any, any> {
                         </li>
 
                         <li className="sub-menu__version">
-                            version 2.4.3
+                            version {VERSION}
                         </li>
                     </ul>
                 </div>

@@ -2,12 +2,13 @@ import * as io from "socket.io-client";
 import {setEvaluation} from "../actions";
 import {ISyzygy, setSyzygyEvaluation} from "../components/syzygyExplorer/syzygyExplorerReducers";
 import config from "../config";
-import {IWorkerResponse, LINE_MAP} from "../interfaces";
+import {IEvaluation, IWorkerResponse, LINE_MAP} from "../interfaces";
 import {Flash} from "./errorManager";
 import {StockfishService} from "./stockfishService";
 import {parseResult} from "../libs/parseStockfishResults";
 import store from "../store";
 import {socketConnect} from "./sockets/actions";
+import {NODE_MAP, treeService} from "../components/moveTree/tree";
 
 export default class SocketManager {
     private socket;
@@ -39,11 +40,16 @@ export default class SocketManager {
 
         const arr = JSON.parse(result);
         // for now we are expecting only one result, no more
-        console.log({arr});
         // ignore others @todo disable others results
         const fen = store.getState()["fen"];
         const results = arr.filter((data) => data.fen === fen).map((data) => this.prepareEvaluation(data));
         if (results && results.length > 0) {
+
+            const refs = treeService.findReferencesByFen(fen);
+            const move = refs[0];
+            move[NODE_MAP.evaluation] = results;
+
+            // find in history move and add this result to the move
             store.dispatch(setEvaluation(results));
         }
     }
@@ -107,12 +113,38 @@ export default class SocketManager {
         });
     }
 
-    public setNewPosition(fen: string, isOnline: boolean) {
-        if (isOnline) {
-            console.log("setNewPosition", fen);
-            this.emit("setNewPosition", {
-                FEN: fen
-            })
+    public setNewPosition(
+        fen: string,
+        move: string,
+        checkIsOnline: boolean,
+        previousEvaluation: IEvaluation | null,
+        evaluation: IEvaluation | null
+    ) {
+        if (checkIsOnline) {
+            console.log("setNewPosition", {previousEvaluation, fen, evaluation});
+
+            //check if current evaluation is sufficient if yes use it and sent it to redux
+            // otherwise sent it to server
+            // debugger;
+            if (evaluation) {
+                const nodes: number = evaluation[LINE_MAP.nodes] || 0;
+                const score: number = parseInt(evaluation[LINE_MAP.score]) || 0;
+                const nodesConst = 50 * 1000 * 1000;
+                if (nodes > nodesConst && score > 3.5 && evaluation[LINE_MAP.pv].length > 8) {
+                    store.dispatch(setEvaluation([{
+                        fen,
+                        ...evaluation,
+                        [LINE_MAP.nodes]: nodes - nodesConst
+                    }]));
+                }
+            } else {
+                this.emit("setNewPosition", {
+                    move,
+                    previousEvaluation,
+                    FEN: fen,
+                });
+            }
+
         } else {
             this.stockfishEngineInterface.go(fen);
         }

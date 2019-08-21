@@ -10,6 +10,7 @@ import {loadOpeningPosition, setOpeningPosition} from "../openingExplorer/openin
 import {lastMoveId} from "./historyReducers";
 import {emitPosition} from "../../services/sockets/actions";
 import {loadGamesFromDatabase} from "../gamesDatabaseExplorer/gamesDatabaseReducers";
+import {IEvaluation} from "../../interfaces";
 
 const classNames = require("classnames");
 
@@ -42,7 +43,24 @@ export class History extends React.Component<any, any> {
                 setOpeningPosition([])
             ]));
 
-            store.dispatch(emitPosition(fen));
+            //todo send previous evaluation
+            let previousEvaluation: IEvaluation | null = null;
+            let evaluation: IEvaluation | null = null;
+            const evaluations = ref.node[NODE_MAP.evaluation];
+            if (evaluations && evaluations[0]) {
+                evaluation = evaluations[0];
+            }
+
+            if (ref.parent.length > 2 && ref.parent[ref.parent.length - 2]) {
+                const prevRef = ref.parent[ref.parent.length - 2];
+                const prevEvaluations = prevRef[NODE_MAP.evaluation];
+                if (prevEvaluations && prevEvaluations[0]) {
+                    previousEvaluation = prevEvaluations[0];
+                }
+            }
+
+            store.dispatch(emitPosition(fen, ref.node[NODE_MAP.move], previousEvaluation, evaluation));
+
             store.dispatch(loadOpeningPosition(fen));
             store.dispatch(loadGamesFromDatabase(fen));
         }
@@ -60,7 +78,6 @@ export class History extends React.Component<any, any> {
     }
 
     render() {
-
         return (
             <div className="history">
 

@@ -3,7 +3,7 @@ import * as Chess from "chess.js";
 import {connect} from "react-redux";
 
 import {IEvaluation, LINE_MAP} from "../interfaces";
-import {isYourMove} from "../libs/isYourMove";
+import {isYourMove} from "../tools/isYourMove";
 import FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import * as faSignal from "@fortawesome/fontawesome-free-solid/faSignal";
 import * as faMicrophoneSlash from "@fortawesome/fontawesome-free-solid/faMicrophoneSlash";

@@ -1,8 +1,5 @@
 import * as React from "react";
-import {connect, Provider} from "react-redux";
 import {Pannel} from "../components/Pannel";
-import {Route, Router, Switch} from "react-router"
-import {BrowserRouter} from "react-router-dom"
 import {MenuWithRouter} from "../components/menu/menu";
 import {SmartAwesomeChessboard} from "../components/chessboard/chessboard";
 import {InfoPanel} from "../components/infoPanel/infoPanel";

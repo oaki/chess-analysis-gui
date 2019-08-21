@@ -1,10 +1,7 @@
 import * as React from "react";
-import {connect, Provider} from "react-redux";
-import {Route, Router, Switch} from "react-router"
-import {BrowserRouter} from "react-router-dom"
+import {connect} from "react-redux";
 import {MenuWithRouter} from "../components/menu/menu";
 import {Header} from "../components/Header";
-import {Checkbox, Form} from "informed";
 import Toggle from "react-toggle"
 import {IAction} from "../interfaces";
 import store from "../store";

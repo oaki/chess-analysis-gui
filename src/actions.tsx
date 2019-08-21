@@ -1,4 +1,4 @@
-import {IWorkerResponse} from "./interfaces";
+import {IEvaluation, IWorkerResponse} from "./interfaces";
 import config from "./config";
 import {IUser, IWorker} from "./reducers";
 import {Flash} from "./services/errorManager";
@@ -76,6 +76,7 @@ export interface ISetMoveProps {
     id: number;
     promotion?: string;
     fen: string;
+    previousMoveEvaluation?: IEvaluation;
 }
 
 

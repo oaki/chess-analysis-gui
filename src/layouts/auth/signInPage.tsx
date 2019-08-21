@@ -1,6 +1,5 @@
 import * as React from "react";
 import {CSSProperties} from "react";
-import {Redirect, Route, RouteComponentProps, RouteProps} from "react-router-dom"
 import {connect} from "react-redux";
 import {IUser} from "../../reducers";
 import {SessionManagerService} from "../../services/sessionManager";
@@ -35,10 +34,12 @@ class SignInPage extends React.Component<ISignInPageProps, any> {
     private async checkTemporaryTokenOnServer() {
         try {
             const res = await ApiManagerService.checkTemporaryToken(SessionManagerService.getTemporaryToken());
+            console.log("google_token---------------", res.google_token);
+            const resWithJwt = await ApiManagerService.getUserBasedOnGoogleToken(res.google_token);
             clearInterval(this.timer);
             SessionManagerService.removeTemporaryToken();
-            SessionManagerService.setToken(res.token);
-            location.href = "/";
+            SessionManagerService.setToken(resWithJwt.token);
+            // location.href = "/";
         } catch (e) {
             console.log(e);
         }

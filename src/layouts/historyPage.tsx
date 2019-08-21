@@ -1,7 +1,4 @@
 import * as React from "react";
-import {connect, Provider} from "react-redux";
-import {Route, Router, Switch} from "react-router"
-import {BrowserRouter} from "react-router-dom"
 import {MenuWithRouter} from "../components/menu/menu";
 import {setLoading} from "../actions";
 import store from "../store";
@@ -9,7 +6,7 @@ import config from "../config";
 import {Header} from "../components/Header";
 import {HistoryList} from "../components/historyList/historyList";
 import {setHistoryGameList} from "../components/historyList/historyListReducers";
-import {addError, Flash} from "../services/errorManager";
+import {Flash} from "../services/errorManager";
 import {SessionManagerService} from "../services/sessionManager";
 
 export class HistoryPage extends React.PureComponent<any, undefined> {

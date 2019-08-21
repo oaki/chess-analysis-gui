@@ -3,7 +3,7 @@ import {Provider} from "react-redux";
 import store from "./store";
 import SignInPage from "./layouts/auth/signInPage";
 import {ChessboardPage} from "./layouts/chessboardPage";
-import {BrowserRouter, Link, Redirect, Route, withRouter} from "react-router-dom";
+import {BrowserRouter, Route} from "react-router-dom";
 import {PrivateRoute} from "./libs/privateRoute";
 import {EnginesPageSmart} from "./layouts/enginesPage";
 import {HistoryPage} from "./layouts/historyPage";
@@ -19,7 +19,6 @@ import {Flash} from "./services/errorManager";
 import {setHistory} from "./components/history/historyReducers";
 import {Loading} from "./components/Loading";
 import {connectSocket} from "./services/sockets/actions";
-
 
 export class App extends React.Component<{}, {}> {
 
@@ -38,15 +37,15 @@ export class App extends React.Component<{}, {}> {
 
                         {!this.state.isLoading &&
                         <div className="app">
-                            <PrivateRoute exact={true} path="/" component={ChessboardPage}/>
-                            <PrivateRoute path="/user/engines" component={EnginesPageSmart}/>
-                            <PrivateRoute path="/user/history" component={HistoryPage}/>
-                            <PrivateRoute path="/settings" component={SettingPage}/>
-                            <Route path="/auth/sign-in" component={SignInPage}/>
-                            <Route path="/auth/google-popup" component={GooglePopupRedirect}/>
-                            <Route path="/auth/verify-google-response" component={VerifyGoogleResponse}/>
+                          <PrivateRoute exact={true} path="/" component={ChessboardPage}/>
+                          <PrivateRoute path="/user/engines" component={EnginesPageSmart}/>
+                          <PrivateRoute path="/user/history" component={HistoryPage}/>
+                          <PrivateRoute path="/settings" component={SettingPage}/>
+                          <Route path="/auth/sign-in" component={SignInPage}/>
+                          <Route path="/auth/google-popup" component={GooglePopupRedirect}/>
+                          <Route path="/auth/verify-google-response" component={VerifyGoogleResponse}/>
 
-                            <ErrorContainer/>
+                          <ErrorContainer/>
                         </div>}
                     </div>
                 </BrowserRouter>
@@ -113,8 +112,17 @@ export class App extends React.Component<{}, {}> {
 
                     if (temporaryToken) {
                         ApiManagerService.checkTemporaryToken(temporaryToken).then((res) => {
-                            SessionManagerService.setToken(res.token);
-                            this.setState({isLoading: false});
+                            console.log("RES1---------------------", res);
+                            if (res.google_token) {
+                                ApiManagerService.getUserBasedOnGoogleToken(res.google_token).then((res2) => {
+                                    console.log("RES2---------------------", res2);
+                                    SessionManagerService.setToken(res2.token);
+                                    this.setState({isLoading: false});
+                                });
+                            } else {
+                                throw Error("Google token is missing.");
+                            }
+
                         }).catch((error) => {
                             SessionManagerService.removeTemporaryToken();
                             this.prepareTemporaryToken();

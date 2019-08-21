@@ -1,4 +1,5 @@
-import guid from "../../libs/uuid";
+import guid from "../../tools/uuid";
+import {IEvaluation} from "../../interfaces";
 
 export enum NODE_MAP {
     id = "id",
@@ -8,6 +9,7 @@ export enum NODE_MAP {
     variants = "vs",
     moves = "ms",
     shortNotation = "s",
+    evaluation = "e",
 }
 
 export interface Node {
@@ -16,6 +18,7 @@ export interface Node {
     [NODE_MAP.move]: string;
     [NODE_MAP.shortNotation]: string;
     [NODE_MAP.variants]: NodeVariant[];
+    [NODE_MAP.evaluation]?: IEvaluation[];
 }
 
 
@@ -128,12 +131,7 @@ export class Tree {
     getPrevMove(id: number): Node {
         const ref = this.getReference(id);
 
-        if (ref.index > 0) {
-            return ref.parent[ref.index - 1];
-        } else {
-            return ref.parent[ref.index - 1];
-        }
-
+        return ref.parent[ref.index - 1];
     }
 
     getNextMove(id: number): Node {
@@ -210,6 +208,27 @@ export class Tree {
         this.findReference(ref, this.nodes, id);
 
         return ref;
+    }
+
+    private findReferenceByFen(list: any[], moves: Node[], fen: string): void {
+
+        for (let i = 0; i < moves.length; i++) {
+            const move: Node = moves[i];
+            if (move[NODE_MAP.fen] === fen) {
+                list.push(move);
+            } else {
+                for (let j = 0; j < move[NODE_MAP.variants].length; j++) {
+                    const variant: NodeVariant = move[NODE_MAP.variants][j];
+                    this.findReferenceByFen(list, variant[NODE_MAP.moves], fen);
+                }
+            }
+        }
+    }
+
+    findReferencesByFen(fen: string) {
+        const list = [];
+        this.findReferenceByFen(list, this.nodes, fen);
+        return list;
     }
 
 }

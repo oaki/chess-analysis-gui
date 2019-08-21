@@ -12,13 +12,14 @@ import {
 } from "../../actions";
 import {batchActions} from "redux-batched-actions";
 import store from "../../store";
-import {IAction} from "../../interfaces";
+import {IAction, IEvaluation, LINE_MAP} from "../../interfaces";
 import * as Chess from "chess.js";
 import {setSyzygyEvaluation} from "../syzygyExplorer/syzygyExplorerReducers";
 import {setPromotionDialog} from "../chessboard/promotingDialogReducers";
 import {emitPosition} from "../../services/sockets/actions";
 import {loadGamesFromDatabase} from "../gamesDatabaseExplorer/gamesDatabaseReducers";
 
+const maxBy = require("lodash/maxBy");
 
 export interface IHistoryMove {
     id: number;
@@ -42,6 +43,12 @@ export const historyReducer = (state: Node[] = [], action: IAction<IHistoryMove 
     }
 };
 
+// find best eval based on nodes count. It's temporary. Maybe in future will find better solution.
+export function findBestEvaluation(evaluations: IEvaluation[]) {
+    return maxBy(evaluations, (evaluation) => {
+        return evaluation[LINE_MAP.nodes]
+    });
+}
 
 export function setMove(props: ISetMoveProps) {
 
@@ -75,14 +82,18 @@ export function setMove(props: ISetMoveProps) {
             lastMove(from, to)
         ];
 
+        let previousEvaluation = null;
+        let evaluation = null;
+
         if (nextMoveId) {
+            const currRef = treeService.getReference(nextMoveId);
+            if (currRef && currRef[NODE_MAP.evaluation]) {
+                evaluation = findBestEvaluation(currRef[NODE_MAP.evaluation]);
+            }
+
             actions.push(lastMoveId(nextMoveId));
         } else {
             actions.push(lastMoveId(id));
-
-            if (!newMove.san) {
-                debugger;
-            }
             actions.push(
                 setHistoryMove({
                     id,
@@ -94,7 +105,15 @@ export function setMove(props: ISetMoveProps) {
             );
         }
 
-        actions.push(emitPosition(newFen));
+        const prevRef = treeService.getReference(previousId);
+
+        if (prevRef && prevRef.node && prevRef.node[NODE_MAP.evaluation] && Array.isArray(prevRef.node[NODE_MAP.evaluation])) {
+            previousEvaluation = findBestEvaluation(prevRef.node[NODE_MAP.evaluation] || []);
+        }
+
+        // todo check how to write move with promotion
+        const move = `${from}${to}`;
+        actions.push(emitPosition(newFen, move, previousEvaluation, evaluation));
 
 
         store.dispatch(loadOpeningPosition(newFen));
