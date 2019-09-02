@@ -39,7 +39,7 @@ class SignInPage extends React.Component<ISignInPageProps, any> {
             clearInterval(this.timer);
             SessionManagerService.removeTemporaryToken();
             SessionManagerService.setToken(resWithJwt.token);
-            // location.href = "/";
+            location.href = "/";
         } catch (e) {
             console.log(e);
         }
@@ -59,27 +59,33 @@ class SignInPage extends React.Component<ISignInPageProps, any> {
         };
 
         return (
-            <div className="page-log-in container" style={style}>
-                <h2>
-                    Sign in
-                </h2>
+            <>
+                <div className="alert alert-warn">
+                    <strong>Beta version!!!</strong>
+                </div>
+                <div className="page-log-in container" style={style}>
+                    <h2>
+                        Sign in
+                    </h2>
 
-                <p>
-                    Welcome to the 2018 edition of Chess analysis. It's a strongest chess engine on mobile. Let'a try if
-                    you can WIN.
-                    Featuring a faster and smoother user interface along with a stronger state of the art artificial
-                    intelligence engine.
-                </p>
+                    <p>
+                        Welcome to the 2019 edition of Chess analysis. It's a strongest chess engine on mobile. Let'a
+                        try if
+                        you can WIN.
+                        Featuring a faster and smoother user interface along with a stronger state of the art artificial
+                        intelligence engine.
+                    </p>
 
 
-                <a href="#" className="sing-in-with-google" onClick={this.handleOpenPopup}>
-                    <img
-                        className="sing-in-with-google--image"
-                        src="/img/btn_google_signin_light_normal_web@2x.png"
-                        alt="Sign in with Google"
-                    />
-                </a>
-            </div>
+                    <a href="#" className="sing-in-with-google" onClick={this.handleOpenPopup}>
+                        <img
+                            className="sing-in-with-google--image"
+                            src="/img/btn_google_signin_light_normal_web@2x.png"
+                            alt="Sign in with Google"
+                        />
+                    </a>
+                </div>
+            </>
         );
     }
 

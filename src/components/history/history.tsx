@@ -12,14 +12,6 @@ import {emitPosition} from "../../services/sockets/actions";
 import {loadGamesFromDatabase} from "../gamesDatabaseExplorer/gamesDatabaseReducers";
 import {IEvaluation} from "../../interfaces";
 
-const classNames = require("classnames");
-
-interface IHistoryProps {
-    history: string[];
-    lastMoveId: string;
-}
-
-
 @connect((state) => ({
     history: state.history,
     lastMoveId: state.lastMoveId,

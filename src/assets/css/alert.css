@@ -12,6 +12,12 @@
     color: white;
 }
 
+.alert-warn {
+    background-color: #fff3cd;
+    color: #856404;
+    text-align: center;
+}
+
 .note {
     margin: 1rem;
     border-radius: .5rem;
