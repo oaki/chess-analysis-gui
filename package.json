@@ -27,7 +27,7 @@
     "jsonwebtoken": "^8.3.0",
     "jsrsasign": "^8.0.12",
     "jwt-decode": "^2.2.0",
-    "lodash": "^4.17.5",
+    "lodash": "^4.17.13",
     "query-string": "5.1.1",
     "react": "^16.8.6",
     "react-app-rewire-scss": "^1.0.2",
