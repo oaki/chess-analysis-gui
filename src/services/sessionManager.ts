@@ -1,5 +1,3 @@
-import {IUser} from "../reducers";
-
 export const TOKEN_BASE_NAME = "chess-analysis";
 export const TOKEN_NAME = "chess-analysis__token";
 export const TOKEN_USER_NAME = `${TOKEN_BASE_NAME}__user`;

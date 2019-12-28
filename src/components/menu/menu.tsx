@@ -15,7 +15,7 @@ import {SessionManagerService} from "../../services/sessionManager";
 import {batchActions} from "redux-batched-actions";
 import {Node, NODE_MAP, treeService} from "../moveTree/tree";
 import {lastMoveId, setHistory} from "../history/historyReducers";
-import {SmartAwesomeChessboard} from "../chessboard/chessboard";
+import {FIRST_POSITION} from "../chessboard/chessboardController";
 import {faPause} from "@fortawesome/fontawesome-free-solid";
 import {loadOpeningPosition, setOpeningPosition} from "../openingExplorer/openingExplorerReducers";
 import {flipBoard, openPgnDialog, toggleAutoplay, toogleOpenMenu} from "./menuReducers";
@@ -26,12 +26,13 @@ import {loadGamesFromDatabase} from "../gamesDatabaseExplorer/gamesDatabaseReduc
 import {VERSION} from "../../libs/version";
 import {IEvaluation} from "../../interfaces";
 
-@connect((state) => ({
+const mapStateToProps = (state) => ({
     isOpen: state.menu.isOpen,
     autoplay: state.autoplay,
     pgnDialog: state.pgnDialog,
-}))
-export class Menu extends React.PureComponent<any, any> {
+});
+
+export class M extends React.PureComponent<any, any> {
 
     handleFlipBoard() {
         store.dispatch(flipBoard());
@@ -51,7 +52,7 @@ export class Menu extends React.PureComponent<any, any> {
             id = (previousMove[NODE_MAP.id] as number);
         }
 
-        const fen: string = previousMove ? previousMove[NODE_MAP.fen] : SmartAwesomeChessboard.FIRST_POSITION;
+        const fen: string = previousMove ? previousMove[NODE_MAP.fen] : FIRST_POSITION;
         store.dispatch(batchActions([
             toggleAutoplay(false),
             lastMoveId(id),
@@ -60,6 +61,7 @@ export class Menu extends React.PureComponent<any, any> {
             setEvaluation([]),
         ]));
 
+        debugger;
         let previousEvaluation: IEvaluation | null = null;
         const evaluations = previousMove[NODE_MAP.evaluation];
         if (evaluations && evaluations[0]) {
@@ -106,7 +108,7 @@ export class Menu extends React.PureComponent<any, any> {
     handleLogout = () => {
         SessionManagerService.removeToken();
         SessionManagerService.removeTemporaryToken();
-        location.href = "/";
+        window.location.href = "/";
     }
 
     handleNewGame = () => {
@@ -116,16 +118,16 @@ export class Menu extends React.PureComponent<any, any> {
                 setStatus(""),
                 setWhoIsOnMove(IOnMove.WHITE),
                 lastMoveId(null),
-                setPosition(SmartAwesomeChessboard.FIRST_POSITION),
+                setPosition(FIRST_POSITION),
                 setEvaluation([]),
                 setSyzygyEvaluation(null),
                 setOpeningPosition([]),
                 setHistory([])
             ]));
 
-            store.dispatch(emitPosition(SmartAwesomeChessboard.FIRST_POSITION, "", null));
-            store.dispatch(loadOpeningPosition(SmartAwesomeChessboard.FIRST_POSITION));
-            store.dispatch(loadGamesFromDatabase(SmartAwesomeChessboard.FIRST_POSITION));
+            store.dispatch(emitPosition(FIRST_POSITION, "", null));
+            store.dispatch(loadOpeningPosition(FIRST_POSITION));
+            store.dispatch(loadGamesFromDatabase(FIRST_POSITION));
             console.log("id", id);
         }));
     };
@@ -137,16 +139,16 @@ export class Menu extends React.PureComponent<any, any> {
                 setStatus(""),
                 setWhoIsOnMove(IOnMove.WHITE),
                 lastMoveId(null),
-                setPosition(SmartAwesomeChessboard.FIRST_POSITION),
+                setPosition(FIRST_POSITION),
                 setEvaluation([]),
                 setSyzygyEvaluation(null),
                 setOpeningPosition([]),
                 setHistory([])
             ]));
 
-            store.dispatch(emitPosition(SmartAwesomeChessboard.FIRST_POSITION, "", null));
-            store.dispatch(loadOpeningPosition(SmartAwesomeChessboard.FIRST_POSITION));
-            store.dispatch(loadGamesFromDatabase(SmartAwesomeChessboard.FIRST_POSITION));
+            store.dispatch(emitPosition(FIRST_POSITION, "", null));
+            store.dispatch(loadOpeningPosition(FIRST_POSITION));
+            store.dispatch(loadGamesFromDatabase(FIRST_POSITION));
             console.log("id", id);
         }));
     };
@@ -286,6 +288,6 @@ export class Menu extends React.PureComponent<any, any> {
         }
     }
 }
-
-export const MenuWithRouter = withRouter(Menu);
+const Menu:any = connect<any>(mapStateToProps)(M);
+export const MenuWithRouter:any = withRouter(Menu);
 

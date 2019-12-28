@@ -21,19 +21,19 @@ export interface IMoves {
 }
 
 export function Variants(props: IVariants) {
-
-
-    const variants = props.variants.map((variant: NodeVariant, index: number) => {
+    const variants:any = props.variants.map((variant: NodeVariant, index: number) => {
+        // @ts-ignore
+        const moves = <Moves
+            key={index}
+            counter={props.counter - 1}
+            moves={variant[NODE_MAP.moves]}
+            level={props.level + 1}
+            handleMoveClick={props.handleMoveClick}
+            showBracket={true}
+            lastMoveId={props.lastMoveId}
+        />;
         return [
-            <Moves
-                key={index}
-                counter={props.counter - 1}
-                moves={variant[NODE_MAP.moves]}
-                level={props.level + 1}
-                handleMoveClick={props.handleMoveClick}
-                showBracket={true}
-                lastMoveId={props.lastMoveId}
-            />
+            moves
         ];
     });
 

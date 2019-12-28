@@ -22,3 +22,8 @@
 .games-database-explorer__results {
     text-align: right;
 }
+
+
+.games-database-explorer__line {
+    font-size: .6rem;
+}

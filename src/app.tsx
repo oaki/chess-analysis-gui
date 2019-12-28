@@ -32,7 +32,7 @@ export class App extends React.Component<{}, {}> {
         return (
             <Provider store={store}>
                 <BrowserRouter>
-                    <div>
+                    <>
                         <Loading isLoading={this.state.isLoading}/>
 
                         {!this.state.isLoading &&
@@ -47,7 +47,7 @@ export class App extends React.Component<{}, {}> {
 
                           <ErrorContainer/>
                         </div>}
-                    </div>
+                    </>
                 </BrowserRouter>
             </Provider>
         )

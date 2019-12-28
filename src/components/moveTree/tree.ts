@@ -1,5 +1,5 @@
 import guid from "../../tools/uuid";
-import {IEvaluation} from "../../interfaces";
+import {IEvaluation, Nullable} from "../../interfaces";
 
 export enum NODE_MAP {
     id = "id",
@@ -31,10 +31,10 @@ export class Tree {
     private counter: number = 0;
     private nodes: Node[] = [];
     private cache = {}; //not used yet
-    private stateHash: string;
+    private stateHash: string = '';
 
     setNodes(nodes: Node[]) {
-        this.nodes = nodes;
+        this.nodes = JSON.parse(JSON.stringify(nodes));
 
         let idCounter = 0;
         this.iterate(this.nodes, (node: Node) => {
@@ -162,7 +162,7 @@ export class Tree {
     }
 
 
-    private findReference(moveRef: ReferenceToMove, moves: Node[], id: number): void {
+    private findReference(moveRef: ReferenceToMove, moves: Node[], id: number, parentId: Nullable<number> = null): void {
 
         for (let i = 0; i < moves.length; i++) {
             const move: Node = moves[i];
@@ -176,7 +176,7 @@ export class Tree {
 
                 for (let j = 0; j < move[NODE_MAP.variants].length; j++) {
                     const variant: NodeVariant = move[NODE_MAP.variants][j];
-                    this.findReference(moveRef, variant[NODE_MAP.moves], id);
+                    this.findReference(moveRef, variant[NODE_MAP.moves], id, move[NODE_MAP.id]);
                 }
             }
         }
@@ -198,7 +198,7 @@ export class Tree {
     }
 
 
-    getReference(id: number) {
+    getReference(id: number):ReferenceToMove {
         const ref: ReferenceToMove = {
             node: null,
             parent: this.nodes,

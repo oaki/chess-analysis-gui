@@ -13,7 +13,7 @@ interface ISignInPageProps {
 
 class SignInPage extends React.Component<ISignInPageProps, any> {
 
-    private timer;
+    private timer:any;
 
     constructor(props: ISignInPageProps) {
         super(props);
@@ -39,7 +39,7 @@ class SignInPage extends React.Component<ISignInPageProps, any> {
             clearInterval(this.timer);
             SessionManagerService.removeTemporaryToken();
             SessionManagerService.setToken(resWithJwt.token);
-            location.href = "/";
+            window.location.href = "/";
         } catch (e) {
             console.log(e);
         }
@@ -77,13 +77,13 @@ class SignInPage extends React.Component<ISignInPageProps, any> {
                     </p>
 
 
-                    <a href="#" className="sing-in-with-google" onClick={this.handleOpenPopup}>
+                    <button className="sing-in-with-google" onClick={this.handleOpenPopup}>
                         <img
                             className="sing-in-with-google--image"
                             src="/img/btn_google_signin_light_normal_web@2x.png"
                             alt="Sign in with Google"
                         />
-                    </a>
+                    </button>
                 </div>
             </>
         );
@@ -112,7 +112,7 @@ class SignInPage extends React.Component<ISignInPageProps, any> {
 }
 
 
-function mapStateToProps(state) {
+function mapStateToProps(state:any) {
     return {
         user: state.user
     }

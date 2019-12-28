@@ -100,9 +100,8 @@ export class AutoplayService {
 
         const isImported = evaluation[LINE_MAP.import];
         const pv = evaluation[LINE_MAP.pv];
-        const time = Number(evaluation[LINE_MAP.time]);
         const nodes = Number(evaluation[LINE_MAP.nodes]);
-        const requiredTime = 20 * 1000;// @todo based on level
+        // const requiredTime = 20 * 1000;// @todo based on level
 
         if (this.isScoreHigh(evaluation)) {
             console.log("isScoreHigh", {evaluation});

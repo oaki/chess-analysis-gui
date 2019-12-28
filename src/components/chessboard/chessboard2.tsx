@@ -22,18 +22,17 @@ import {ILastMove, IUser} from "../../reducers";
 const throttle = require("lodash/throttle");
 const debounce = require("lodash/debounce");
 
-
-@connect((state) => ({
-    fen: state.fen,
-    onMove: state.onMove,
-    history: state.history,
-    isFlip: state.isFlip,
-    lastMoveId: state.lastMoveId,
-    lastMove: state.lastMove,
-    promotionDialog: state.promotionDialog,
-    evaluation: state.evaluation,
-}))
-export class SmartAwesomeChessboard extends React.Component<any, any> {
+// @connect((state):any => ({
+//     fen: state.fen,
+//     onMove: state.onMove,
+//     history: state.history,
+//     isFlip: state.isFlip,
+//     lastMoveId: state.lastMoveId,
+//     lastMove: state.lastMove,
+//     promotionDialog: state.promotionDialog,
+//     evaluation: state.evaluation,
+// }))
+export class SmartAwesomeChessboard2 extends React.Component<any, any> {
 
     private board: any = null;
     static FIRST_POSITION = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -43,7 +42,7 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
         super(props);
 
         this.state = {
-            fen: SmartAwesomeChessboard.FIRST_POSITION,
+            fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
             orientation: "white",
             evaluation: {}
         };
@@ -68,7 +67,7 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
 
     handlePromotePiece = (e: any) => {
         e.preventDefault();
-        const propsSetMove = {...store.getState()["promotionDialog"]["requestedParams"]};
+        const propsSetMove:any = {...store.getState()["promotionDialog"]["requestedParams"]};
         propsSetMove.promotion = e.currentTarget.dataset.piece;
         store.dispatch(setPromotionDialog({isOpen: false}));
         store.dispatch(setMove(propsSetMove));
@@ -126,7 +125,7 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
     private updateStatus(chess) {
         const moveColor = chess.turn() === "b" ? "Black" : "White";
 
-        status = "";
+        let status = "";
         // checkmate?
         if (chess.in_checkmate() === true) {
             status = "Game over, " + moveColor + " is in checkmate.";
@@ -161,8 +160,9 @@ export class SmartAwesomeChessboard extends React.Component<any, any> {
         let previousHash: string = treeService.getStateHash();
 
         const saveHistory = throttle(() => {
-            const history = store.getState()["history"];
-            const user: IUser = store.getState()["user"];
+            const state = store.getState();
+            const history = state["history"];
+            const user: IUser = state["user"];
             const token = SessionManagerService.getToken();
             if (user.lastGameId) {
                 ApiManagerService.saveGame(history, user.lastGameId, token);

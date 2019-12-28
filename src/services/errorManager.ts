@@ -5,6 +5,23 @@ import store from "../store";
 export const ADD_ERROR = "ADD_ERROR";
 export const REMOVE_ERROR = "REMOVE_ERROR";
 
+interface IRemoveErrorProps {
+    identifier: string;
+}
+
+export enum ErrorType {
+    INFO = "info",
+    ERROR = "error",
+}
+
+export interface IErrorProps {
+    msg: string;
+    identifier?: string;
+    type?: ErrorType;
+    delay: number;
+    expireTime?: number;
+    handleOnClick: (e: any) => void
+}
 export function addError(props: Partial<IErrorProps>) {
 
     return {
@@ -28,23 +45,6 @@ export function removeError(props: IRemoveErrorProps) {
     };
 }
 
-interface IRemoveErrorProps {
-    identifier: string;
-}
-
-export enum ErrorType {
-    INFO = "info",
-    ERROR = "error",
-}
-
-export interface IErrorProps {
-    msg: string;
-    identifier?: string;
-    type?: ErrorType;
-    delay: number;
-    expireTime?: number;
-    handleOnClick: (e: any) => void
-}
 
 export function errorReducers(state: IErrorProps[] = [], action: IAction<IErrorProps>) {
     let index;
@@ -84,7 +84,7 @@ export function errorReducers(state: IErrorProps[] = [], action: IAction<IErrorP
         default:
             return state;
     }
-};
+}
 
 
 export class ErrorManager {
@@ -122,5 +122,3 @@ export class Flash {
         store.dispatch(addError(props));
     }
 }
-
-export const ErrorManagerService = new ErrorManager();

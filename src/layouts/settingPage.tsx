@@ -5,47 +5,44 @@ import {Header} from "../components/Header";
 import Toggle from "react-toggle"
 import {IAction} from "../interfaces";
 import store from "../store";
+import {memo} from "react";
 
-@connect((state) => ({
+const mapStateToProps = (state) => ({
     settings: state.settings
-}))
-export class SettingPage extends React.PureComponent<any, undefined> {
+});
 
-    handleToggleShowEvaluation = () => {
-        store.dispatch(toggleShowEvaluation());
-    }
+function  handleToggleShowEvaluation(){
+    store.dispatch(toggleShowEvaluation());
+}
+const Sp = memo((props:any)=>{
+    return (
+        <div className="container">
+            <div className="row">
+                <div className="col-md-12">
+                    <Header title="Settings"/>
 
-    render() {
+                    <div className="row p-t-md">
+                        <div className="col-md-12">
+                            <label>
 
-        return (
-            <div className="container">
-                <div className="row">
-                    <div className="col-md-12">
-                        <Header title="Settings"/>
+                                <Toggle
+                                    defaultChecked={props.settings.showEvaluation}
+                                    icons={false}
+                                    onChange={handleToggleShowEvaluation}
+                                />
 
-                        <div className="row p-t-md">
-                            <div className="col-md-12">
-                                <label>
-
-                                    <Toggle
-                                        defaultChecked={this.props.settings.showEvaluation}
-                                        icons={false}
-                                        onChange={this.handleToggleShowEvaluation}
-                                    />
-
-                                    <span className="react-toggle--label">Show evaluation</span>
-                                </label>
-                            </div>
+                                <span className="react-toggle--label">Show evaluation</span>
+                            </label>
                         </div>
-
                     </div>
 
-                    <MenuWithRouter showMainMenu={true}/>
                 </div>
+
+                <MenuWithRouter showMainMenu={true}/>
             </div>
-        );
-    }
-}
+        </div>
+    );
+});
 
 interface ISettings {
     showEvaluation: boolean;
@@ -73,4 +70,5 @@ export const settingsReducer = (settings: ISettings = {
     }
 };
 
+export  const SettingPage = connect(mapStateToProps)(Sp);
 

@@ -1,9 +1,7 @@
 import * as React from "react";
 import * as Chess from "chess.js";
 import {connect} from "react-redux";
-
 import {IEvaluation, LINE_MAP} from "../interfaces";
-import {isYourMove} from "../tools/isYourMove";
 import FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import * as faSignal from "@fortawesome/fontawesome-free-solid/faSignal";
 import * as faMicrophoneSlash from "@fortawesome/fontawesome-free-solid/faMicrophoneSlash";
@@ -16,20 +14,7 @@ export interface Evaluation {
     nodes: string;
 }
 
-interface SocketIoProviderProps {
-    evaluation: Evaluation[]
-}
-
-
-@connect((state) => ({
-    fen: state.fen,
-    evaluation: state.evaluation,
-    onMove: state.onMove,
-    isFlip: state.isFlip,
-    isOnline: state.isOnline,
-    settings: state.settings
-}))
-export class Evaluation extends React.Component<any, any> {
+export class Eval extends React.Component<any, any> {
 
     static splitPv(pv: string) {
         return pv.split(" ");
@@ -120,14 +105,6 @@ export class Evaluation extends React.Component<any, any> {
             return `#${Number(evaluation[LINE_MAP.mate])}`;
         }
 
-        if (!isYourMove(onMove, isFlip)) {
-            score *= (-1);
-        }
-
-        if (score >= 0) {
-            return `+${score}`;
-        }
-
         return score;
     }
 
@@ -177,3 +154,13 @@ export class Evaluation extends React.Component<any, any> {
     }
 
 }
+
+
+export const Evaluation = connect((state: any) => ({
+    fen: state.fen,
+    evaluation: state.evaluation,
+    onMove: state.onMove,
+    isFlip: state.isFlip,
+    isOnline: state.isOnline,
+    settings: state.settings
+}))(Eval);

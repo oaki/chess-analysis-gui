@@ -21,7 +21,7 @@ import {historyReducer} from "./components/history/historyReducers";
 import {autoplayReducer, flipBoardReducer, menuReducer, pgnDialogReducer} from "./components/menu/menuReducers";
 import {promotionDialogReducer} from "./components/chessboard/promotingDialogReducers";
 import {errorReducers} from "./services/errorManager";
-import {isOnlineReducer} from "./services/onlineIndicator";
+import {IIsOnline} from "./services/onlineIndicator";
 import {settingsReducer} from "./layouts/settingPage";
 import {panelTabReducer} from "./components/infoPanel/infoPanelReducers";
 import {socketReducer} from "./services/socketService";
@@ -150,6 +150,19 @@ export const onMoveReducer = (onMove: IOnMove = IOnMove.WHITE, action: IAction<I
 
         default:
             return onMove;
+    }
+};
+
+export const IS_ONLINE = "services/onlineIndicator/is_online";
+
+export const isOnlineReducer = (isOnline: boolean = false, action: IAction<IIsOnline>) => {
+
+    switch (action.type) {
+        case IS_ONLINE:
+            return !!action.payload;
+
+        default:
+            return isOnline;
     }
 };
 

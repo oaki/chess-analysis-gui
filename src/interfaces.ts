@@ -1,5 +1,6 @@
 import {IGameDatabase} from "./components/gamesDatabaseExplorer/gamesDatabaseReducers";
 
+export type Nullable<T> = T | null;
 export enum LINE_MAP {
     mate = "m",
     score = "s",

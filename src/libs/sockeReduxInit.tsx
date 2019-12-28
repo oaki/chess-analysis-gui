@@ -1,19 +1,7 @@
-import * as io from "socket.io-client";
+import io from "socket.io-client";
 import config from "../config";
 import store from "../store";
-
-// this.socket.on("workerEvaluation", this.handleResult);
-// this.socket.on("syzygyEvaluation", this.handleSyzygyResult);
-// this.socket.on("noWorkerAvailable", this.handleOfflineWorker);
-// // this.socket.on('openingMoves', this.handleOpeningMoves);
-//
-// this.socket.on("disconnect", () => {
-//     Flash.error({msg: "Cloud engine disconnect", identifier: "socket"});
-// });
-//
-// this.socket.on("connect_timeout", (timeout) => {
-//     Flash.error({msg: "Cloud engine connection timeout", identifier: "socket"});
-// });
+import {Nullable} from "../interfaces";
 
 export const messageTypes = {
     workerEvaluation: "workerEvaluation",
@@ -24,8 +12,8 @@ export const messageTypes = {
 
 
 export class SocketReduxMiddleware {
-    private signInToken: string;
-    private socket: SocketIOClient.Socket;
+    private signInToken: string = '';
+    private socket: Nullable<SocketIOClient.Socket> = null;
 
     constructor() {
 
@@ -49,15 +37,17 @@ export class SocketReduxMiddleware {
             reconnectionAttempts: 99999
         });
 
-        Object.keys(messageTypes)
-            .forEach(type => this.socket.on(type, (payload) =>
-                    store.dispatch({type, payload})
-                )
-            );
+        if(this.socket) {
+            Object.keys(messageTypes)
+                .forEach(type => this.socket && this.socket.on(type, (payload) =>
+                        store.dispatch({type, payload})
+                    )
+                );
+        }
     }
 
     emit(type, payload) {
-        this.socket.emit(type, payload)
+        this.socket && this.socket.emit(type, payload)
     };
 }
 

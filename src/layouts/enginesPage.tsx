@@ -12,10 +12,12 @@ import {MenuWithRouter} from "../components/menu/menu";
 import {Header} from "../components/Header";
 
 
-@connect((state) => ({
+const mapStateToProps = (state) => ({
     workers: state.workers
-}))
-export class EnginesPageSmart extends React.Component<any, any> {
+});
+
+
+export class EnginesPage extends React.Component<any, any> {
 
     constructor(props) {
         super(props);
@@ -129,4 +131,4 @@ export class EnginesPageSmart extends React.Component<any, any> {
     }
 }
 
-
+export const EnginesPageSmart = connect(mapStateToProps)(EnginesPage);

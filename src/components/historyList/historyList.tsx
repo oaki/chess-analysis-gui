@@ -14,8 +14,9 @@ import {IHistoryGameResponse} from "./historyListReducers";
 const format = require("date-fns/format");
 
 
-@connect((state) => ({historyList: state.historyList}))
-export class HistoryList extends React.Component<any, any> {
+const mapStateToProps = (state) => ({historyList: state.historyList});
+
+export class Hl extends React.Component<any, any> {
     handleLoadGame = (e) => {
         e.preventDefault();
 
@@ -95,7 +96,4 @@ export class HistoryList extends React.Component<any, any> {
     }
 }
 
-
-
-
-
+export const HistoryList = connect(mapStateToProps)(Hl);

@@ -11,13 +11,9 @@ export interface IOpeningMove {
 }
 
 export interface IOpeningExplorerProps {
-    moves: IOpeningMove[],
-    fen: string,
-    handleMove: (move: string, fen: string) => {}
-}
-
-export interface IOpeningExplorerState {
-
+    moves: IOpeningMove[];
+    fen: string;
+    handleMove: (move: string, fen: string) => void;
 }
 
 export function loadOpeningPosition(fen: string) {

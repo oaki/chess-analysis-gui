@@ -7,15 +7,9 @@ class StockfishEngineInterface {
     }
 
     private instance: any;
-    private lastFen: string;
-    private onResultCallback: (data: string, fen: string) => {};
-
+    private lastFen: string = '';
+    private onResultCallback: (data: string, fen: string) => void = ()=>{};
     private isInicialized = false;
-
-
-    constructor() {
-
-    }
 
     isInit() {
         return this.isInicialized;

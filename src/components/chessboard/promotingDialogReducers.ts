@@ -8,7 +8,7 @@ export interface IShowPromotionDialogProps {
 
 export interface IPromotingDialogProps extends IShowPromotionDialogProps {
     onMove: IOnMove;
-    handleOnClick: (e: any) => {}
+    handleOnClick: (e: any) => void;
 }
 
 export function setPromotionDialog(props: IShowPromotionDialogProps) {

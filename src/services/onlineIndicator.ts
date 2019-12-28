@@ -1,5 +1,17 @@
-import {IAction} from "../interfaces";
 import store from "../store";
+import {IS_ONLINE} from "../reducers";
+
+export interface IIsOnline {
+    isOnline: boolean;
+}
+
+
+export function setIsOnline(isOnline: boolean) {
+    return {
+        payload: !!isOnline,
+        type: IS_ONLINE
+    };
+}
 
 export default function onlineIndicator() {
     store.dispatch(setIsOnline(true));
@@ -12,27 +24,3 @@ export default function onlineIndicator() {
         store.dispatch(setIsOnline(true))
     });
 }
-
-export interface IIsOnline {
-    isOnline: boolean;
-}
-
-const IS_ONLINE = "services/onlineIndicator/is_online";
-
-export function setIsOnline(isOnline: boolean) {
-    return {
-        payload: !!isOnline,
-        type: IS_ONLINE
-    };
-}
-
-export const isOnlineReducer = (isOnline: boolean = false, action: IAction<IIsOnline>) => {
-
-    switch (action.type) {
-        case IS_ONLINE:
-            return !!action.payload;
-
-        default:
-            return isOnline;
-    }
-};

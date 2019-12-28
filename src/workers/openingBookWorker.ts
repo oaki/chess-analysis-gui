@@ -4,6 +4,7 @@ const sendMessage: any = self.postMessage;
 
 const opening = new Opening();
 
+// @ts-ignore
 self.onmessage = async function (this: Window, event: MessageEvent) {
     const action = event.data.action;
     console.log('onmessage', action);

@@ -1,32 +1,28 @@
 import * as React from "react";
-import {connect} from "react-redux";
+import {memo} from "react";
 
 interface ILoadingProps {
     isLoading: boolean;
 }
 
-export class Loading extends React.Component<ILoadingProps, any> {
-    render() {
-        if (this.props.isLoading) {
-            return (
-                <div className="full-loading">
-                    <div className="full-loading__img">
-                        <img src="/img/chess-analysis-logo.svg" alt="chess-analysis-logo.svg"/>
-                    </div>
+export const Loading = memo((props: ILoadingProps) => {
+    if (props.isLoading) {
+        return (
+            <div className="full-loading">
+                <div className="full-loading__img">
+                    <img src="/img/chess-analysis-logo.svg" alt="chess-analysis-logo.svg"/>
                 </div>
-            )
-        }
-        return null;
+            </div>
+        )
     }
-}
+    return null;
+});
 
-export class SmallLoading extends React.Component<ILoadingProps, any> {
-    render() {
-        if (this.props.isLoading) {
-            return (
-                <span className="small-loading">Loadding....</span>
-            )
-        }
-        return null;
+export const SmallLoading = memo((props:ILoadingProps) => {
+    if (props.isLoading) {
+        return (
+            <span className="small-loading">Loading....</span>
+        )
     }
-}
+    return null;
+})
