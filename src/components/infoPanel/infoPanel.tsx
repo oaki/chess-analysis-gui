@@ -9,14 +9,15 @@ import store from "../../store";
 import {PanelTabType, setPanelTab} from "./infoPanelReducers";
 import {IconDefinition} from "../../../node_modules/@fortawesome/fontawesome";
 import {IEvaluation, LINE_MAP} from "../../interfaces";
-import {Evaluation} from "../evaluation";
+import {Evaluation} from "../evaluation/evaluation";
 import {IOnMove} from "../../actions";
+import styled from "@emotion/styled";
 
 const classNames = require("classnames");
 
 const InfoPanel = memo((props: InfoPanelProps) => {
     return (
-        <>
+        <div className={'d-f'}>
             <>
                 {renderButton(PanelTabType.INFO_TAB, faInfoCircle, props.panelTab)}
                 {renderButton(PanelTabType.EVALUATION_TAB, faCogs, props.panelTab)}
@@ -24,7 +25,7 @@ const InfoPanel = memo((props: InfoPanelProps) => {
             </>
 
             {renderScore(props)}
-        </>
+        </div>
     )
 });
 
@@ -46,6 +47,15 @@ function renderButton(id: string, icon: IconDefinition, panelTab: string) {
     )
 }
 
+const Container = styled.div`
+    padding: .2rem .4rem;
+`;
+
+const Column = styled.span`
+    display: inline-block;
+    padding: 0 .5rem;
+`;
+
 function renderScore(props: InfoPanelProps) {
     if (props.evaluation.length === 0) {
         return null;
@@ -53,16 +63,16 @@ function renderScore(props: InfoPanelProps) {
     const evaluation: IEvaluation = props.evaluation[0];
 
     return (
-        <div className="info-panel__score-container">
-                <span className="info-panel__score">
+        <Container>
+                <Column>
                     {Evaluation.getScore(evaluation, props.onMove, props.isFlip)}
                     {!evaluation[LINE_MAP.mate] &&
                     <span className="fs-xs fw-r">/{evaluation[LINE_MAP.depth]}</span>}
-                </span>
-            <span className="info-panel__nodes">n: {Evaluation.getNodes(evaluation)}</span>
-            <span className="info-panel__time">t: {Evaluation.getTime(evaluation)}</span>
+                </Column>
+            <Column>n: {Evaluation.getNodes(evaluation)}</Column>
+            <Column>t: {Evaluation.getTime(evaluation)}</Column>
 
-        </div>
+        </Container>
     )
 
 }

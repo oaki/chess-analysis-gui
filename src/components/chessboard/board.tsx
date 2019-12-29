@@ -64,15 +64,14 @@ export function useBoard() {
     const onResize = useCallback(() => {
         return debounce(() => {
             board.redrawAll();
-            console.log("redraw");
         }, 100);
     }, [board]);
 
     useEffect(() => {
         if (board) {
-            window.addEventListener("resize", onResize, true);
+            window.addEventListener("resize", onResize(), true);
             return () => {
-                window.addEventListener("resize", onResize, true);
+                window.addEventListener("resize", onResize(), true);
             }
         }
 

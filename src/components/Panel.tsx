@@ -4,11 +4,12 @@ import {connect} from "react-redux";
 import {SmartOpeningExplorer} from "./openingExplorer/openingExplorer";
 import store from "../store";
 import {loadOpeningBook} from "../actions";
-import {Evaluation} from "./evaluation";
+import {Evaluation} from "./evaluation/evaluation";
 import {SyzygyExplorerSmart} from "./syzygyExplorer/syzygyExplorer";
 import {SmartGamesDatabaseExplorer} from "./gamesDatabaseExplorer/gamesDatabaseExplorer";
 import {History} from "./history/history";
 import {PanelTabType} from "./infoPanel/infoPanelReducers";
+import {SmartStockFish} from "./evaluation/offlineStockfishEvaluation";
 
 interface IEvaluation {
     score: string;
@@ -39,7 +40,12 @@ const Panel = memo((props: IPannelState) => {
         <React.Fragment>
 
             {props.panelTab === PanelTabType.INFO_TAB && <History/>}
-            {props.panelTab === PanelTabType.EVALUATION_TAB && <Evaluation/>}
+            {props.panelTab === PanelTabType.EVALUATION_TAB && (
+                <>
+                    <SmartStockFish/>
+                    <Evaluation/>
+                </>
+            )}
             {props.panelTab === PanelTabType.BOOK_TAB && (
                 <React.Fragment>
                     <SmartOpeningExplorer/>

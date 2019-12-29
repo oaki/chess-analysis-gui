@@ -4,7 +4,7 @@ import {IOpeningMove} from "../components/openingExplorer/openingExplorerReducer
 import {treeService} from "../components/moveTree/tree";
 import {setMove} from "../components/history/historyReducers";
 import {IEvaluation, LINE_MAP} from "../interfaces";
-import {Evaluation} from "../components/evaluation";
+import {Evaluation} from "../components/evaluation/evaluation";
 import {getMoveFen} from "./moveFen";
 
 const debounce = require("lodash/debounce");

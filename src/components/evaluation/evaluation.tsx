@@ -1,11 +1,11 @@
 import * as React from "react";
 import * as Chess from "chess.js";
 import {connect} from "react-redux";
-import {IEvaluation, LINE_MAP} from "../interfaces";
+import {IEvaluation, LINE_MAP} from "../../interfaces";
 import FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import * as faSignal from "@fortawesome/fontawesome-free-solid/faSignal";
 import * as faMicrophoneSlash from "@fortawesome/fontawesome-free-solid/faMicrophoneSlash";
-import {IOnMove} from "../actions";
+import {IOnMove} from "../../actions";
 
 export interface Evaluation {
     score: string;

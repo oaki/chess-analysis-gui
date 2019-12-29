@@ -30,7 +30,7 @@ export const ChessboardPage = memo(() => {
                 <Column className={"p-xs"}>
                     <SmartAwesomeChessboard/>
                 </Column>
-                <Column className={"pt-xs"}>
+                <Column className={"sm-pt-xs"}>
                     <SmartInfoPanel/>
 
                     <div className="ox-a" style={{height}}>
