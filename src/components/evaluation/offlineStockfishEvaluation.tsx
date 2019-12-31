@@ -4,18 +4,21 @@ import Toggle from "react-toggle"
 import {useStockFishWorker} from "./useStockFish";
 import {connect} from "react-redux";
 import {IState} from "../../interfaces";
+import {treeService} from "../moveTree/tree";
 
 
 interface Props {
-    lastFen
+    lastFen,
+    lastMoveId
 }
 
 export const OfflineStockFishEvaluationController = memo((props: Props) => {
     const [state, setState] = useState({
         doEvaluation: false
     });
-    debugger;
-    const [worker, evaluation] = useStockFishWorker(props.lastFen);
+
+    const movesLine = treeService.getMoveLine(props.lastMoveId);
+    const [worker, evaluation] = useStockFishWorker(props.lastFen, '');
     console.log({worker,evaluation});
     return (
         <div>
@@ -37,4 +40,7 @@ export const OfflineStockFishEvaluationController = memo((props: Props) => {
     );
 });
 
-export const SmartStockFish = connect((state: IState) => ({lastFen: state.fen}))(OfflineStockFishEvaluationController);
+export const SmartStockFish = connect((state: IState) => ({
+    lastFen: state.fen,
+    lastMoveId: state.lastMoveId
+}))(OfflineStockFishEvaluationController);

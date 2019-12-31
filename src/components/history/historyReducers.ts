@@ -54,22 +54,20 @@ export function setMove(props: ISetMoveProps) {
 
     const {from, to, promotion, id, fen} = props;
 
+    const reduxState = store.getState();
     const chess = new Chess(fen);
 
     if (!promotion && isPromoting(from, to, chess)) {
-        console.log("setPromotionDialog", from, to);
         return store.dispatch(
             setPromotionDialog({
                 requestedParams: props,
                 isOpen: true,
             })
         );
-
-
     } else {
         const newMove: any = chess.move({from, to, promotion});
         const newFen: string = chess.fen();
-        const previousId = store.getState()["lastMoveId"];
+        const previousId = reduxState.lastMoveId;
 
         //check if FEN is not exist already like next move
         const nextMoveId = treeService.getNextMoveId(previousId, newFen);

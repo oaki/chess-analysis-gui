@@ -114,7 +114,7 @@ export interface IUser {
     lastGameId?: number;
 }
 
-export const userReducer = (user: IUser = {isLoggedIn: false}, action: IAction<IUser>) => {
+export const userReducer = (user: IUser = {isLoggedIn: false}, action: IAction<IUser>): IUser => {
     switch (action.type) {
         case USER_SIGN_IN:
             console.log("old state", user, "new state", action.payload);

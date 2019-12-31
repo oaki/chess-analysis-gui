@@ -39,9 +39,9 @@ export function useStockFishWorker(lastFen: string, movesLine: string) {
             // instance.postMessage(`setoption name Threads value ${this.config.threads}`); // do not allow this line, then is 100% cpu
             instance.postMessage(`setoption name Hash value ${workerConfig.hashSize}`);
             instance.postMessage(`setoption name UCI_AnalyseMode value false`);
-            instance.postMessage("setoption name ownbook value false");
             instance.postMessage("setoption name Ponder value false");
             instance.postMessage(`setoption name multipv value ${workerConfig.multiPv}`);
+            instance.postMessage(`setoption name Contempt value 24`);
 
             setWorker(instance);
         }

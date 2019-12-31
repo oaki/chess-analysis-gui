@@ -24,7 +24,7 @@ import PgnImportForm from "./pgnImportForm";
 import {emitPosition} from "../../services/sockets/actions";
 import {loadGamesFromDatabase} from "../gamesDatabaseExplorer/gamesDatabaseReducers";
 import {VERSION} from "../../libs/version";
-import {IEvaluation} from "../../interfaces";
+import {IEvaluation, Nullable, Undef} from "../../interfaces";
 
 const mapStateToProps = (state) => ({
     isOpen: state.menu.isOpen,
@@ -43,13 +43,15 @@ export class M extends React.PureComponent<any, any> {
     }
 
     handleUndo() {
-
         const lastMove = store.getState()["lastMoveId"];
-        const previousMove: Node | undefined = treeService.getPrevMove(lastMove);
+        const previousMove: Undef<Node> = treeService.getPrevMove(lastMove);
 
-        let id: number | null = null;
+        if(!previousMove){
+            return;
+        }
+        let id: Nullable<number> = null;
         if (previousMove && previousMove[NODE_MAP.id]) {
-            id = (previousMove[NODE_MAP.id] as number);
+            id = (previousMove[NODE_MAP.id]);
         }
 
         const fen: string = previousMove ? previousMove[NODE_MAP.fen] : FIRST_POSITION;
@@ -61,12 +63,14 @@ export class M extends React.PureComponent<any, any> {
             setEvaluation([]),
         ]));
 
-        debugger;
-        let previousEvaluation: IEvaluation | null = null;
-        const evaluations = previousMove[NODE_MAP.evaluation];
-        if (evaluations && evaluations[0]) {
-            previousEvaluation = evaluations[0];
+        let previousEvaluation: Nullable<IEvaluation> = null;
+        if(previousMove){
+            const evaluations = previousMove[NODE_MAP.evaluation];
+            if (evaluations && evaluations[0]) {
+                previousEvaluation = evaluations[0];
+            }
         }
+
         store.dispatch(emitPosition(fen, previousMove[NODE_MAP.move], previousEvaluation));
         store.dispatch(loadOpeningPosition(fen));
         store.dispatch(loadGamesFromDatabase(fen));

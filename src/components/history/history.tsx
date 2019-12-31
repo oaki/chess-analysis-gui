@@ -11,7 +11,7 @@ import {loadOpeningPosition, setOpeningPosition} from "../openingExplorer/openin
 import {lastMoveId} from "./historyReducers";
 import {emitPosition} from "../../services/sockets/actions";
 import {loadGamesFromDatabase} from "../gamesDatabaseExplorer/gamesDatabaseReducers";
-import {IEvaluation} from "../../interfaces";
+import {IEvaluation, Nullable} from "../../interfaces";
 
 
 const HistoryContainer = memo((props: any) => {
@@ -51,16 +51,17 @@ function handleMoveClick(e: any) {
         ]));
 
         //todo send previous evaluation
-        let previousEvaluation: IEvaluation | null = null;
-        let evaluation: IEvaluation | null = null;
+        let previousEvaluation: Nullable<IEvaluation> = null;
+        let evaluation: Nullable<IEvaluation> = null;
         const evaluations = ref.node[NODE_MAP.evaluation];
         if (evaluations && evaluations[0]) {
             evaluation = evaluations[0];
         }
 
-        if (ref.parent.length > 2 && ref.parent[ref.parent.length - 2]) {
-            const prevRef = ref.parent[ref.parent.length - 2];
-            const prevEvaluations = prevRef[NODE_MAP.evaluation];
+        // find prevEvaluation
+        const prevMove = treeService.getPrevMove(ref.node[NODE_MAP.id]);
+        if (prevMove) {
+            const prevEvaluations = prevMove[NODE_MAP.evaluation];
             if (prevEvaluations && prevEvaluations[0]) {
                 previousEvaluation = prevEvaluations[0];
             }
