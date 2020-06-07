@@ -2,36 +2,28 @@ import * as React from "react";
 import {IOnMove} from "../../actions";
 import {IPromotingDialogProps} from "./promotingDialogReducers";
 
-declare global {
-    namespace JSX {
-        interface IntrinsicElements {
-            piece: React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
-        }
-    }
-}
-
-
 export const PromotingDialog = (props: IPromotingDialogProps) => {
     if (!props.isOpen) {
         return null;
     }
 
     const onMoveClass = props.onMove === IOnMove.WHITE ? "white" : "black";
+    // @ts-ignore
     return (
         <div className="promotion__dialog">
             <div className="promotion__pieces">
-                <a href="#" onClick={props.handleOnClick} className="promotion__href" data-piece="q">
+                <button onClick={props.handleOnClick} className="promotion__href" data-piece="q">
                     <piece className={`${onMoveClass} queen`}/>
-                </a>
-                <a href="#" onClick={props.handleOnClick} className="promotion__href" data-piece="r">
+                </button>
+                <button onClick={props.handleOnClick} className="promotion__href" data-piece="r">
                     <piece className={`${onMoveClass} rook`}/>
-                </a>
-                <a href="#" onClick={props.handleOnClick} className="promotion__href" data-piece="b">
+                </button>
+                <button onClick={props.handleOnClick} className="promotion__href" data-piece="b">
                     <piece className={`${onMoveClass} bishop`}/>
-                </a>
-                <a href="#" onClick={props.handleOnClick} className="promotion__href" data-piece="n">
+                </button>
+                <button onClick={props.handleOnClick} className="promotion__href" data-piece="n">
                     <piece className={`${onMoveClass} knight`}/>
-                </a>
+                </button>
             </div>
         </div>
     )

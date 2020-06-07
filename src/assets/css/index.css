@@ -1,8 +1,5 @@
-@import 'bootstrap/bootstrap-reboot.css';
-@import 'bootstrap/bootstrap-grid.css';
 @import 'bootstrap/bootstrap-custom-modal.css';
 @import './react-toggle.css';
-@import './criticalCss.css';
 @import './colors.css';
 @import './btn.css';
 @import './onMoveIndicator.css';
@@ -10,14 +7,12 @@
 @import './promotionDialog.css';
 @import './bottomMenu.css';
 @import './evaluation.css';
-@import './history.css';
 @import './page.css';
 @import './pageSingIn.css';
 @import './progressBar.css';
 @import 'list.css';
 @import 'alert.css';
 @import 'fullLoading.css';
-@import 'gamesDatabaseExplorer.css';
 @import 'infoPanel.css';
 @import './app.css';
 

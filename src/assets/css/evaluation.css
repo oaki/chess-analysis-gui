@@ -13,20 +13,19 @@
 }
 
 .evaluation .depth {
-    font-size: .6rem;
+    font-size: 1rem;
     padding: .3rem .3rem;
     min-width: 3.8rem;
 }
 
 .pv-holder {
     color: #d6d6d6;
-    font-size: .8rem;
-    padding-top: .4rem;
+    font-size: 1rem;
     margin-left: .4rem;
 }
 
 .pv-holder__move {
-    padding-right: .3rem;
+    padding-right: 0.5rem;
     display: inline-block;
 }
 

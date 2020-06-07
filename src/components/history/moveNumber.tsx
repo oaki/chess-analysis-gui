@@ -1,27 +1,25 @@
 import * as React from "react";
+import {FC, memo} from "react";
 
-export interface IMoveNumberProps {
+export type IMoveNumberProps = {
+    fen: string;
     counter: number;
-    moveIndex: number
 }
 
-export function MoveNumber(props: IMoveNumberProps) {
+export const MoveNumber: FC<IMoveNumberProps> = memo(({fen, counter}) => {
+    const tokens = fen.split(/\s+/);
+    const moveNumber = tokens[5];
+    const isBlack = tokens[1] === "b";
+    const className = ` move_num move_num_${counter}`;
 
-    const isBlack = props.counter % 2 === 0;
-    if (isBlack && props.moveIndex !== 0) {
+    if (!isBlack) {
         return null;
     }
-    const className = ` move_num move_num_${props.counter}`;
-    return (
-        <span
-            key={`move_${props.counter}`}
-            className={className}
-            id={className}
-        >{isBlack && <span>.</span>}{!isBlack && getMoveNumber(props.counter)}.
-        </span>
+    return (isBlack &&
+      <span
+        key={`move_${counter}`}
+        className={className}
+        id={className}
+      >{moveNumber}.</span>
     )
-}
-
-function getMoveNumber(counter: number) {
-    return Math.round((counter) / 2);
-}
+})

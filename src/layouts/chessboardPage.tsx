@@ -1,56 +1,56 @@
 import * as React from "react";
-import {Pannel} from "../components/Pannel";
+import {memo} from "react";
+import {SmartPanel} from "../components/Panel";
 import {MenuWithRouter} from "../components/menu/menu";
-import {SmartAwesomeChessboard} from "../components/chessboard/chessboard";
-import {InfoPanel} from "../components/infoPanel/infoPanel";
+import { SmartInfoPanel} from "../components/infoPanel/infoPanel";
+import {SmartAwesomeChessboard} from "../components/chessboard/chessboardController";
+import styled from "@emotion/styled";
 
+const Column = styled.div`
+    flex-grow: 1;
+    flex-basis: 0;
+`;
 
-export class ChessboardPage extends React.Component<any, any> {
+export const ChessboardPage = memo(() => {
+    // calculate height for
+    const availWidth = window.innerWidth;
+    const availHeight = window.innerHeight;
 
-    render() {
+    const chessboarcWidth = availWidth - 30/* padding:15*/;
+    const chessboarcHeight = chessboarcWidth;
+    const infoPanelHeight = 20;
+    const height = availHeight - 40 /* bottom menu height */ - chessboarcHeight - infoPanelHeight;
+    console.log({
+        availHeight, availWidth, chessboarcWidth, chessboarcHeight, height
+    });
+    return (
 
-        // calculate height for
-        const availWidth = window.innerWidth;
-        const availHeight = window.innerHeight;
+        <div className="container-fullscreen">
+            <div className={"sm-d-f"}>
+                <Column className={"p-xs"}>
+                    <SmartAwesomeChessboard/>
+                </Column>
+                <Column className={"sm-pt-xs"}>
+                    <SmartInfoPanel/>
 
-        const chessboarcWidth = availWidth - 30/* padding:15*/;
-        const chessboarcHeight = chessboarcWidth;
-        const infoPanelHeight = 20;
-        const height = availHeight - 40 /* bottom menu height */ - chessboarcHeight - infoPanelHeight;
-        console.log({
-            availHeight, availWidth, chessboarcWidth, chessboarcHeight, height
-        });
-        return (
-
-            <div className="container container-fullscreen">
-
-                <div className="row">
-                    <div className="col-sm-7">
-                        <SmartAwesomeChessboard key="1"/>
+                    <div className="ox-a" style={{height}}>
+                        <SmartPanel/>
                     </div>
-                    <div className="col-sm-5 ">
-                        <InfoPanel/>
-
-                        <div className="ox-a" style={{height}}>
-                            <Pannel/>
-                        </div>
-
-                    </div>
-                </div>
-
-
-                <MenuWithRouter
-                    showMainMenu={true}
-                    showFlip={true}
-                    showUndo={true}
-                    showRedo={true}
-                    showAutoplay={true}
-                />
+                </Column>
             </div>
 
-        );
-    }
-}
+
+            <MenuWithRouter
+                showMainMenu={true}
+                showFlip={true}
+                showUndo={true}
+                showRedo={true}
+                showAutoplay={true}
+            />
+        </div>
+
+    );
+});
 
 
 

@@ -1,10 +1,9 @@
 .games-database-explorer{
-    font-size: 0.8rem;
+    font-size: 1.2rem;
 }
 
 .games-database-explorer th {
     padding: .2rem .5rem;
-    font-size: 12px;
 }
 
 .games-database-explorer td {
@@ -21,4 +20,8 @@
 
 .games-database-explorer__results {
     text-align: right;
+}
+
+.games-database-explorer__line {
+    font-size: 1rem;
 }

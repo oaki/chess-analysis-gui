@@ -19,16 +19,16 @@
 
 .promotion__href piece {
     position: initial;
-    width: 3rem;
-    height: 3rem;
+    width: 5rem;
+    height: 5rem;
     display: block;
 }
 
 .promotion__href {
     display: block;
     float: left;
-    width: 3rem;
-    height: 3rem;
+    width: 5rem;
+    height: 5rem;
 
 }
 

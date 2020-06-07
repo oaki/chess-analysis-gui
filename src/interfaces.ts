@@ -1,5 +1,7 @@
 import {IGameDatabase} from "./components/gamesDatabaseExplorer/gamesDatabaseReducers";
 
+export type Nullable<T> = T | null;
+export type Undef<T> = T | undefined;
 export enum LINE_MAP {
     mate = "m",
     score = "s",
@@ -28,6 +30,7 @@ export interface IEvaluation {
     [LINE_MAP.nps]?: string;
     [LINE_MAP.tbhits]?: string;
     [LINE_MAP.import]?: number;
+    [LINE_MAP.mate]?: boolean;
 }
 
 export type IAction<TPayload> = {

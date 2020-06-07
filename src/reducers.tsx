@@ -21,11 +21,12 @@ import {historyReducer} from "./components/history/historyReducers";
 import {autoplayReducer, flipBoardReducer, menuReducer, pgnDialogReducer} from "./components/menu/menuReducers";
 import {promotionDialogReducer} from "./components/chessboard/promotingDialogReducers";
 import {errorReducers} from "./services/errorManager";
-import {isOnlineReducer} from "./services/onlineIndicator";
+import {IIsOnline} from "./services/onlineIndicator";
 import {settingsReducer} from "./layouts/settingPage";
 import {panelTabReducer} from "./components/infoPanel/infoPanelReducers";
 import {socketReducer} from "./services/socketService";
 import {gamesDatabaseReducer} from "./components/gamesDatabaseExplorer/gamesDatabaseReducers";
+import {FIRST_ID} from "./components/moveTree/tree";
 
 export const loadingReducer = (isLoading: boolean = false, action: any) => {
     switch (action.type) {
@@ -81,13 +82,13 @@ export const evaluationReducer = (evaluation: IWorkerResponse | IOpeningMove[] =
 ;
 
 
-export const lastMoveIdReducer = (state: number = -1, action: any) => {
+export const lastMoveIdReducer = (lastMoveId: number = FIRST_ID, action: any) => {
     switch (action.type) {
         case SET_LAST_MOVE_ID:
             return action.id;
 
         default:
-            return state;
+            return lastMoveId;
     }
 };
 
@@ -114,7 +115,7 @@ export interface IUser {
     lastGameId?: number;
 }
 
-export const userReducer = (user: IUser = {isLoggedIn: false}, action: IAction<IUser>) => {
+export const userReducer = (user: IUser = {isLoggedIn: false}, action: IAction<IUser>): IUser => {
     switch (action.type) {
         case USER_SIGN_IN:
             console.log("old state", user, "new state", action.payload);
@@ -150,6 +151,19 @@ export const onMoveReducer = (onMove: IOnMove = IOnMove.WHITE, action: IAction<I
 
         default:
             return onMove;
+    }
+};
+
+export const IS_ONLINE = "services/onlineIndicator/is_online";
+
+export const isOnlineReducer = (isOnline: boolean = false, action: IAction<IIsOnline>) => {
+
+    switch (action.type) {
+        case IS_ONLINE:
+            return !!action.payload;
+
+        default:
+            return isOnline;
     }
 };
 

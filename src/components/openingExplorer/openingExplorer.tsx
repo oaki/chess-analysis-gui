@@ -4,61 +4,51 @@ import store from "../../store";
 import {setMove} from "../history/historyReducers";
 import {treeService} from "../moveTree/tree";
 import "../../assets/css/explorerBox.css";
-import {IOpeningExplorerProps, IOpeningExplorerState, IOpeningMove} from "./openingExplorerReducers";
+import {IOpeningExplorerProps, IOpeningMove} from "./openingExplorerReducers";
+import {memo} from "react";
 
-export class OpeningExplorer extends React.Component<IOpeningExplorerProps, IOpeningExplorerState> {
+function renderTr(props:IOpeningExplorerProps) {
 
-    // componentDidUpdate(prevProps) {
-    //     if (prevProps.fen !== this.props.fen) {
-    //         store.dispatch(loadOpeningPosition(this.props.fen));
-    //     }
-    // }
-
-    handleClick = (e) => {
+    const handleClick = (e) => {
         e.preventDefault();
-        this.props.handleMove(e.currentTarget.dataset.move, e.currentTarget.dataset.fen);
+        props.handleMove(e.currentTarget.dataset.move, e.currentTarget.dataset.fen);
     }
 
-    renderTr() {
-
-        return this.props.moves.map((item: IOpeningMove, index) => {
-            return (
-                <tr key={index} onClick={this.handleClick} data-move={item.move}>
-                    <td>
-                        {item.san}
-                    </td>
-                    <td>{item.weight}</td>
-                </tr>
-            )
-        })
-    }
-
-    render() {
-
-        if (this.props.moves.length === 0) {
-            return null;
-        }
+    return props.moves.map((item: IOpeningMove, index) => {
         return (
-            <div className="explorer-box">
-
-                <div className="data">
-                    <table className="moves">
-                        <thead>
-                        <tr>
-                            <th>Move</th>
-                            <th>Weight</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {this.renderTr()}
-                        </tbody>
-                    </table>
-
-                </div>
-            </div>
+            <tr key={index} onClick={handleClick} data-move={item.move}>
+                <td>
+                    {item.san}
+                </td>
+                <td>{item.weight}</td>
+            </tr>
         )
-    }
+    })
 }
+const OpeningExplorer = memo((props:IOpeningExplorerProps)=>{
+    if (props.moves.length === 0) {
+        return null;
+    }
+    return (
+        <div className="explorer-box">
+
+            <div className="data">
+                <table className="moves">
+                    <thead>
+                    <tr>
+                        <th>Move</th>
+                        <th>Weight</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {renderTr(props)}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    )
+});
 
 function mapStateToProps(state: any) {
     return {

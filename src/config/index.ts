@@ -15,7 +15,7 @@
 //     }
 // }
 const env: any = process.env;
-console.log('env',env);
+
 const config: IConfig = {
     apiHost: env.REACT_APP_HOST,
     socketIo: {

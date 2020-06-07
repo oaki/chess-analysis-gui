@@ -8,10 +8,11 @@ import {batchActions} from "redux-batched-actions";
 import {lastMoveId, setHistory} from "../history/historyReducers";
 import {setSyzygyEvaluation} from "../syzygyExplorer/syzygyExplorerReducers";
 import {loadOpeningPosition, setOpeningPosition} from "../openingExplorer/openingExplorerReducers";
-import {SmartAwesomeChessboard} from "../chessboard/chessboard";
 import {SmallLoading} from "../Loading";
 import {emitPosition} from "../../services/sockets/actions";
 import {loadGamesFromDatabase} from "../gamesDatabaseExplorer/gamesDatabaseReducers";
+import {FIRST_ID} from "../moveTree/tree";
+import {FIRST_POSITION} from "../../contants";
 
 export default class PgnImportForm extends React.PureComponent<any, any> {
 
@@ -32,9 +33,16 @@ export default class PgnImportForm extends React.PureComponent<any, any> {
         const pgn = this.state.value;
         event.preventDefault();
 
+
         this.setState({isLoading: true});
         try {
-            ApiManagerService.importGameFromPgn(pgn, SessionManagerService.getToken()).then((res: any) => {
+            const token = SessionManagerService.getToken();
+            if (!token) {
+                this.setState({isLoading: false});
+                return;
+            }
+
+            ApiManagerService.importGameFromPgn(pgn, token).then((res: any) => {
 
                 this.setState({isLoading: false});
 
@@ -43,16 +51,16 @@ export default class PgnImportForm extends React.PureComponent<any, any> {
                 const moves = JSON.parse(res.moves);
                 store.dispatch(batchActions([
                     setHistory(moves),
-                    lastMoveId(null),
-                    setPosition(SmartAwesomeChessboard.FIRST_POSITION),
+                    lastMoveId(FIRST_ID),
+                    setPosition(FIRST_POSITION),
                     setOpeningPosition([]),
                     setEvaluation([]),
                     setSyzygyEvaluation(null),
                 ]));
 
-                store.dispatch(emitPosition(SmartAwesomeChessboard.FIRST_POSITION, "", null));
-                store.dispatch(loadOpeningPosition(SmartAwesomeChessboard.FIRST_POSITION));
-                store.dispatch(loadGamesFromDatabase(SmartAwesomeChessboard.FIRST_POSITION));
+                store.dispatch(emitPosition(FIRST_POSITION, "", null));
+                store.dispatch(loadOpeningPosition(FIRST_POSITION));
+                store.dispatch(loadGamesFromDatabase(FIRST_POSITION));
             });
         } catch (e) {
             console.log(e);
