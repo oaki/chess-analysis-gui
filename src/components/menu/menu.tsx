@@ -13,9 +13,8 @@ import * as faPlay from "@fortawesome/fontawesome-free-solid/faPlay";
 import {addNewGame, IOnMove, setEvaluation, setPosition, setStatus, setWhoIsOnMove} from "../../actions";
 import {SessionManagerService} from "../../services/sessionManager";
 import {batchActions} from "redux-batched-actions";
-import {Node, NODE_MAP, treeService} from "../moveTree/tree";
+import {FIRST_ID, firstNode, Node, NODE_MAP, treeService} from "../moveTree/tree";
 import {lastMoveId, setHistory} from "../history/historyReducers";
-import {FIRST_POSITION} from "../chessboard/chessboardController";
 import {faPause} from "@fortawesome/fontawesome-free-solid";
 import {loadOpeningPosition, setOpeningPosition} from "../openingExplorer/openingExplorerReducers";
 import {flipBoard, openPgnDialog, toggleAutoplay, toogleOpenMenu} from "./menuReducers";
@@ -25,6 +24,7 @@ import {emitPosition} from "../../services/sockets/actions";
 import {loadGamesFromDatabase} from "../gamesDatabaseExplorer/gamesDatabaseReducers";
 import {VERSION} from "../../libs/version";
 import {IEvaluation, Nullable, Undef} from "../../interfaces";
+import {FIRST_POSITION} from "../../contants";
 
 const mapStateToProps = (state) => ({
     isOpen: state.menu.isOpen,
@@ -46,10 +46,10 @@ export class M extends React.PureComponent<any, any> {
         const lastMove = store.getState()["lastMoveId"];
         const previousMove: Undef<Node> = treeService.getPrevMove(lastMove);
 
-        if(!previousMove){
+        if (!previousMove) {
             return;
         }
-        let id: Nullable<number> = null;
+        let id: number = FIRST_ID;
         if (previousMove && previousMove[NODE_MAP.id]) {
             id = (previousMove[NODE_MAP.id]);
         }
@@ -64,7 +64,7 @@ export class M extends React.PureComponent<any, any> {
         ]));
 
         let previousEvaluation: Nullable<IEvaluation> = null;
-        if(previousMove){
+        if (previousMove) {
             const evaluations = previousMove[NODE_MAP.evaluation];
             if (evaluations && evaluations[0]) {
                 previousEvaluation = evaluations[0];
@@ -121,12 +121,12 @@ export class M extends React.PureComponent<any, any> {
             store.dispatch(batchActions([
                 setStatus(""),
                 setWhoIsOnMove(IOnMove.WHITE),
-                lastMoveId(null),
+                lastMoveId(FIRST_ID),
                 setPosition(FIRST_POSITION),
                 setEvaluation([]),
                 setSyzygyEvaluation(null),
                 setOpeningPosition([]),
-                setHistory([])
+                setHistory([firstNode])
             ]));
 
             store.dispatch(emitPosition(FIRST_POSITION, "", null));
@@ -142,12 +142,12 @@ export class M extends React.PureComponent<any, any> {
             store.dispatch(batchActions([
                 setStatus(""),
                 setWhoIsOnMove(IOnMove.WHITE),
-                lastMoveId(null),
+                lastMoveId(FIRST_ID),
                 setPosition(FIRST_POSITION),
                 setEvaluation([]),
                 setSyzygyEvaluation(null),
                 setOpeningPosition([]),
-                setHistory([])
+                setHistory([firstNode])
             ]));
 
             store.dispatch(emitPosition(FIRST_POSITION, "", null));
@@ -292,6 +292,7 @@ export class M extends React.PureComponent<any, any> {
         }
     }
 }
-const Menu:any = connect<any>(mapStateToProps)(M);
-export const MenuWithRouter:any = withRouter(Menu);
+
+const Menu: any = connect<any>(mapStateToProps)(M);
+export const MenuWithRouter: any = withRouter(Menu);
 

@@ -2,7 +2,7 @@ import {Node, NODE_MAP, treeService} from "../moveTree/tree";
 import {isPromoting} from "../chessboard/promotingDialog";
 import {loadOpeningPosition, setOpeningPosition} from "../openingExplorer/openingExplorerReducers";
 import {
-    ISetMoveProps,
+    ISetMoveProps, REMOVE_GAME_FROM_HISTORY,
     SET_HISTORY,
     SET_HISTORY_MOVE,
     SET_LAST_MOVE,
@@ -67,8 +67,7 @@ export function setMove(props: ISetMoveProps) {
     } else {
         const newMove: any = chess.move({from, to, promotion});
         const newFen: string = chess.fen();
-        const previousId = reduxState.lastMoveId;
-
+        const previousId: number = reduxState.lastMoveId;
         //check if FEN is not exist already like next move
         const nextMoveId = treeService.getNextMoveId(previousId, newFen);
 
@@ -130,8 +129,6 @@ export function setHistoryMove(payload: IHistoryMove) {
         [NODE_MAP.variants]: []
     }, payload.parentId);
 
-    console.log({treeService});
-
     return {
         payload,
         type: SET_HISTORY_MOVE
@@ -145,7 +142,14 @@ export function setHistory(payload: any) {
     };
 }
 
-export function lastMoveId(id: number | null) {
+export function deleteHistoryGame(id: number) {
+    return {
+        id,
+        type: REMOVE_GAME_FROM_HISTORY
+    };
+}
+
+export function lastMoveId(id: number) {
     return {
         id,
         type: SET_LAST_MOVE_ID

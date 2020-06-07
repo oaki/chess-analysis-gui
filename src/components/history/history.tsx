@@ -12,6 +12,7 @@ import {lastMoveId} from "./historyReducers";
 import {emitPosition} from "../../services/sockets/actions";
 import {loadGamesFromDatabase} from "../gamesDatabaseExplorer/gamesDatabaseReducers";
 import {IEvaluation, Nullable} from "../../interfaces";
+import styled from "@emotion/styled";
 
 
 const HistoryContainer = memo((props: any) => {
@@ -25,14 +26,60 @@ const HistoryContainer = memo((props: any) => {
         showBracket={false}/>;
 
     return (
-        <div className="history">
-
-            <div className="history__slider">
-                {moves}
-            </div>
-        </div>
+        <HistoryWrapper>
+            {props.history.length > 1 && moves}
+        </HistoryWrapper>
     )
 });
+
+const HistoryWrapper = styled.div`
+    font-size: 1.3rem;
+    color: white;
+    background-color: #4b4b4b;
+    padding: 0 .8rem;
+    
+    .move_num {
+        font-size: 1.1rem;
+        color: #cecece;
+    }
+    
+    .move {
+        padding: .1rem .5rem .1rem 0;
+        display: inline-block;
+    }
+    
+    .l-1{
+        font-size: 1rem;
+        color: rgba(170, 165, 170, 0.99);
+    }
+    
+    .l-2{
+        font-size: .9rem;
+        color: rgba(170, 165, 170, 0.99);
+    }
+    
+    
+    .history__subline {
+        padding-left: 1rem;
+        display: block;
+    }
+    
+    .history__subline .move{
+        font-size: 1rem;
+        color: rgba(170, 165, 170, 0.99);
+    }
+    
+    .move__active {
+        color: red;
+    }
+    
+    
+    .history__title {
+        color: white;
+        padding: .6rem;
+    }
+`;
+
 
 function handleMoveClick(e: any) {
     e.preventDefault();

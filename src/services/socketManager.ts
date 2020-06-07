@@ -15,8 +15,10 @@ export default class SocketManager {
     private signInToken;
     private dispatchResults;
     private stockfishEngineInterface;
+    private config: SocketIoConfig;
 
-    constructor(private config: SocketIoConfig) {
+    constructor(config: SocketIoConfig) {
+        this.config = config;
         this.initOfflineStockfish();
     }
 
@@ -46,7 +48,7 @@ export default class SocketManager {
         if (results && results.length > 0) {
 
             const refs = treeService.findReferencesByFen(fen);
-            const move:any = refs[0];
+            const move: any = refs[0];
             move[NODE_MAP.evaluation] = results;
 
             // find in history move and add this result to the move

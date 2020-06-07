@@ -30,6 +30,7 @@ export interface IEvaluation {
     [LINE_MAP.nps]?: string;
     [LINE_MAP.tbhits]?: string;
     [LINE_MAP.import]?: number;
+    [LINE_MAP.mate]?: boolean;
 }
 
 export type IAction<TPayload> = {

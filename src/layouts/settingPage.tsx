@@ -1,39 +1,38 @@
 import * as React from "react";
+import {memo} from "react";
 import {connect} from "react-redux";
 import {MenuWithRouter} from "../components/menu/menu";
 import {Header} from "../components/Header";
 import Toggle from "react-toggle"
 import {IAction} from "../interfaces";
 import store from "../store";
-import {memo} from "react";
 
 const mapStateToProps = (state) => ({
     settings: state.settings
 });
 
-function  handleToggleShowEvaluation(){
+function handleToggleShowEvaluation() {
     store.dispatch(toggleShowEvaluation());
 }
-const Sp = memo((props:any)=>{
+
+const Sp = memo((props: any) => {
     return (
         <div className="container">
             <div className="row">
                 <div className="col-md-12">
                     <Header title="Settings"/>
 
-                    <div className="row p-t-md">
-                        <div className="col-md-12">
-                            <label>
+                    <div className="p-sm">
+                        <label>
+                            <Toggle
+                                defaultChecked={props.settings.showEvaluation}
+                                icons={false}
+                                onChange={handleToggleShowEvaluation}
+                            />
 
-                                <Toggle
-                                    defaultChecked={props.settings.showEvaluation}
-                                    icons={false}
-                                    onChange={handleToggleShowEvaluation}
-                                />
+                            <span className="react-toggle--label">Show evaluation</span>
+                        </label>
 
-                                <span className="react-toggle--label">Show evaluation</span>
-                            </label>
-                        </div>
                     </div>
 
                 </div>
@@ -70,5 +69,5 @@ export const settingsReducer = (settings: ISettings = {
     }
 };
 
-export  const SettingPage = connect(mapStateToProps)(Sp);
+export const SettingPage = connect(mapStateToProps)(Sp);
 

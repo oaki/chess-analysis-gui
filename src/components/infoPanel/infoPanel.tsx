@@ -9,7 +9,7 @@ import store from "../../store";
 import {PanelTabType, setPanelTab} from "./infoPanelReducers";
 import {IconDefinition} from "../../../node_modules/@fortawesome/fontawesome";
 import {IEvaluation, LINE_MAP} from "../../interfaces";
-import {Evaluation} from "../evaluation/evaluation";
+import {Evaluation, getNodes, getScore, getTime} from "../evaluation/evaluation";
 import {IOnMove} from "../../actions";
 import styled from "@emotion/styled";
 
@@ -65,12 +65,12 @@ function renderScore(props: InfoPanelProps) {
     return (
         <Container>
                 <Column>
-                    {Evaluation.getScore(evaluation, props.onMove, props.isFlip)}
+                    {getScore(evaluation)}
                     {!evaluation[LINE_MAP.mate] &&
                     <span className="fs-xs fw-r">/{evaluation[LINE_MAP.depth]}</span>}
                 </Column>
-            <Column>n: {Evaluation.getNodes(evaluation)}</Column>
-            <Column>t: {Evaluation.getTime(evaluation)}</Column>
+            <Column>n: {getNodes(evaluation)}</Column>
+            <Column>t: {getTime(evaluation)}</Column>
 
         </Container>
     )

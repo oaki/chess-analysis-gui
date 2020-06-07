@@ -18,7 +18,11 @@ class StockfishEngineInterface {
     init() {
         const wasmSupported = typeof (window as any).WebAssembly === "object" && (window as any).WebAssembly.validate(Uint8Array.of(0x0, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00));
         const path: string = "/engines/";
-        this.instance = new Worker(wasmSupported ? `${path}stockfish.wasm.js` : `${path}stockfish.js`);
+
+        if(!window.Worker){
+            throw new Error('Worker is not supported');
+        }
+        this.instance = new window.Worker(wasmSupported ? `${path}stockfish.wasm.js` : `${path}stockfish.js`);
 
         this.instance.addEventListener("message", (e) => {
             this.onResultCallback(e.data, this.lastFen);

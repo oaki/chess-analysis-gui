@@ -1,12 +1,11 @@
 import * as React from "react";
-import * as Chess from "chess.js";
-import {connect} from "react-redux";
-import {IEvaluation, LINE_MAP} from "../../interfaces";
-import FontAwesomeIcon from "@fortawesome/react-fontawesome";
-import * as faSignal from "@fortawesome/fontawesome-free-solid/faSignal";
-import * as faMicrophoneSlash from "@fortawesome/fontawesome-free-solid/faMicrophoneSlash";
-import {IOnMove} from "../../actions";
+import {FC, memo} from "react";
+import {IEvaluation, IState, LINE_MAP} from "../../interfaces";
+import {shallowEqual, useSelector} from "react-redux";
 
+import * as Chess from "chess.js";
+
+const ChessInstance = new Chess();
 export interface Evaluation {
     score: string;
     pv: string;
@@ -14,153 +13,171 @@ export interface Evaluation {
     nodes: string;
 }
 
-export class Eval extends React.Component<any, any> {
+interface EvalHeaderProps {
+    name: string;
+    evaluation: IEvaluation;
+}
 
-    static splitPv(pv: string) {
-        return pv.split(" ");
+export const EvalHeader = memo((props: EvalHeaderProps) => {
+    return (
+        <div className="evaluation-info">
+            <table>
+                <tbody>
+                <tr>
+                    <td className="fs-xs ta-c">
+                        {props.name}
+                    </td>
+                    <td className="fs-xs ta-c">Nodes: {getNodes(props.evaluation)}</td>
+                    <td className="fs-xs ta-c">Time: {getTime(props.evaluation)}</td>
+                    <td className="fs-xs ta-c">Tb hits: {getTbHits(props.evaluation)}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    );
+});
+
+interface EvalLineProps {
+    evaluation: IEvaluation;
+    fen: string;
+}
+
+const EvalLine = memo((props: EvalLineProps) => {
+    const time1 = performance.now();
+    const moves = prepareEvaluation(props.evaluation[LINE_MAP.pv], props.fen);
+    const time2 = performance.now();
+    console.log('EvalLine', time2-time1);
+    return (
+        <div className={"d-f pb-xxs"}>
+            <div className={"fs-sm"}>{getScore(props.evaluation)}</div>
+            <div className="pv-holder">
+                {moves.map((move, index) => {
+                    return (
+                        <span className="pv-holder__move" key={index}>{move}</span>
+                    )
+                })}
+            </div>
+        </div>
+
+    );
+});
+
+interface SmartEvaluationProps {
+    name: string;
+}
+
+export const SmartEvaluation = memo((props: SmartEvaluationProps) => {
+        const {fen, evaluations} = useSelector((state: IState) => ({
+            fen: state.fen,
+            evaluations: state.evaluation
+        }), shallowEqual);
+        return <Eval evaluations={evaluations} fen={fen} name={props.name}/>;
     }
+);
 
-    prepareEvaluation(pv: string, fen: string) {
-        const chess = new Chess(fen);
+type EvalProps = {
+    evaluations: IEvaluation[];
+    name: string;
+    fen: string;
+}
+export const Eval: FC<EvalProps> = memo(({evaluations, name, fen}) => {
 
-        const moves = Evaluation.splitPv(pv);
-
-        const newMoves: any = [];
-        if (moves && moves.length > 0) {
-            for (let i = 0; i < moves.length; i++) {
-                const move = moves[i];
-                const newMove = chess.move(move, {sloppy: true});
-                if (!newMove) {
-                    console.log("Move doesn't exist", {move, fen});
-                    break;
-                }
-
-                let annotationMove = `${newMove.san}`;
-                // if (newMove.promotion) {
-                //     annotationMove += `=${newMove.promotion}`;
-                // }
-
-                newMoves.push(annotationMove);
-            }
-        }
-
-        return newMoves;
-    }
-
-    renderLine(evaluation: IEvaluation) {
         return (
-            <React.Fragment key={evaluation[LINE_MAP.pv]}>
+            <div>
+                {evaluations[0] && <EvalHeader name={name} evaluation={evaluations[0]}/>}
 
-
-                {evaluation &&
-                <div className="evaluation-info">
-                  <table>
-                    <tbody>
-                    <tr>
-                      <td className="fs-xs ta-c">
-                          {this.props.isOnline && <FontAwesomeIcon className="c-green" icon={faSignal}/>}
-                          {!this.props.isOnline && <FontAwesomeIcon icon={faMicrophoneSlash}/>}
-                      </td>
-                      <td className="fs-xs ta-c">Nodes: {Evaluation.getNodes(evaluation)}</td>
-                      <td className="fs-xs ta-c">Time: {Evaluation.getTime(evaluation)}</td>
-                      <td className="fs-xs ta-c">Tb hits: {Evaluation.getTbHits(evaluation)}</td>
-                    </tr>
-                    </tbody>
-                  </table>
-                </div>}
-
-
-                {evaluation &&
-                <div className="pv-holder">
-                    {this.prepareEvaluation(evaluation[LINE_MAP.pv], this.props.fen).map((move, index) => {
-                        return (
-                            <span className="pv-holder__move" key={index}>{move}</span>
-                        )
-                    })}
+                <div>
+                    {evaluations.map((evaluation) => (
+                        <EvalLine fen={fen} evaluation={evaluation} key={evaluation[LINE_MAP.pv]}/>))}
                 </div>
-                }
-                <div className="fen-info">
-                    FEN<br/>
-                    <input value={this.props.fen}/>
-                </div>
+            </div>
+        );
+    }
+);
 
-            </React.Fragment>
-        )
+
+export function getScore(evaluation: IEvaluation) {
+    let score = Number(evaluation[LINE_MAP.score]);
+
+    if (evaluation[LINE_MAP.mate]) {
+        return `#${Number(evaluation[LINE_MAP.mate])}`;
     }
 
-    render() {
+    return score;
+}
 
+export function getNodes(evaluation: IEvaluation) {
+    return formatNumber(evaluation[LINE_MAP.nodes]);
+}
 
-        if (this.props.evaluation.length === 0 || !this.props.settings.showEvaluation) {
-            return null
-        }
-        return this.props.evaluation.map((evaluation) => this.renderLine(evaluation));
+export function getTime(evaluation: IEvaluation) {
+    if (evaluation[LINE_MAP.time]) {
+        const time = Number(evaluation[LINE_MAP.time]) / 1000;
+        return `${time.toFixed(0)}s`;
     }
-
-
-    static getScore(evaluation: IEvaluation, onMove: IOnMove, isFlip: boolean) {
-        let score = Number(evaluation[LINE_MAP.score]);
-
-        if (evaluation[LINE_MAP.mate]) {
-            return `#${Number(evaluation[LINE_MAP.mate])}`;
-        }
-
-        return score;
-    }
-
-    static getNodes(evaluation: IEvaluation) {
-        return Evaluation.formatNumber(evaluation[LINE_MAP.nodes]);
-
-    }
-
-    static getTime(evaluation: IEvaluation) {
-        if (evaluation[LINE_MAP.time]) {
-            const time = Number(evaluation[LINE_MAP.time]) / 1000;
-            return `${time.toFixed(0)}s`;
-        }
-        return 0;
-
-    }
-
-    static getTbHits(evaluation: IEvaluation) {
-        return Evaluation.formatNumber(evaluation[LINE_MAP.tbhits]);
-    }
-
-
-    static formatNumber(num: number | string | undefined) {
-        if (num) {
-            const n = Number(num);
-
-            let _num = 1000000 * 1000;
-            if (n > _num) {
-                const d = n / _num;
-                return `${d.toFixed(2)}B`;
-            }
-
-            if (n > 1000000) {
-                const d = n / 1000000;
-                return `${d.toFixed(2)}M`;
-            }
-
-            if (n > 1000) {
-                const d = n / 1000;
-                return `${d.toFixed(0)}K`;
-            }
-
-            return n;
-
-        }
-        return 0;
-    }
+    return 0;
 
 }
 
+function getTbHits(evaluation: IEvaluation) {
+    return formatNumber(evaluation[LINE_MAP.tbhits]);
+}
 
-export const Evaluation = connect((state: any) => ({
-    fen: state.fen,
-    evaluation: state.evaluation,
-    onMove: state.onMove,
-    isFlip: state.isFlip,
-    isOnline: state.isOnline,
-    settings: state.settings
-}))(Eval);
+
+function formatNumber(num: number | string | undefined) {
+    if (num) {
+        const n = Number(num);
+
+        let _num = 1000000 * 1000;
+        if (n > _num) {
+            const d = n / _num;
+            return `${d.toFixed(2)}B`;
+        }
+
+        if (n > 1000000) {
+            const d = n / 1000000;
+            return `${d.toFixed(2)}M`;
+        }
+
+        if (n > 1000) {
+            const d = n / 1000;
+            return `${d.toFixed(0)}K`;
+        }
+
+        return n;
+
+    }
+    return 0;
+}
+
+export function splitPv(pv: string) {
+    return pv.split(" ");
+}
+
+function prepareEvaluation(pv: string, fen: string) {
+    // const chess = new Chess(fen);
+    ChessInstance.load(fen);
+
+    const moves = splitPv(pv);
+
+    const newMoves: any = [];
+    if (moves && moves.length > 0) {
+        for (let i = 0; i < moves.length; i++) {
+            const move = moves[i];
+            const newMove = ChessInstance.move(move, {sloppy: true});
+            if (!newMove) {
+                console.log("Move doesn't exist", {move, fen});
+                break;
+            }
+
+            let annotationMove = `${newMove.san}`;
+            // if (newMove.promotion) {
+            //     annotationMove += `=${newMove.promotion}`;
+            // }
+
+            newMoves.push(annotationMove);
+        }
+    }
+
+    return newMoves;
+}

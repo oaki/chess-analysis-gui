@@ -26,6 +26,7 @@ import {settingsReducer} from "./layouts/settingPage";
 import {panelTabReducer} from "./components/infoPanel/infoPanelReducers";
 import {socketReducer} from "./services/socketService";
 import {gamesDatabaseReducer} from "./components/gamesDatabaseExplorer/gamesDatabaseReducers";
+import {FIRST_ID} from "./components/moveTree/tree";
 
 export const loadingReducer = (isLoading: boolean = false, action: any) => {
     switch (action.type) {
@@ -81,13 +82,13 @@ export const evaluationReducer = (evaluation: IWorkerResponse | IOpeningMove[] =
 ;
 
 
-export const lastMoveIdReducer = (state: number = -1, action: any) => {
+export const lastMoveIdReducer = (lastMoveId: number = FIRST_ID, action: any) => {
     switch (action.type) {
         case SET_LAST_MOVE_ID:
             return action.id;
 
         default:
-            return state;
+            return lastMoveId;
     }
 };
 

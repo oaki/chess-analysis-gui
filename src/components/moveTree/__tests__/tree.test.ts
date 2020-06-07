@@ -1,5 +1,6 @@
 import {NODE_MAP, treeService} from "../tree";
 import {mock} from "./mocks/tree";
+import {getBranchPath} from "../treeUtils";
 
 describe("TreeServiceTree test", () => {
     test("findReferencesByFen", () => {
@@ -71,7 +72,48 @@ describe("TreeServiceTree test", () => {
             "e": []
         }, 36);
         expect(referenceToMove2.index).toEqual(2);
-    })
+    });
+
+    test("add first move", () => {
+        treeService.setNodes([]);
+        const referenceToMove = treeService.add({
+            "id": 1,
+            "f": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq d3 0 1",
+            "m": "d2d4",
+            "s": "d4",
+            "vs": [],
+            "e": []
+        }, -1);
+        console.log({referenceToMove});
+        expect(referenceToMove.index).toEqual(0);
+        expect(referenceToMove.path).toEqual('0');
+    });
+
+    test("start with start position", () => {
+        treeService.setNodes([]);
+        const referenceToMove = treeService.add({
+            "id": 1,
+            "f": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq d3 0 1",
+            "m": "d2d4",
+            "s": "d4",
+            "vs": [],
+            "e": []
+        }, -1);
+
+        const referenceToMove2 = treeService.add({
+            "id": 2,
+            "f": "rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq d6 0 2",
+            "m": "d7d5",
+            "s": "d5",
+            "vs": [],
+            "e": []
+        }, -1);
+        console.log({referenceToMove2});
+        expect(referenceToMove.index).toEqual(0);
+        expect(referenceToMove.path).toEqual('0');
+        expect(referenceToMove2.index).toEqual(1);
+        expect(referenceToMove2.path).toEqual('1');
+    });
 
     test("getNextMove - exist", () => {
         treeService.setNodes(mock as any);
@@ -161,7 +203,33 @@ describe("TreeServiceTree test", () => {
 
     test("getMoveLine", () => {
         treeService.setNodes(mock as any);
-        const line = treeService.getMoveLine(33);
-        expect(line).toEqual(3);
+        const line = treeService.getMoveLine(35);
+        expect(line).toEqual("d2d4 g8f6 c2c4 e7e5 d4e5 f6e4");
+    });
+
+    test("getMoveLine", () => {
+        treeService.setNodes(mock as any);
+        const line = treeService.getMoveLine(4);
+        expect(line).toEqual("d2d4 g8f6 c2c4 e7e6");
+    });
+
+    test("getBranchPath", () => {
+        const line = getBranchPath("2");
+        expect(line).toEqual("2");
+    });
+
+    test("getBranchPath - 3.vs.0.ms.2.vs.0.ms.0", () => {
+        const line = getBranchPath("3.vs.0.ms.2.vs.0.ms.0");
+        expect(line).toEqual("3.vs.0.ms.2");
+    });
+
+    test("getBranchPath - 3.vs.0.ms.2.vs.0.ms.1", () => {
+        const line = getBranchPath("3.vs.0.ms.2.vs.0.ms.1");
+        expect(line).toEqual("3.vs.0.ms.2.vs.0.ms.1");
+    });
+
+    test("getBranchPath - input -> 0", () => {
+        const line = getBranchPath("0");
+        expect(line).toEqual("");
     });
 })

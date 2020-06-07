@@ -1,4 +1,4 @@
-import {LINE_MAP} from "../interfaces";
+import {IEvaluation, LINE_MAP} from "../interfaces";
 
 export function parseResult(result: string, fen: string) {
     if (result.indexOf("info") === -1) {
@@ -36,18 +36,19 @@ export function pairValues(name, str) {
     return tmp[namePosition + 1];
 }
 
-export function parseLine(lineStr) {
-    const obj = {};
-
-    obj[LINE_MAP.mate] = pairValues("mate", lineStr); // mate
-    obj[LINE_MAP.score] = parseFloat(pairValues("cp", lineStr)) / 100; //score
-    obj[LINE_MAP.depth] = pairValues("depth", lineStr);
-    obj[LINE_MAP.pv] = pairValues("pv", lineStr);
-    obj[LINE_MAP.multipv] = pairValues("multipv", lineStr);
-    obj[LINE_MAP.nodes] = pairValues("nodes", lineStr);
-    obj[LINE_MAP.time] = pairValues("time", lineStr);
-    obj[LINE_MAP.nps] = pairValues("nps", lineStr);
-    obj[LINE_MAP.tbhits] = pairValues("tbhits", lineStr);
+export function parseLine(lineStr): IEvaluation {
+    const score = String(parseFloat(pairValues("cp", lineStr)) / 100);
+    const obj: IEvaluation = {
+        [LINE_MAP.mate]: pairValues("mate", lineStr), // mate
+        [LINE_MAP.score]: score,
+        [LINE_MAP.depth]: pairValues("depth", lineStr),
+        [LINE_MAP.pv]: pairValues("pv", lineStr),
+        [LINE_MAP.multipv]: pairValues("multipv", lineStr),
+        [LINE_MAP.nodes]: pairValues("nodes", lineStr),
+        [LINE_MAP.time]: pairValues("time", lineStr),
+        [LINE_MAP.nps]: pairValues("nps", lineStr),
+        [LINE_MAP.tbhits]: pairValues("tbhits", lineStr),
+    };
 
     return obj;
 }

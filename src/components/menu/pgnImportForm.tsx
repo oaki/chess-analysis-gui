@@ -11,7 +11,8 @@ import {loadOpeningPosition, setOpeningPosition} from "../openingExplorer/openin
 import {SmallLoading} from "../Loading";
 import {emitPosition} from "../../services/sockets/actions";
 import {loadGamesFromDatabase} from "../gamesDatabaseExplorer/gamesDatabaseReducers";
-import {FIRST_POSITION} from "../chessboard/chessboardController";
+import {FIRST_ID} from "../moveTree/tree";
+import {FIRST_POSITION} from "../../contants";
 
 export default class PgnImportForm extends React.PureComponent<any, any> {
 
@@ -32,9 +33,16 @@ export default class PgnImportForm extends React.PureComponent<any, any> {
         const pgn = this.state.value;
         event.preventDefault();
 
+
         this.setState({isLoading: true});
         try {
-            ApiManagerService.importGameFromPgn(pgn, SessionManagerService.getToken()).then((res: any) => {
+            const token = SessionManagerService.getToken();
+            if (!token) {
+                this.setState({isLoading: false});
+                return;
+            }
+
+            ApiManagerService.importGameFromPgn(pgn, token).then((res: any) => {
 
                 this.setState({isLoading: false});
 
@@ -43,7 +51,7 @@ export default class PgnImportForm extends React.PureComponent<any, any> {
                 const moves = JSON.parse(res.moves);
                 store.dispatch(batchActions([
                     setHistory(moves),
-                    lastMoveId(null),
+                    lastMoveId(FIRST_ID),
                     setPosition(FIRST_POSITION),
                     setOpeningPosition([]),
                     setEvaluation([]),

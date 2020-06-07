@@ -10,9 +10,9 @@ interface IHeaderProps {
 
 export function Header(props: IHeaderProps) {
     return (
-        <div className="row header p-sm fs-4 bg-mine-shaft2">
+        <div className="p-sm fs-5 bg-mine-shaft2">
 
-            <Link to="/" className="c-white fs-5 m-r-md"><FontAwesomeIcon icon={faArrowLeft}/></Link>
+            <Link to="/" className="c-white d-ib fs-5 pr-sm"><FontAwesomeIcon icon={faArrowLeft}/></Link>
 
             {props.title}
         </div>

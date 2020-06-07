@@ -1,11 +1,10 @@
 import * as React from "react"
 import {Redirect, Route} from "react-router-dom"
 import store from "../store";
-
-
 export const PrivateRoute = ({component: Component, ...rest}) => {
 
-    const {isLoggedIn} = store.getState()["user"];
+    const state = store.getState();
+    const isLoggedIn = state.user.isLoggedIn;
     const renderComponent = (props) => {
 
         if (isLoggedIn) {

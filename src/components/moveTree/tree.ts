@@ -2,6 +2,7 @@ import guid from "../../tools/uuid";
 import {IEvaluation, Nullable, Undef} from "../../interfaces";
 import get from "lodash/get";
 import {getBranchPath, getLastIndex, getPrefix} from "./treeUtils";
+import {FIRST_POSITION} from "../../contants";
 
 export enum NODE_MAP {
     id = "id",
@@ -29,15 +30,26 @@ export interface NodeVariant {
     [NODE_MAP.moves]: Node[];
 }
 
+export const FIRST_ID = 0;
+export const firstNode = {
+    [NODE_MAP.id]: 0,
+    [NODE_MAP.fen]: FIRST_POSITION,
+    [NODE_MAP.move]: "",
+    [NODE_MAP.shortNotation]: "",
+    [NODE_MAP.variants]: [],
+    [NODE_MAP.evaluation]: []
+};
 export class Tree {
+    //unique counter for each move, basicly it's a id
     private counter: number = 0;
+
+    // keep all nodes (tree)
     private nodes: Node[] = [];
-    private cache = {}; //not used yet
+
     private stateHash: string = "";
 
     setNodes(nodes: Node[]) {
         this.nodes = JSON.parse(JSON.stringify(nodes));
-
         let idCounter = 0;
         this.iterate(this.nodes, (node: Node) => {
             if (node && idCounter < node.id) {
@@ -67,9 +79,11 @@ export class Tree {
     }
 
     add(node: Node, parentId: number): ReferenceToMove {
+        console.log('add', node, parentId);
         const ref: ReferenceToMove = this.getReference(parentId);
-
-        return this.addWithRef(node, ref);
+        const newRef = this.addWithRef(node, ref);
+        this.generateNewState();
+        return newRef;
     }
 
     addNewVariant(variants: NodeVariant[], node: Node): ReferenceToMove {
@@ -81,7 +95,6 @@ export class Tree {
         this.generateNewState();
 
         return {
-            isLast: true,
             index: 0,
             node: variants[variants.length - 1][NODE_MAP.moves][0],
             path: "todo"
@@ -89,15 +102,12 @@ export class Tree {
     }
 
     addWithRef(node: Node, ref: ReferenceToMove): ReferenceToMove {
-        if (!ref.path) {
-            throw new Error("Path is empty?");
-        }
         const pathParts = this.parsePath(ref.path);
         if (pathParts.prefix === null || pathParts.index === null) {
             throw new Error("prefix or index is null");
         }
 
-        const moves = get(this.nodes, pathParts.prefix);
+        const moves = pathParts.prefix ? get(this.nodes, pathParts.prefix) : this.nodes;
 
         const nextMove = moves[pathParts.index + 1];
 
@@ -220,13 +230,13 @@ export class Tree {
         this.counter = num;
     }
 
-    private findReference(moveRef: ReferenceToMove, pathToMoves: string, id: number): void {
+    private findReference(moveRef: ReferenceToMove, pathToMoves: string, moveId: number): void {
+
         const moves = pathToMoves ? get(this.nodes, pathToMoves) : this.nodes;
         for (let i = 0; i < moves.length; i++) {
             const move: Node = moves[i];
             const newPath = pathToMoves ? `${pathToMoves}.${i}` : `${i}`;
-            if (move.id === id) {
-                moveRef.isLast = moves.length - 1 === i;
+            if (move.id === moveId) {
                 moveRef.node = moves[i];
                 moveRef.path = newPath;
                 moveRef.index = i;
@@ -234,7 +244,7 @@ export class Tree {
             } else {
                 for (let j = 0; j < move[NODE_MAP.variants].length; j++) {
                     const newVariantPath = `${newPath}.${NODE_MAP.variants}.${j}.${NODE_MAP.moves}`;
-                    this.findReference(moveRef, newVariantPath, id);
+                    this.findReference(moveRef, newVariantPath, moveId);
                 }
             }
         }
@@ -257,10 +267,9 @@ export class Tree {
 
     getReference(id: number): ReferenceToMove {
         const ref: ReferenceToMove = {
-            node: null,
-            path: "",
-            isLast: true,
-            index: -1
+            node: firstNode,
+            path: "0",
+            index: 0
         };
         this.findReference(ref, "", id);
 
@@ -291,30 +300,40 @@ export class Tree {
     // get move line - all previous moves
     getMoveLine(id: number): string {
         const ref = this.getReference(id);
-        console.log({ref});
+
         if (!ref.node) {
             return "";
         }
-        const moves = [ref.node[NODE_MAP.move]];
+        const moves: string[] = [];
+
         let path = ref.path;
-        let prefix = getPrefix(ref.path);
-        let index = ref.index;
         let counter = 0;
-        while(path || index > 0){
-            
-            const move = get(this.nodes, `${prefix}.${--index}`);
-            console.log({move});
-            moves.push(move);
+        let useMinusOne = false;
+        while (path && counter < 10) {
+            let index = getLastIndex(path);
 
-            if(index === 0){
-                index = getLastIndex(path);
+            if (useMinusOne) {
+                index--;
+                useMinusOne = false;
             }
 
-            if(counter++ >10){
-                break;
+            let prefix = getPrefix(path);
+
+            for (let i = index; i >= 0; i--) {
+                path = prefix ? `${prefix}.${i}` : `${i}`;
+                const move = get(this.nodes, path);
+                moves.push(move[NODE_MAP.move]);
             }
+
+            if (getLastIndex(path) === 0) {
+                path = getBranchPath(path);
+                useMinusOne = true;
+            }
+
+            counter++
         }
-        return "";
+
+        return moves.reverse().join(" ");
     }
 
 }
@@ -331,6 +350,5 @@ export const treeService = new Tree();
 interface ReferenceToMove {
     node: Nullable<Node>;
     path: string;
-    isLast: boolean;
     index: number;
 }

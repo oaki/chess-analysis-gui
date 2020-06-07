@@ -4,7 +4,7 @@ import {IOpeningMove} from "../components/openingExplorer/openingExplorerReducer
 import {treeService} from "../components/moveTree/tree";
 import {setMove} from "../components/history/historyReducers";
 import {IEvaluation, LINE_MAP} from "../interfaces";
-import {Evaluation} from "../components/evaluation/evaluation";
+import {splitPv} from "../components/evaluation/evaluation";
 import {getMoveFen} from "./moveFen";
 
 const debounce = require("lodash/debounce");
@@ -113,7 +113,7 @@ export class AutoplayService {
             || this.isScoreHigh(evaluation)
         ) {
 
-            const moves = Evaluation.splitPv(pv);
+            const moves = splitPv(pv);
             const firstMove = moves[0];
 
             // console.log("dispatchEngineMove", {firstMove, time});

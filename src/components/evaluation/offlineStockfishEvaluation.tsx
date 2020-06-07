@@ -2,24 +2,23 @@ import * as React from "react";
 import {memo, useState} from "react";
 import Toggle from "react-toggle"
 import {useStockFishWorker} from "./useStockFish";
-import {connect} from "react-redux";
+import {shallowEqual, useSelector} from "react-redux";
 import {IState} from "../../interfaces";
 import {treeService} from "../moveTree/tree";
+import {Eval} from "./evaluation";
 
+type ControllerProps = {}
 
-interface Props {
-    lastFen,
-    lastMoveId
-}
-
-export const OfflineStockFishEvaluationController = memo((props: Props) => {
+export const SmartStockFish = memo((props: ControllerProps) => {
     const [state, setState] = useState({
         doEvaluation: false
     });
 
-    const movesLine = treeService.getMoveLine(props.lastMoveId);
-    const [worker, evaluation] = useStockFishWorker(props.lastFen, '');
-    console.log({worker,evaluation});
+    const {lastFen, lastMoveId} = useSelector((state: IState) => ({
+        lastFen: state.fen,
+        lastMoveId: state.lastMoveId
+    }), shallowEqual);
+
     return (
         <div>
             <label>
@@ -34,13 +33,30 @@ export const OfflineStockFishEvaluationController = memo((props: Props) => {
                     }}
                 />
 
-                <span className="react-toggle--label">Show evaluation</span>
+                <span className="react-toggle--label">Local</span>
             </label>
+
+            {state.doEvaluation && <OfflineStockFishEvaluation lastMoveId={lastMoveId} lastFen={lastFen}/>}
         </div>
     );
 });
 
-export const SmartStockFish = connect((state: IState) => ({
-    lastFen: state.fen,
-    lastMoveId: state.lastMoveId
-}))(OfflineStockFishEvaluationController);
+type OfflineStockFishEvaluationProps = {
+    lastMoveId: number;
+    lastFen: string;
+}
+const OfflineStockFishEvaluation = memo((props: OfflineStockFishEvaluationProps) => {
+    const movesLine = treeService.getMoveLine(props.lastMoveId);
+    const [worker, evaluations] = useStockFishWorker(props.lastFen, movesLine);
+    console.log({worker, evaluations});
+
+    return (
+        <div>
+            {evaluations && <Eval
+              evaluations={evaluations}
+              fen={props.lastFen}
+              name={"Local"}
+            />}
+        </div>
+    )
+})

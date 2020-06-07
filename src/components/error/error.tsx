@@ -12,7 +12,6 @@ export function Error(props: Partial<IErrorProps>) {
             </button>
             <span className="c-white"><FontAwesomeIcon icon={faInfoCircle}/></span>
             <span className="m-l-sm">{props.msg}</span>
-
         </div>
     );
 }

@@ -1,18 +1,17 @@
 import * as React from "react";
 import {memo, useEffect} from "react";
-import {connect} from "react-redux";
+import {shallowEqual, useSelector} from "react-redux";
 import store from "../../store";
 import * as Chess from "chess.js";
 import {toColor, toDests} from "../../libs/chessboardUtils";
 import {OnMoveIndication} from "./onMoveIndication";
 import {PromotingDialog} from "./promotingDialog";
-import {IHistoryMove, setMove} from "../history/historyReducers";
-import {IShowPromotionDialogProps, setPromotionDialog} from "./promotingDialogReducers";
-import {ILastMove} from "../../reducers";
+import {setMove} from "../history/historyReducers";
+import {setPromotionDialog} from "./promotingDialogReducers";
 import {IOnMove, setStatus, setWhoIsOnMove} from "../../actions";
 import {useBoard} from "./board";
-
-export const FIRST_POSITION = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+import {useWhyDidYouUpdate} from "../../hooks/useWhyDidYouUpdate";
+import {IState} from "../../interfaces";
 
 const handlePromotePiece = (e: any) => {
     e.preventDefault();
@@ -44,11 +43,22 @@ function updateStatus(chess) {
 }
 
 
-export const ChessboardController = memo((props: IChessboardProps) => {
-    const {isFlip, fen, lastMove, evaluation, promotionDialog} = props;
+export const SmartAwesomeChessboard = memo((props: IChessboardProps) => {
+    const reduxState = useSelector((state: IState) => {
+        return {
+            fen: state.fen,
+            onMove: state.onMove,
+            history: state.history,
+            isFlip: state.isFlip,
+            lastMoveId: state.lastMoveId,
+            lastMove: state.lastMove,
+            promotionDialog: state.promotionDialog,
+            evaluation: state.evaluation,
+        }
+    }, shallowEqual);
+    const {isFlip, fen, lastMove, evaluation, promotionDialog, onMove} = reduxState;
     const {from, to} = lastMove;
     const [setRef, board] = useBoard();
-
     useEffect(() => {
         if (board) {
             board.set({
@@ -80,6 +90,7 @@ export const ChessboardController = memo((props: IChessboardProps) => {
                 options.lastMove = [from, to];
             }
             board.set(options);
+            console.log('board.redrawAll');
             board.redrawAll();
             updateStatus(chess);
         }
@@ -102,11 +113,11 @@ export const ChessboardController = memo((props: IChessboardProps) => {
 
     return (
         <div className="brown pos-r">
-            <OnMoveIndication onMove={props.onMove} isFlip={props.isFlip}/>
+            <OnMoveIndication onMove={onMove} isFlip={isFlip}/>
 
             <PromotingDialog
                 {...promotionDialog}
-                onMove={props.onMove}
+                onMove={onMove}
                 handleOnClick={handlePromotePiece}
             />
 
@@ -116,29 +127,6 @@ export const ChessboardController = memo((props: IChessboardProps) => {
 });
 
 
-const mapStateToProps = (state: any) => {
-    return {
-        fen: state.fen,
-        onMove: state.onMove,
-        history: state.history,
-        isFlip: state.isFlip,
-        lastMoveId: state.lastMoveId,
-        lastMove: state.lastMove,
-        promotionDialog: state.promotionDialog,
-        evaluation: state.evaluation,
-    }
-};
-export const SmartAwesomeChessboard = connect(mapStateToProps)(ChessboardController);
-
 export interface IChessboardProps {
-    fen: string;
-    onMove: IOnMove;
-    promotionDialog: IShowPromotionDialogProps;
-    history: IHistoryMove[];
-    isFlip: boolean;
-    lastMoveId: string;
-    lastMove: ILastMove;
-    evaluation: {
-        p: string
-    }[]
+
 }

@@ -4,7 +4,7 @@ import {setLoading} from "../actions";
 import store from "../store";
 import config from "../config";
 import {Header} from "../components/Header";
-import {HistoryList} from "../components/historyList/historyList";
+import {SmartHistoryList} from "../components/historyList/smartHistoryList";
 import {setHistoryGameList} from "../components/historyList/historyListReducers";
 import {Flash} from "../services/errorManager";
 import {SessionManagerService} from "../services/sessionManager";
@@ -21,7 +21,7 @@ export class HistoryPage extends React.PureComponent<any, undefined> {
 
                         <div className="row bg-mine-shaft1">
                             <div className="col-md-12">
-                                <HistoryList list={[]} history={this.props.history}/>
+                                <SmartHistoryList history={this.props.history}/>
                             </div>
                         </div>
 

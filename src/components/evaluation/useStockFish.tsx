@@ -1,61 +1,87 @@
-import * as React from "react";
-import {useCallback, useEffect, useState} from "react";
-import {parseResult} from "../../libs/parseStockfishResults";
+import React, {useEffect, useState} from "react";
+import {pairValues, parseResult} from "../../libs/parseStockfishResults";
+import {useInterval} from "../hooks/useInterval";
 
+let engineMsgBuffer = {};
+
+function collectEngineData(msg: MessageEvent) {
+    const multipv = pairValues("multipv", msg.data);
+    engineMsgBuffer[multipv] = msg.data;
+}
 
 export function useStockFishWorker(lastFen: string, movesLine: string) {
     const [worker, setWorker] = useState();
     const [error, setError] = useState();
-    const [evaluation, setEvaluation] = useState();
+    const [evaluations, setEvaluations] = useState();
     const [workerConfig, setWorkerConfig] = useState({
         threads: 1,
-        delay: 120 * 1000,
+        delay: 10 * 1000,
         hashSize: 32,
-        multiPv: 1
+        multiPv: 3
     });
 
-    const onResultCallback = useCallback((msg: MessageEvent) => {
+    useInterval(() => {
+        console.log("Time", performance.now() / 1000);
+        const values = Object.keys(engineMsgBuffer).map((key) => (engineMsgBuffer[key]));
+        console.log({values});
+        const evaluationStringFromEngine = values.join("\n");
 
-
-        const data = JSON.stringify(msg.data);
-        console.log({msg, data});
-        const result = parseResult(data, lastFen);
+        // const data = JSON.stringify(evaluationStringFromEngine);
+        const result = parseResult(evaluationStringFromEngine, lastFen);
 
         if (result) {
-            console.log({result});
-            setEvaluation(evaluation);
+            setEvaluations(result);
         }
+    }, 3000);
 
-    }, [lastFen]);
+    // const onResultCallback = useCallback((msg: MessageEvent) => {
+    //     engineMsgBuffer.push(msg.data);
+    //     debounceMsg(lastFen, setEvaluations);
+    // }, [lastFen, setEvaluations]);
 
     useEffect(() => {
         if (!worker) {
             const path: string = "/engines/";
-            const instance = new Worker(isWasmSupported() ? `${path}stockfish.wasm.js` : `${path}stockfish.js`);
+            try {
 
-            instance.addEventListener("message", onResultCallback);
-            instance.postMessage("uci");
-            instance.postMessage("isready");
-            // instance.postMessage(`setoption name Threads value ${this.config.threads}`); // do not allow this line, then is 100% cpu
-            instance.postMessage(`setoption name Hash value ${workerConfig.hashSize}`);
-            instance.postMessage(`setoption name UCI_AnalyseMode value false`);
-            instance.postMessage("setoption name Ponder value false");
-            instance.postMessage(`setoption name multipv value ${workerConfig.multiPv}`);
-            instance.postMessage(`setoption name Contempt value 24`);
+                if (!window.Worker) {
+                    throw new Error("Worker is not supported");
+                }
+                const instance = new window.Worker(isWasmSupported() ? `${path}stockfish.wasm.js` : `${path}stockfish.js`);
 
-            setWorker(instance);
+                instance.addEventListener("message", collectEngineData);
+                instance.postMessage("uci");
+                instance.postMessage("isready");
+                // instance.postMessage(`setoption name Threads value ${this.config.threads}`); // do not allow this line, then is 100% cpu
+                instance.postMessage(`setoption name Hash value ${workerConfig.hashSize}`);
+                instance.postMessage(`setoption name UCI_AnalyseMode value false`);
+                instance.postMessage("setoption name Ponder value false");
+                instance.postMessage(`setoption name multipv value ${workerConfig.multiPv}`);
+                instance.postMessage(`setoption name Contempt value 24`);
+
+                setWorker(instance);
+            } catch (e) {
+                setError(e);
+            }
         }
-    }, []);
+    }, [collectEngineData, worker, workerConfig.hashSize, workerConfig.multiPv]);
 
     useEffect(() => {
         if (worker && lastFen) {
             worker.postMessage("stop");
             worker.postMessage(`position fen ${lastFen} moves ${movesLine}`);
             worker.postMessage(`go movetime ${workerConfig.delay}`);
-
         }
+
+        return function cleanup() {
+            if (worker) {
+                worker.postMessage("stop");
+                worker.terminate();
+                console.log("worker terminated");
+            }
+        };
     }, [lastFen, movesLine, worker, workerConfig]);
-    return [worker, evaluation];
+    return [worker, evaluations, error];
 }
 
 function isWasmSupported(): boolean {

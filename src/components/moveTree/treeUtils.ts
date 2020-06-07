@@ -11,12 +11,17 @@ export function getBranchPath(path: string): string {
 
     let isOk = false;
     let newPath = path;
-    while (path && !isOk) {
+    let counter = 0;
+    while (newPath && !isOk) {
         const lastIndex = getLastIndex(newPath);
         if (lastIndex > 0) {
             isOk = true;
-        }else{
+        } else {
             newPath = newPath.split(".").slice(0, -4).join(".");
+        }
+        counter++;
+        if (counter > 10) {
+            throw new Error("Lot of cycles");
         }
     }
 

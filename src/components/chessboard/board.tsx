@@ -95,7 +95,7 @@ function initHistorySaving() {
         const history = store.getState()["history"];
         const user: IUser = store.getState()["user"];
         const token = SessionManagerService.getToken();
-        if (user.lastGameId) {
+        if (user.lastGameId && token) {
             ApiManagerService.saveGame(history, user.lastGameId, token);
         }
     }, 1000);
