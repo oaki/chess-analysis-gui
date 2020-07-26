@@ -30,7 +30,7 @@
     "generate-password": "^1.4.0",
     "informed": "^1.10.4",
     "jsonwebtoken": "^8.3.0",
-    "jsrsasign": "^8.0.12",
+    "jsrsasign": "^8.0.19",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.19",
     "node-sass": "^4.13.1",
