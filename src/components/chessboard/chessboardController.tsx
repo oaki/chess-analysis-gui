@@ -99,14 +99,18 @@ export const SmartAwesomeChessboard = memo((props: IChessboardProps) => {
     useEffect(() => {
         if (board && evaluation.length > 0) {
             const move = evaluation[0].p;
-            const from = move.substring(0, 2);
-            const to = move.substring(2, 4);
+            if(typeof move === 'string'){
+                const from = move.substring(0, 2);
+                const to = move.substring(2, 4);
 
-            board.setShapes([{
-                orig: from,
-                dest: to,
-                brush: "paleGreen"
-            }])
+                if(from && to){
+                    board.setShapes([{
+                        orig: from,
+                        dest: to,
+                        brush: "paleGreen"
+                    }])
+                }
+            }
         }
     }, [board, evaluation])
 
