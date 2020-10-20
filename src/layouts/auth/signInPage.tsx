@@ -1,5 +1,4 @@
-import * as React from "react";
-import {CSSProperties, memo, useCallback, useEffect, useState} from "react";
+import React, {CSSProperties, memo, useCallback, useEffect, useState} from "react";
 import {connect} from "react-redux";
 import {IUser} from "../../reducers";
 import {SessionManagerService} from "../../services/sessionManager";

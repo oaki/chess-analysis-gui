@@ -1,5 +1,3 @@
-import {ApiManagerService} from "../services/apiManager";
-import {SessionManagerService} from "../services/sessionManager";
 import config from "../config";
 
 export function userProfileApi(token): Api {

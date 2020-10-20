@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import {openPgnDialog} from "./menuReducers";
 import store from "../../store";
 import {ApiManagerService} from "../../services/apiManager";

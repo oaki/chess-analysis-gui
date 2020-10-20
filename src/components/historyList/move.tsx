@@ -1,6 +1,5 @@
 import {NODE_MAP} from "../moveTree/tree";
-import * as React from "react";
-import {memo} from "react";
+import React, {memo} from "react";
 import {IHistoryMove} from "../history/historyReducers";
 
 export const Move = memo(({move, index}: MoveProps) => {

@@ -1,16 +1,16 @@
 import {IEvaluation, LINE_MAP} from "../interfaces";
 
-export function parseResult(result: string, fen: string) {
+export function parseResult(result: string, fen: string): IEvaluation[] {
     if (result.indexOf("info") === -1) {
-        return false;
+        return [];
     }
     let lines = result.split("\n");
     lines = lines.filter(line => line.indexOf("info") !== -1 && line.indexOf("pv") !== -1);
     if (lines.length < 1) {
-        return false;
+        return [];
     }
 
-    const output: any = [];
+    const output: IEvaluation[] = [];
 
     lines.forEach((line) => {
         const r: any = parseLine(line);

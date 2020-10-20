@@ -1,6 +1,5 @@
 import store from "../../store";
-import * as React from "react";
-import {memo, ReactElement, useEffect} from "react";
+import React, {memo, ReactElement, useEffect} from "react";
 import {connect} from "react-redux";
 import {batchActions} from "redux-batched-actions";
 import {setEvaluation, setPosition, setUser} from "../../actions";
@@ -29,7 +28,7 @@ const HistoryList = memo((props: HistoryListProps) => {
 
     useEffect(() => {
         if (fetchState.response) {
-            store.dispatch(loadHistoryGames());
+            loadHistoryGames();
         }
     }, [doFetch, fetchState.response]);
 

@@ -1,4 +1,4 @@
-import {MutableRefObject, useEffect, useRef} from 'react';
+import {MutableRefObject, useEffect, useRef} from "react";
 import {Nullable} from "../interfaces";
 
 export function useWhyDidYouUpdate(name: string, props: Nullable<any>) {

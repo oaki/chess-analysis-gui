@@ -1,5 +1,4 @@
-import * as React from "react";
-import {memo} from "react";
+import React, {memo} from "react";
 import {connect} from "react-redux";
 import FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import * as faBook from "@fortawesome/fontawesome-free-solid/faBook";
@@ -9,7 +8,7 @@ import store from "../../store";
 import {PanelTabType, setPanelTab} from "./infoPanelReducers";
 import {IconDefinition} from "../../../node_modules/@fortawesome/fontawesome";
 import {IEvaluation, LINE_MAP} from "../../interfaces";
-import {Evaluation, getNodes, getScore, getTime} from "../evaluation/evaluation";
+import {getNodes, getScore, getTime} from "../evaluation/evaluation";
 import {IOnMove} from "../../actions";
 import styled from "@emotion/styled";
 

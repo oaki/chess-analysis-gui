@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useReducer, useRef} from 'react';
+import {useCallback, useEffect, useReducer, useRef} from "react";
 import {Nullable} from "../../interfaces";
 
 /**

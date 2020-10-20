@@ -1,6 +1,5 @@
 import {Node, NODE_MAP, NodeVariant} from "../moveTree/tree";
-import * as React from "react";
-import {memo} from "react";
+import React, {memo} from "react";
 import {MoveNumber} from "./moveNumber";
 import {Styles} from "@fortawesome/fontawesome";
 import {FIRST_POSITION} from "../../contants";

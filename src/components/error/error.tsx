@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import {ErrorType, IErrorProps} from "../../services/errorManager";
 import FontAwesomeIcon from "@fortawesome/react-fontawesome";
 

@@ -1,4 +1,5 @@
 import {IAction} from "../../interfaces";
+
 export const SET_TAB = "panelTab/setTab";
 export enum PanelTabType {
     INFO_TAB = "infoTab",

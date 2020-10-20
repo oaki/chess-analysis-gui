@@ -62,7 +62,7 @@ const loadGamesFromDatabaseDebounce = debounce(async (dispatch: (data: any) => {
     dispatch(gameDatabaseSetLoading(false));
 }, 1000);
 
-export function loadGamesFromDatabase(fen: string) {
+export function loadGamesFromDatabase(fen: string):any {
     return async (dispatch: (data: any) => {}) => {
         console.log("try to load");
         dispatch(gameDatabaseSetLoading(true));

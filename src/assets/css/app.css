@@ -23,12 +23,6 @@ html, body {
     width: 100%;
 }
 
-.app {
-    /*background-color: #2b2b2b;*/
-    height: 100%;
-    width: 100%;
-}
-
 .app__status {
     color: #b3b3b3;
     font-size: .9rem;
@@ -107,12 +101,4 @@ table {
 
 .level-3 {
     font-size: 11px;
-}
-
-.cf {
-    clear: both;
-}
-
-.container-fullscreen {
-    height: 100vh;
 }

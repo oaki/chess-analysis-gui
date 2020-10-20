@@ -1,6 +1,7 @@
 import * as React from "react"
 import {Redirect, Route} from "react-router-dom"
 import store from "../store";
+
 export const PrivateRoute = ({component: Component, ...rest}) => {
 
     const state = store.getState();

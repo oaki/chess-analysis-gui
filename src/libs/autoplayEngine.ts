@@ -108,9 +108,13 @@ export class AutoplayService {
         }
 
         // console.log({evaluation});
-        if (isImported === 1
+        if(typeof pv !== 'string'){
+            debugger;
+        }
+        if (typeof pv === 'string' &&
+            (isImported === 1
             || nodes > 80 * 1000 * 1000
-            || this.isScoreHigh(evaluation)
+            || this.isScoreHigh(evaluation))
         ) {
 
             const moves = splitPv(pv);

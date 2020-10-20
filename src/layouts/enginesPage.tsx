@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import {connect} from "react-redux";
 import store from "../store";
 import {addWorker, deleteWorker, loadEngines} from "../actions";

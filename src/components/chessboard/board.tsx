@@ -12,7 +12,8 @@ import {IUser} from "../../reducers";
 import {SessionManagerService} from "../../services/sessionManager";
 import {ApiManagerService} from "../../services/apiManager";
 import throttle from "lodash/throttle";
-import debounce  from "lodash/debounce";
+import debounce from "lodash/debounce";
+import {Undef} from "interfaces";
 
 const playOtherSide = (cg: Api) => {
     return (orig, dest) => {
@@ -25,9 +26,9 @@ const playOtherSide = (cg: Api) => {
     };
 }
 
-export function useBoard() {
+export function useBoard(): [(node: HTMLDivElement) => void, Undef<Api>] {
     const [node, setRef] = useRefCallback<HTMLDivElement>();
-    const [board, setBoard] = useState();
+    const [board, setBoard] = useState<Api>();
 
     useEffect(() => {
         if (node && !board) {
@@ -63,7 +64,7 @@ export function useBoard() {
 
     const onResize = useCallback(() => {
         return debounce(() => {
-            board.redrawAll();
+            board?.redrawAll();
         }, 100);
     }, [board]);
 
