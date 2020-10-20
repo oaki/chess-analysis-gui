@@ -27,6 +27,7 @@ import {panelTabReducer} from "./components/infoPanel/infoPanelReducers";
 import {socketReducer} from "./services/socketService";
 import {gamesDatabaseReducer} from "./components/gamesDatabaseExplorer/gamesDatabaseReducers";
 import {FIRST_ID} from "./components/moveTree/tree";
+import {FIRST_POSITION} from "contants";
 
 export const loadingReducer = (isLoading: boolean = false, action: any) => {
     switch (action.type) {
@@ -38,7 +39,7 @@ export const loadingReducer = (isLoading: boolean = false, action: any) => {
     }
 };
 
-export const positionReducer = (fen: string = "", action: any) => {
+export const positionReducer = (fen: string = FIRST_POSITION, action: any) => {
     switch (action.type) {
         case SET_POSITION:
             return action.fen;

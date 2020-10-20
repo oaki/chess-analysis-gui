@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import {ApiManagerService} from "../../services/apiManager";
 import {Log} from "../../libs/logger";
 import * as queryString from "querystring";

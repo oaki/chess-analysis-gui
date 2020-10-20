@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {pairValues, parseResult} from "../../libs/parseStockfishResults";
 import {useInterval} from "../hooks/useInterval";
+import {IEvaluation, Undef} from "interfaces";
 
 let engineMsgBuffer = {};
 
@@ -9,10 +10,10 @@ function collectEngineData(msg: MessageEvent) {
     engineMsgBuffer[multipv] = msg.data;
 }
 
-export function useStockFishWorker(lastFen: string, movesLine: string) {
-    const [worker, setWorker] = useState();
-    const [error, setError] = useState();
-    const [evaluations, setEvaluations] = useState();
+export function useStockFishWorker(lastFen: string, movesLine: string): [Undef<Worker>, IEvaluation[], any] {
+    const [worker, setWorker] = useState<Worker>();
+    const [error, setError] = useState<any>();
+    const [evaluations, setEvaluations] = useState<IEvaluation[]>([]);
     const [workerConfig, setWorkerConfig] = useState({
         threads: 1,
         delay: 10 * 1000,
@@ -29,7 +30,7 @@ export function useStockFishWorker(lastFen: string, movesLine: string) {
         // const data = JSON.stringify(evaluationStringFromEngine);
         const result = parseResult(evaluationStringFromEngine, lastFen);
 
-        if (result) {
+        if (result.length > 0) {
             setEvaluations(result);
         }
     }, 3000);

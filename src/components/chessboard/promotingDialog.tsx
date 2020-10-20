@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, {FC, memo} from "react";
 import {IOnMove} from "../../actions";
 import {IPromotingDialogProps} from "./promotingDialogReducers";
 
@@ -13,20 +13,32 @@ export const PromotingDialog = (props: IPromotingDialogProps) => {
         <div className="promotion__dialog">
             <div className="promotion__pieces">
                 <button onClick={props.handleOnClick} className="promotion__href" data-piece="q">
-                    <piece className={`${onMoveClass} queen`}/>
+                    <Piece className={`${onMoveClass} queen`}/>
                 </button>
                 <button onClick={props.handleOnClick} className="promotion__href" data-piece="r">
-                    <piece className={`${onMoveClass} rook`}/>
+                    <Piece className={`${onMoveClass} rook`}/>
                 </button>
                 <button onClick={props.handleOnClick} className="promotion__href" data-piece="b">
-                    <piece className={`${onMoveClass} bishop`}/>
+                    <Piece className={`${onMoveClass} bishop`}/>
                 </button>
                 <button onClick={props.handleOnClick} className="promotion__href" data-piece="n">
-                    <piece className={`${onMoveClass} knight`}/>
+                    <Piece className={`${onMoveClass} knight`}/>
                 </button>
             </div>
         </div>
     )
+}
+
+
+export const Piece: FC<PieceProps> = memo(({className}) => {
+    return (
+        // @ts-ignore
+        <piece className={className}/>
+    );
+});
+
+export type PieceProps = {
+    className: string;
 }
 
 export function isPromoting(from: string, to: string, chess: any) {

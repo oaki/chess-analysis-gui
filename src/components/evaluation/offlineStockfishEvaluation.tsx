@@ -1,5 +1,4 @@
-import * as React from "react";
-import {memo, useState} from "react";
+import React, {memo, useState} from "react";
 import Toggle from "react-toggle"
 import {useStockFishWorker} from "./useStockFish";
 import {shallowEqual, useSelector} from "react-redux";

@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import {faArrowLeft} from "@fortawesome/fontawesome-free-solid";
 import FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import {Link} from "react-router-dom";

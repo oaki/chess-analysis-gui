@@ -1,5 +1,4 @@
-import * as React from "react";
-import {FC, memo} from "react";
+import React, {FC, memo} from "react";
 import {IEvaluation, IState, LINE_MAP} from "../../interfaces";
 import {shallowEqual, useSelector} from "react-redux";
 
@@ -150,7 +149,10 @@ function formatNumber(num: number | string | undefined) {
     return 0;
 }
 
-export function splitPv(pv: string) {
+export function splitPv(pv: string): string[] {
+    if(typeof pv !== 'string'){
+        return [];
+    }
     return pv.split(" ");
 }
 

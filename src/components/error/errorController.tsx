@@ -1,5 +1,4 @@
-import * as React from "react";
-import {FC, memo, useCallback} from "react";
+import React, {FC, memo, useCallback} from "react";
 import {useSelector} from "react-redux";
 import {Error} from "./error";
 import store from "../../store";

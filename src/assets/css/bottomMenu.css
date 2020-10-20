@@ -1,9 +1,4 @@
 .bottom-menu {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    left: 0;
-    right: 0;
     z-index: 99;
     background-color: #2b2b2b;
 }

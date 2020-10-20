@@ -1,44 +1,69 @@
-import * as React from "react";
-import {memo} from "react";
+import React, {memo} from "react";
 import {SmartPanel} from "../components/Panel";
 import {MenuWithRouter} from "../components/menu/menu";
-import { SmartInfoPanel} from "../components/infoPanel/infoPanel";
+import {SmartInfoPanel} from "../components/infoPanel/infoPanel";
 import {SmartAwesomeChessboard} from "../components/chessboard/chessboardController";
 import styled from "@emotion/styled";
+import {ContainerSizes, useElementResize} from "hooks/useElementResize";
+import {useRefCallback} from "components/hooks/useRefCallback";
+import useResizeObserver from "use-resize-observer";
+import useScreenOrientation from 'react-hook-screen-orientation'
+
 
 const Column = styled.div`
-    flex-grow: 1;
-    flex-basis: 0;
+    flex: 50%;
 `;
 
 export const ChessboardPage = memo(() => {
-    // calculate height for
-    const availWidth = window.innerWidth;
-    const availHeight = window.innerHeight;
+    const [wrapperEl, setWrapperRef] = useRefCallback<HTMLDivElement>();
+    const [infoWrapperEl, setInfoWrapperRef] = useRefCallback<HTMLDivElement>();
+    const orientation = useScreenOrientation();
+    console.log('orientation',orientation);
+    const isLandscape = window.innerWidth > window.innerHeight;
 
-    const chessboarcWidth = availWidth - 30/* padding:15*/;
-    const chessboarcHeight = chessboarcWidth;
-    const infoPanelHeight = 20;
-    const height = availHeight - 40 /* bottom menu height */ - chessboarcHeight - infoPanelHeight;
-    console.log({
-        availHeight, availWidth, chessboarcWidth, chessboarcHeight, height
-    });
-    return (
+    const { ref, width = 1, height = 1 } = useResizeObserver<HTMLDivElement>();
+console.log('window.innerHeight',window.innerHeight);
+    console.log({width, height});
 
-        <div className="container-fullscreen">
-            <div className={"sm-d-f"}>
-                <Column className={"p-xs"}>
+    if(orientation === 'landscape-primary'){
+        return (
+            <div
+                ref={setWrapperRef}
+                className={'d-f'}
+            >
+                <Column>
                     <SmartAwesomeChessboard/>
                 </Column>
-                <Column className={"sm-pt-xs"}>
-                    <SmartInfoPanel/>
 
-                    <div className="ox-a" style={{height}}>
-                        <SmartPanel/>
-                    </div>
+                <Column>
+                    <SmartInfoPanel/>
+                    <SmartPanel/>
+
+                    <MenuWithRouter
+                        showMainMenu={true}
+                        showFlip={true}
+                        showUndo={true}
+                        showRedo={true}
+                        showAutoplay={true}
+                    />
                 </Column>
             </div>
+        );
+    }
+    return (
+        <StyledWrapper
+            ref={setWrapperRef}
+            chessboardHeight={isLandscape ? window.innerHeight : window.innerWidth}
+            appHeight={window.innerHeight}
+        >
+            <SmartAwesomeChessboard/>
+            <SmartInfoPanel/>
 
+            <div ref={ref} style={{overflow: 'hidden'}}>
+                <div style={{height}}>
+                    <SmartPanel/>
+                </div>
+            </div>
 
             <MenuWithRouter
                 showMainMenu={true}
@@ -47,10 +72,21 @@ export const ChessboardPage = memo(() => {
                 showRedo={true}
                 showAutoplay={true}
             />
-        </div>
+        </StyledWrapper>
 
     );
 });
 
+
+const StyledWrapper = styled.div`
+    height: ${(props: StyledWrapperProps) => (`${props.appHeight}px`)};
+    display: grid;
+    grid-template-rows: ${(props: StyledWrapperProps) => (`${props.chessboardHeight}px`)} 23px auto 30px;
+`;
+
+type StyledWrapperProps = {
+    appHeight: number;
+    chessboardHeight: number;
+}
 
 

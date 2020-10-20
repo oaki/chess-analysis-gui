@@ -1,5 +1,4 @@
-import * as React from "react";
-import {memo, useEffect, useMemo, useState} from "react";
+import React, {memo, useEffect, useState} from "react";
 import {Provider} from "react-redux";
 import store from "./store";
 import SignInPage from "./layouts/auth/signInPage";
@@ -10,20 +9,19 @@ import {EnginesPageSmart} from "./layouts/enginesPage";
 import {HistoryPage} from "./layouts/historyPage";
 import GooglePopupRedirect from "./layouts/auth/googlePopupRedirect";
 import {VerifyGoogleResponse} from "./layouts/auth/verifyGoogleResponse";
-import {ErrorController, Errors} from "./components/error/errorController";
+import {ErrorController} from "./components/error/errorController";
 import {SettingPage} from "./layouts/settingPage";
 import {SessionManagerService} from "./services/sessionManager";
 import {setUser} from "./actions";
-import {ApiManagerService} from "./services/apiManager";
 import {IUser} from "./reducers";
-import {Flash} from "./services/errorManager";
 import {setHistory} from "./components/history/historyReducers";
 import {Loading} from "./components/Loading";
 import {connectSocket} from "./services/sockets/actions";
 import {useFetch} from "./components/hooks/useFetch";
 import {userHistoryApi, userProfileApi} from "./tools/api";
 import {Nullable} from "./interfaces";
-import {Error} from './components/error/error';
+import {Error} from "./components/error/error";
+import styled from "@emotion/styled";
 //
 // export class App extends React.Component<{}, {}> {
 //
@@ -225,7 +223,7 @@ export const ChessApp = memo((props: ChessAppProps) => {
                 <Loading isLoading={!state.isLoaded}/>
 
                 {state.isLoaded && !profileResponse.isError && !isError &&
-                <div className="app">
+                <StyledApp>
                   <PrivateRoute exact={true} path="/" component={ChessboardPage}/>
                   <PrivateRoute path="/user/engines" component={EnginesPageSmart}/>
                   <PrivateRoute path="/user/history" component={HistoryPage}/>
@@ -235,11 +233,16 @@ export const ChessApp = memo((props: ChessAppProps) => {
                   <Route path="/auth/verify-google-response" component={VerifyGoogleResponse}/>
 
                   <ErrorController/>
-                </div>}
+                </StyledApp>}
             </BrowserRouter>
         </Provider>
     )
 });
+
+const StyledApp = styled.div`
+    height: 100%;
+    width: 100%;
+`
 
 interface ChessAppProps {
 

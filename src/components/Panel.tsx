@@ -1,15 +1,14 @@
-import * as React from "react";
-import {memo, useEffect} from "react";
-import {connect} from "react-redux";
+import React, {FC, memo} from "react";
+import {shallowEqual, useSelector} from "react-redux";
 import {SmartOpeningExplorer} from "./openingExplorer/openingExplorer";
-import store from "../store";
-import {loadOpeningBook} from "../actions";
 import {SmartEvaluation} from "./evaluation/evaluation";
 import {SyzygyExplorerSmart} from "./syzygyExplorer/syzygyExplorer";
 import {SmartGamesDatabaseExplorer} from "./gamesDatabaseExplorer/gamesDatabaseExplorer";
 import {History} from "./history/history";
 import {PanelTabType} from "./infoPanel/infoPanelReducers";
 import {SmartStockFish} from "./evaluation/offlineStockfishEvaluation";
+import styled from "@emotion/styled";
+import {IState} from "interfaces";
 
 interface IEvaluation {
     score: string;
@@ -18,40 +17,31 @@ interface IEvaluation {
     nodes: string;
 }
 
-interface IPannelState {
-    evaluation?: IEvaluation;
-    panelTab: PanelTabType;
-    pgn?: string;
-    fen?: string;
-}
 
-const mapStateToProps = (state: any) => ({
-    status: state.status,
-    panelTab: state.panelTab
-});
-
-const Panel = memo((props: IPannelState) => {
-
-    useEffect(() => {
-        store.dispatch(loadOpeningBook());
-    }, []);
+type PanelProps = {}
+const Panel: FC<PanelProps> = memo(() => {
+    const panelTab = useSelector((state: IState) => {
+        return state.panelTab;
+    }, shallowEqual);
 
     return (
         <React.Fragment>
 
-            {props.panelTab === PanelTabType.INFO_TAB && <History/>}
-            {props.panelTab === PanelTabType.EVALUATION_TAB && (
-                <>
+            {panelTab === PanelTabType.INFO_TAB && <History/>}
+            {panelTab === PanelTabType.EVALUATION_TAB && (
+                <div>
                     <SmartStockFish/>
-                    <SmartEvaluation name={'Cloud'}/>
-                </>
+                    <SmartEvaluation name={"Cloud"}/>
+                </div>
             )}
-            {props.panelTab === PanelTabType.BOOK_TAB && (
-                <React.Fragment>
-                    <SmartOpeningExplorer/>
-                    <SmartGamesDatabaseExplorer/>
-                    <SyzygyExplorerSmart/>
-                </React.Fragment>
+            {panelTab === PanelTabType.BOOK_TAB && (
+                <Wrapper>
+                    <div className="section">
+                        <SmartOpeningExplorer/>
+                        <SmartGamesDatabaseExplorer/>
+                        <SyzygyExplorerSmart/>
+                    </div>
+                </Wrapper>
             )}
 
 
@@ -65,5 +55,33 @@ const Panel = memo((props: IPannelState) => {
         </React.Fragment>
     )
 });
+const Wrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  
+  display: flex;
+  flex-direction: column;
 
-export const SmartPanel = connect(mapStateToProps)(Panel);
+.section {
+  flex-grow: 1;
+  
+  display: flex;
+  flex-direction: column;
+  
+  /* for Firefox */
+  min-height: 0;
+}
+
+.scrollable-content {
+  background: white;
+  flex-grow: 1;
+  
+  overflow: auto;
+  
+  /* for Firefox */
+  min-height: 0;
+}
+
+`
+
+export const SmartPanel = Panel;

@@ -2,7 +2,8 @@ import {Node, NODE_MAP, treeService} from "../moveTree/tree";
 import {isPromoting} from "../chessboard/promotingDialog";
 import {loadOpeningPosition, setOpeningPosition} from "../openingExplorer/openingExplorerReducers";
 import {
-    ISetMoveProps, REMOVE_GAME_FROM_HISTORY,
+    ISetMoveProps,
+    REMOVE_GAME_FROM_HISTORY,
     SET_HISTORY,
     SET_HISTORY_MOVE,
     SET_LAST_MOVE,

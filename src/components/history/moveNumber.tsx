@@ -1,5 +1,4 @@
-import * as React from "react";
-import {FC, memo} from "react";
+import React, {FC, memo} from "react";
 
 export type IMoveNumberProps = {
     fen: string;

@@ -1,5 +1,4 @@
-import * as React from "react";
-import {memo} from "react";
+import React, {memo} from "react";
 import {connect} from "react-redux";
 import "../../assets/css/explorerBox.css";
 import store from "../../store";

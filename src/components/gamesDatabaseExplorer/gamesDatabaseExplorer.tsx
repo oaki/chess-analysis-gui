@@ -1,5 +1,4 @@
-import * as React from "react";
-import {memo} from "react";
+import React, {memo} from "react";
 import {connect} from "react-redux";
 import store from "../../store";
 import {setMove} from "../history/historyReducers";
@@ -7,6 +6,7 @@ import {treeService} from "../moveTree/tree";
 import {IState} from "../../interfaces";
 import {SmallLoading} from "../Loading";
 import "./gamesDatabaseExplorer.css";
+import styled from "@emotion/styled";
 
 
 function renderRow(props) {
@@ -27,29 +27,36 @@ function renderRow(props) {
     })
 }
 
+const StyledGamesWrapper = styled.div`
+  flex-grow: 1;
+  overflow: auto;
+  
+  /* for Firefox */
+  min-height: 0;
+`
 const GamesDatabaseExplorer = memo((props: any) => {
     return (
-        <div className="games-database-box">
 
-            <SmallLoading isLoading={props.isLoading}/>
-
-            {props.response &&
+        <StyledGamesWrapper>
             <table className="games-database-explorer">
-              <thead>
-              <tr>
-                <th colSpan={2}>Games</th>
-              </tr>
-              </thead>
-              <tbody>
-              {renderRow(props)}
-              </tbody>
-            </table>
-            }
+                <thead>
+                <tr>
+                    <th colSpan={2}>
+                        <span className={"d-ib pr-sm"}>Games</span>
+                        <SmallLoading isLoading={props.isLoading}/>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                {props.response && renderRow(props)}
 
-            {!props.isLoading && !props.response && <div>
-              No games in database.
-            </div>}
-        </div>
+                {!props.isLoading && !props.response && <tr>
+                  <td>No games in database.</td>
+                </tr>}
+                </tbody>
+            </table>
+        </StyledGamesWrapper>
+
     )
 });
 

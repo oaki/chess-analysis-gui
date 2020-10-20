@@ -1,9 +1,4 @@
 import {IUser} from "../reducers";
-import store from "../store";
-import {setHistory} from "../components/history/historyReducers";
-import {ApiManagerService} from "./apiManager";
-import {setUser} from "../actions";
-import {SessionManagerService} from "./sessionManager";
 import {Log} from "../libs/logger";
 
 class WindowMessageListener {

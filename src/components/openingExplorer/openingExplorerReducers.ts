@@ -10,13 +10,9 @@ export interface IOpeningMove {
     san: string;
 }
 
-export interface IOpeningExplorerProps {
-    moves: IOpeningMove[];
-    fen: string;
-    handleMove: (move: string, fen: string) => void;
-}
 
-export function loadOpeningPosition(fen: string) {
+
+export function loadOpeningPosition(fen: string):any {
     return async (dispatch: (data: any) => {}) => {
         console.log("loadOpeningPosition", fen);
 

@@ -3,6 +3,8 @@ import config from "./config";
 import {IUser, IWorker} from "./reducers";
 import {Flash} from "./services/errorManager";
 import {SessionManagerService} from "./services/sessionManager";
+import {ThunkAction} from "redux-thunk";
+import {Action} from "redux";
 
 export const UPDATE_LOADING = "UPDATE_LOADING";
 export const GAME_DATABASE_UPDATE_LOADING = "GAME_DATABASE_UPDATE_LOADING";
@@ -96,15 +98,15 @@ export function setUser(user: IUser) {
     };
 }
 
-export function loadOpeningBook() {
-    return async (dispatch: (data: any) => {}, getState: any) => {
-        dispatch(setLoading(true));
-        dispatch(setLoading(false));
-    }
-}
+// export function loadOpeningBook() {
+//     return async (dispatch: (data: any) => {}, getState: any) => {
+//         dispatch(setLoading(true));
+//         dispatch(setLoading(false));
+//     }
+// }
 
 
-export function loadEngines() {
+export function loadEngines():any {
     return async (dispatch: (data: any) => {}, getState: any) => {
         const token = SessionManagerService.getToken();
         dispatch(setLoading(true));
@@ -144,7 +146,7 @@ export function loadEngines() {
 
 }
 
-export function checkWorkers(workerList: IWorker[]) {
+export function checkWorkers(workerList: IWorker[]):any {
     return async (dispatch: (data: any) => {}, getState: any) => {
         dispatch(setLoading(true));
 
@@ -181,7 +183,7 @@ export function checkWorkers(workerList: IWorker[]) {
     }
 }
 
-export function addWorker(props: any) {
+export function addWorker(props: any):any {
     return async (dispatch: (data: any) => {}, getState: any) => {
 
         const token = SessionManagerService.getToken();
@@ -222,7 +224,7 @@ export function addWorker(props: any) {
 
 }
 
-export function deleteWorker(props: any) {
+export function deleteWorker(props: any):any {
     return async (dispatch: (data: any) => {}, getState: any) => {
 
         const token = SessionManagerService.getToken();
@@ -259,7 +261,7 @@ export function deleteWorker(props: any) {
 }
 
 
-export function addNewGame(callback) {
+export function addNewGame(callback):any {
     return async (dispatch: (data: any) => {}, getState: any) => {
 
         const user = getState()["user"];
