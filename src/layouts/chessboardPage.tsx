@@ -4,10 +4,9 @@ import {MenuWithRouter} from "../components/menu/menu";
 import {SmartInfoPanel} from "../components/infoPanel/infoPanel";
 import {SmartAwesomeChessboard} from "../components/chessboard/chessboardController";
 import styled from "@emotion/styled";
-import {ContainerSizes, useElementResize} from "hooks/useElementResize";
 import {useRefCallback} from "components/hooks/useRefCallback";
 import useResizeObserver from "use-resize-observer";
-import useScreenOrientation from 'react-hook-screen-orientation'
+import {useScreenOrientation} from "hooks/useScreenOrientation";
 
 
 const Column = styled.div`
@@ -18,18 +17,18 @@ export const ChessboardPage = memo(() => {
     const [wrapperEl, setWrapperRef] = useRefCallback<HTMLDivElement>();
     const [infoWrapperEl, setInfoWrapperRef] = useRefCallback<HTMLDivElement>();
     const orientation = useScreenOrientation();
-    console.log('orientation',orientation);
+    console.log("orientation", orientation);
     const isLandscape = window.innerWidth > window.innerHeight;
 
-    const { ref, width = 1, height = 1 } = useResizeObserver<HTMLDivElement>();
-console.log('window.innerHeight',window.innerHeight);
+    const {ref, width = 1, height = 1} = useResizeObserver<HTMLDivElement>();
+    console.log("window.innerHeight", window.innerHeight);
     console.log({width, height});
 
-    if(orientation === 'landscape-primary'){
+    if (orientation === "landscape") {
         return (
             <div
                 ref={setWrapperRef}
-                className={'d-f'}
+                className={"d-f"}
             >
                 <Column>
                     <SmartAwesomeChessboard/>
@@ -59,7 +58,7 @@ console.log('window.innerHeight',window.innerHeight);
             <SmartAwesomeChessboard/>
             <SmartInfoPanel/>
 
-            <div ref={ref} style={{overflow: 'hidden'}}>
+            <div ref={ref} style={{overflow: "hidden"}}>
                 <div style={{height}}>
                     <SmartPanel/>
                 </div>
