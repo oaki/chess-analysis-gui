@@ -261,8 +261,8 @@ export class M extends React.PureComponent<any, any> {
         // store.dispatch(openPgnDialog(true));
         if (this.props.isOpen) {
             return (
-                <div className="position-relative">
-                    <ul className="sub-menu">
+                <div className="pos-r">
+                    <ul className="pos-a sub-menu">
                         <li className="sub-menu__line">
                             <Link to="/" onClick={this.handleNewGame}>New game</Link>
                         </li>
