@@ -118,7 +118,8 @@
     "use-resize-observer": "^6.1.0",
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12",
-    "webpack-dev-server": "^3.11.0"
+    "webpack-dev-server": "^3.11.0",
+    "workbox-webpack-plugin": "^5.1.4"
   },
   "scripts": {
     "start": "webpack-dev-server --mode development --hot --progress --color --port 3000 --open",
