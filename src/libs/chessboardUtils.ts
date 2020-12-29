@@ -1,5 +1,5 @@
 export function toDests(chess: any) {
-    const dests = {};
+    const dests:any = {};
     chess.SQUARES.forEach(s => {
         const ms = chess.moves({square: s, verbose: true});
         if (ms.length) dests[s] = ms.map(m => m.to);

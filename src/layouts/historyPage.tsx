@@ -9,6 +9,7 @@ import {setHistoryGameList} from "../components/historyList/historyListReducers"
 import {Flash} from "../services/errorManager";
 import {SessionManagerService} from "../services/sessionManager";
 
+export default HistoryPage;
 export const HistoryPage: FC<HistoryPageProps> = memo(({history}) => {
 
     useEffect(() => {

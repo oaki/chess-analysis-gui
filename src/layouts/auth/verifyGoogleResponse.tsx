@@ -35,3 +35,5 @@ export function VerifyGoogleResponse(props: any) {
         </div>
     );
 }
+
+export default VerifyGoogleResponse;

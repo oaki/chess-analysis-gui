@@ -1,68 +1,39 @@
-// import {unsignedHexString} from "./libs/polyglot";
+const openingTable = {};
+let bookLoaded = false;
 
-export default class Opening {
+export async function getOpening() {
+    if (bookLoaded) {
+        return openingTable;
+    }
+    const response = await require("../public/books/book.bin");
+    const buffer = await response.arrayBuffer();
+    addBook(buffer);
 
-    private openingTable;
-    private bookLoaded = false;
+    bookLoaded = true;
+    return openingTable;
+}
 
-    constructor() {
-        this.openingTable = {};
-
-        this.loadBook();
+function unsignedHexString(number) {
+    if (number < 0) {
+        number = 0xFFFFFFFF + number + 1;
     }
 
-    async loadBook() {
+    return number.toString(16).toUpperCase();
+}
 
-        // function syncGETBuffer(path) {
-        //     // Synchronous HTTP request
-        //     var request = new XMLHttpRequest();
-        //     request.open('GET', path, false);
-        //     request.responseType = 'arraybuffer';
-        //     request.send(null);
-        //
-        //     if (request.status === 200) {
-        //         return request.response;
-        //     }
-        // }
+function addBook(book) {
+    const bookDataView = new DataView(book);
 
-        const path = '/books/book.bin';
-        // const path = '/books/gm2001.bin';
-        const response = await fetch(path);
-        const buffer = await response.arrayBuffer();
-        this.addBook(buffer);
+    for (let byteOffset = 0; byteOffset < bookDataView.byteLength - 8; byteOffset += 8) {
+        const key = unsignedHexString(bookDataView.getUint32(byteOffset)) + unsignedHexString(bookDataView.getUint32(byteOffset + 4));
+        const move = bookDataView.getUint16(byteOffset + 8);
+        // const weight = bookDataView.getUint16(byteOffset + 10);
+        // const learn = bookDataView.getUint32(byteOffset + 12);
 
-    }
-
-
-    addBook(book) {
-        const bookDataView = new DataView(book);
-
-        for (let byteOffset = 0; byteOffset < bookDataView.byteLength - 8; byteOffset += 8) {
-            const key = this.unsignedHexString(bookDataView.getUint32(byteOffset)) + this.unsignedHexString(bookDataView.getUint32(byteOffset + 4));
-            const move = bookDataView.getUint16(byteOffset + 8);
-            // const weight = bookDataView.getUint16(byteOffset + 10);
-            // const learn = bookDataView.getUint32(byteOffset + 12);
-
-            if (!this.openingTable[key]) {
-                this.openingTable[key] = [];
-            }
-
-            this.openingTable[key].push(move);
+        if (!openingTable[key]) {
+            openingTable[key] = [];
         }
 
-        this.bookLoaded = true;
+        openingTable[key].push(move);
     }
-
-    isbookLoaded() {
-        return this.bookLoaded;
-    }
-
-
-    unsignedHexString(number) {
-        if (number < 0) {
-            number = 0xFFFFFFFF + number + 1;
-        }
-
-        return number.toString(16).toUpperCase();
-    }
-};
+}

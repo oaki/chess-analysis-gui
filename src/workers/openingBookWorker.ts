@@ -1,27 +1,18 @@
-import Opening from "../openingBook";
+import {getOpening} from "../openingBook";
 
 const sendMessage: any = self.postMessage;
 
-const opening = new Opening();
 
 // @ts-ignore
 self.onmessage = async function (this: Window, event: MessageEvent) {
     const action = event.data.action;
-    console.log('onmessage', action);
-
-    if (!opening.isbookLoaded()) {
-
-        await opening.loadBook();
-        console.log('bookLoaded');
-    }
+    console.log("onmessage", action);
 
     switch (action) {
-        case 'find':
-            const moves = await opening;
-            sendMessage({'moves': moves});
+        case "find":
+            // const moves = await getOpening();
+            // sendMessage({"moves": moves});
             break;
     }
-
-    sendMessage({'jaa': 222});
 
 };
