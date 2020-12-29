@@ -20,6 +20,7 @@ var MiniCssExtractPlugin = require("mini-css-extract-plugin");
 var {CleanWebpackPlugin} = require("clean-webpack-plugin");
 
 module.exports = {
+  stats: "verbose",
   context: sourcePath,
   entry: {
     app: "./index.tsx"
@@ -188,7 +189,7 @@ module.exports = {
     historyApiFallback: {
       disableDotRule: true
     },
-    stats: "minimal",
+    stats: "verbose",
     clientLogLevel: "warning"
   },
   // https://webpack.js.org/configuration/devtool/
