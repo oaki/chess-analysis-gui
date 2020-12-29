@@ -12,7 +12,7 @@ import {useScreenOrientation} from "hooks/useScreenOrientation";
 const Column = styled.div`
     flex: 50%;
 `;
-
+export default ChessboardPage;
 export const ChessboardPage = memo(() => {
     const [wrapperEl, setWrapperRef] = useRefCallback<HTMLDivElement>();
     const [infoWrapperEl, setInfoWrapperRef] = useRefCallback<HTMLDivElement>();

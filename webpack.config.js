@@ -5,10 +5,12 @@ var packageJson = require("./package.json");
 var CopyPlugin = require('copy-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const WorkboxPlugin = require('workbox-webpack-plugin');
+const { BundleStatsWebpackPlugin } = require('bundle-stats-webpack-plugin');
 
 
 // variables
 var isProduction = process.argv.indexOf("-p") >= 0 || process.env.NODE_ENV === "production";
+console.log('isProduction', isProduction);
 var sourcePath = path.join(__dirname, "./src");
 var outPath = path.join(__dirname, "./build");
 
@@ -107,21 +109,21 @@ module.exports = {
     ]
   },
   optimization: {
-    splitChunks: {
-      name: true,
-      cacheGroups: {
-        commons: {
-          chunks: "initial",
-          minChunks: 2
-        },
-        vendors: {
-          test: /[\\/]node_modules[\\/]/,
-          chunks: "all",
-          filename: isProduction ? "vendor.[contenthash].js" : "vendor.[hash].js",
-          priority: -10
-        }
-      }
-    },
+    // splitChunks: {
+    //   name: true,
+    //   cacheGroups: {
+    //     commons: {
+    //       chunks: "initial",
+    //       minChunks: 2
+    //     },
+    //     vendors: {
+    //       test: /[\\/]node_modules[\\/]/,
+    //       chunks: "all",
+    //       filename: isProduction ? "vendor.[contenthash].js" : "vendor.[hash].js",
+    //       priority: -10
+    //     }
+    //   }
+    // },
     runtimeChunk: true
   },
   plugins: [

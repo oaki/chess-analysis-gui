@@ -143,7 +143,7 @@ export default class SocketManager {
                 this.emit("setNewPosition", {
                     move,
                     previousEvaluation,
-                    FEN: fen,
+                    FEN: fen
                 });
             }
 

@@ -69,4 +69,4 @@ export const settingsReducer = (settings: ISettings = {
 };
 
 export const SettingPage = connect(mapStateToProps)(Sp);
-
+export default SettingPage;
