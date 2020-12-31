@@ -19,8 +19,8 @@ import {setSyzygyEvaluation} from "../syzygyExplorer/syzygyExplorerReducers";
 import {setPromotionDialog} from "../chessboard/promotingDialogReducers";
 import {emitPosition} from "../../services/sockets/actions";
 import {loadGamesFromDatabase} from "../gamesDatabaseExplorer/gamesDatabaseReducers";
+import maxBy from 'lodash/maxBy';
 
-const maxBy = require("lodash/maxBy");
 
 export interface IHistoryMove {
     id: number;
@@ -80,8 +80,8 @@ export function setMove(props: ISetMoveProps) {
             lastMove(from, to)
         ];
 
-        let previousEvaluation = null;
-        let evaluation = null;
+        let previousEvaluation;
+        let evaluation;
 
         if (nextMoveId) {
             const currRef = treeService.getReference(nextMoveId);

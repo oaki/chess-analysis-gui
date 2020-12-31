@@ -6,8 +6,8 @@ import {setMove} from "../components/history/historyReducers";
 import {IEvaluation, LINE_MAP} from "../interfaces";
 import {splitPv} from "../components/evaluation/evaluation";
 import {getMoveFen} from "./moveFen";
+import debounce from 'lodash/debounce';
 
-const debounce = require("lodash/debounce");
 
 export class AutoplayService {
     private store;

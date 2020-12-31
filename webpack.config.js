@@ -20,7 +20,7 @@ var MiniCssExtractPlugin = require("mini-css-extract-plugin");
 var {CleanWebpackPlugin} = require("clean-webpack-plugin");
 
 module.exports = {
-  stats: "verbose",
+  // stats: "verbose",
   context: sourcePath,
   entry: {
     app: "./index.tsx"
@@ -75,26 +75,26 @@ module.exports = {
               // }
             }
           },
-          {
-            loader: "postcss-loader",
-            options: {
-              postcssOptions: {
-                ident: "postcss",
-                plugins: [
-                  require("postcss-import")({addDependencyTo: webpack}),
-                  require("postcss-url")(),
-                  require("postcss-preset-env")({
-                    /* use stage 2 features (defaults) */
-                    stage: 2
-                  }),
-                  require("postcss-reporter")(),
-                  require("postcss-browser-reporter")({
-                    disabled: isProduction
-                  })
-                ]
-              }
-            },
-          },
+          // {
+          //   loader: "postcss-loader",
+          //   options: {
+          //     postcssOptions: {
+          //       ident: "postcss",
+          //       plugins: [
+          //         require("postcss-import")({addDependencyTo: webpack}),
+          //         require("postcss-url")(),
+          //         require("postcss-preset-env")({
+          //           /* use stage 2 features (defaults) */
+          //           stage: 2
+          //         }),
+          //         require("postcss-reporter")(),
+          //         require("postcss-browser-reporter")({
+          //           disabled: isProduction
+          //         })
+          //       ]
+          //     }
+          //   },
+          // },
           {
             loader: "sass-loader",
           },
@@ -109,7 +109,7 @@ module.exports = {
       }
     ]
   },
-  optimization: {
+  // optimization: {
     // splitChunks: {
     //   name: true,
     //   cacheGroups: {
@@ -125,10 +125,10 @@ module.exports = {
     //     }
     //   }
     // },
-    runtimeChunk: true
-  },
+    // runtimeChunk: true
+  // },
   plugins: [
-    // new BundleAnalyzerPlugin(),
+    new BundleAnalyzerPlugin(),
     new webpack.DefinePlugin({
       'process.env': JSON.stringify(dotenv.config().parsed)
     }),
@@ -193,11 +193,5 @@ module.exports = {
     clientLogLevel: "warning"
   },
   // https://webpack.js.org/configuration/devtool/
-  devtool: isProduction ? "hidden-source-map" : "cheap-module-eval-source-map",
-  node: {
-    // workaround for webpack-dev-server issue
-    // https://github.com/webpack/webpack-dev-server/issues/60#issuecomment-103411179
-    fs: "empty",
-    net: "empty"
-  }
+  devtool: isProduction ? "hidden-source-map" : "cheap-module-eval-source-map"
 };
