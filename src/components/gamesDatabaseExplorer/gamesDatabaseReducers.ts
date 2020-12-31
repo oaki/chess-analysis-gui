@@ -3,7 +3,7 @@ import config from "../../config";
 import {Flash} from "../../services/errorManager";
 import {GameDatabase, IAction} from "../../interfaces";
 
-const debounce = require("lodash/debounce");
+import debounce from 'lodash/debounce';
 
 export interface IGames {
     id: string;
