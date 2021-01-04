@@ -34,10 +34,8 @@ function handleButton(event: any) {
 }
 
 function renderButton(id: string, icon: IconDefinition, panelTab: string) {
-    const classname = classNames({
-        is_active: panelTab === id,
-        btn: true,
-        "btn-panel": true
+    const classname = classNames('btn btn-panel',{
+        is_active: panelTab === id
     });
     return (
         <button onClick={handleButton} data-tab={id} className={classname}>

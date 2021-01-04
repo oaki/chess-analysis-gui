@@ -148,7 +148,7 @@ module.exports = {
       disable: !isProduction
     }),
     new HtmlWebpackPlugin({
-      // publicPath: 'https://goog.sk',
+      publicPath: 'https://www.chess-analysis.com',
       // templateParameters: {
       //   'publicPath': 'https://goog.sk'
       // },
