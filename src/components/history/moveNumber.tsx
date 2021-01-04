@@ -1,10 +1,5 @@
 import React, {FC, memo} from "react";
 
-export type IMoveNumberProps = {
-    fen: string;
-    counter: number;
-}
-
 export const MoveNumber: FC<IMoveNumberProps> = memo(({fen, counter}) => {
     const tokens = fen.split(/\s+/);
     const moveNumber = tokens[5];
@@ -22,3 +17,8 @@ export const MoveNumber: FC<IMoveNumberProps> = memo(({fen, counter}) => {
       >{moveNumber}.</span>
     )
 })
+
+export type IMoveNumberProps = {
+    fen: string;
+    counter: number;
+}

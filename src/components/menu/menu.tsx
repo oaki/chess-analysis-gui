@@ -32,7 +32,7 @@ const mapStateToProps = (state) => ({
     pgnDialog: state.pgnDialog,
 });
 
-export class M extends React.PureComponent<any, any> {
+export class Menu extends React.PureComponent<any, any> {
 
     handleFlipBoard() {
         store.dispatch(flipBoard());
@@ -293,6 +293,6 @@ export class M extends React.PureComponent<any, any> {
     }
 }
 
-const Menu: any = connect<any>(mapStateToProps)(M);
-export const MenuWithRouter: any = withRouter(Menu);
+const SmartMenu: any = connect<any>(mapStateToProps)(Menu);
+export const MenuWithRouter: any = withRouter(SmartMenu);
 
