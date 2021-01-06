@@ -16,7 +16,7 @@
     "noImplicitReturns": false,
 
     "strict": false,
-    "outDir": "build",
+    "outDir": "./build",
     "lib": ["es6", "es7", "dom"],
     "baseUrl": ".",
     "paths": {

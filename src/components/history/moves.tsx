@@ -1,7 +1,6 @@
 import {Node, NODE_MAP, NodeVariant} from "../moveTree/tree";
 import React, {memo} from "react";
 import {MoveNumber} from "./moveNumber";
-import {Styles} from "@fortawesome/fontawesome";
 import {FIRST_POSITION} from "../../contants";
 
 interface IVariants {
@@ -73,7 +72,7 @@ export const Moves = memo((props: IMoves) => {
 
                 counter++;
 
-                const style: Styles = {};
+                const style:any = {};
 
                 if (move[NODE_MAP.id] === props.lastMoveId) {
                     style.color = "#99ff98";
