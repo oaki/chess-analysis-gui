@@ -35,7 +35,7 @@ function renderButton(id: string, IconComponent: typeof Info, panelTab: string) 
     });
     return (
         <button onClick={handleButton} data-tab={id} className={classname}>
-            <IconComponent color={'white'}/>
+            <IconComponent color={'white'} height={16} width={16}/>
         </button>
     )
 }

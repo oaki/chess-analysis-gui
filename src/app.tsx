@@ -1,7 +1,6 @@
 import React, { lazy, memo, Suspense, useEffect, useState } from "react";
 import {Provider} from "react-redux";
 import store from "./store";
-import SignInPage from "./layouts/auth/signInPage";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import {PrivateRoute} from "./libs/privateRoute";
 import GooglePopupRedirect from "./layouts/auth/googlePopupRedirect";
@@ -36,6 +35,10 @@ const SettingPage = (
 
 const VerifyGoogleResponse = (
   lazy(() => import("./layouts/auth/verifyGoogleResponse"))
+);
+
+const SignInPage = (
+  lazy(() => import("./layouts/auth/signInPage"))
 );
 
 export const ChessApp = memo((props: ChessAppProps) => {

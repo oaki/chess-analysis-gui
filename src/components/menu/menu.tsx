@@ -3,7 +3,7 @@ import * as ReactDOM from "react-dom";
 import { connect } from "react-redux";
 import store from "../../store";
 import { Link, withRouter } from "react-router-dom";
-import { ChevronLeft, ChevronRight, PlayArrow, Pause, Repeat, Menu as MenuIcon } from "@emotion-icons/material";
+import { ChevronLeft, ChevronRight, Menu as MenuIcon, Pause, PlayArrow, Repeat } from "@emotion-icons/material";
 import { addNewGame, IOnMove, setEvaluation, setPosition, setStatus, setWhoIsOnMove } from "../../actions";
 import { SessionManagerService } from "../../services/sessionManager";
 import { batchActions } from "redux-batched-actions";
@@ -189,7 +189,7 @@ export class Menu extends React.PureComponent<any, any> {
 
   render() {
     const btnClasses = "btn btn-link btn-block bottom-menu__font-size";
-
+    const iconSizes = { width: 20, height: 20 };
     return (
       <div className="bottom-menu">
         {this.props.pgnDialog && this.renderPgnDialog()}
@@ -204,7 +204,7 @@ export class Menu extends React.PureComponent<any, any> {
               className={btnClasses}
               onClick={this.handleToggleSubMenu}
             >
-              <MenuIcon />
+              <MenuIcon {...iconSizes} />
             </button>
           </li>}
           {this.props.showFlip &&
@@ -213,7 +213,7 @@ export class Menu extends React.PureComponent<any, any> {
               className={btnClasses}
               onClick={this.handleFlipBoard}
             >
-              <Repeat />
+              <Repeat {...iconSizes} />
             </button>
           </li>}
           {this.props.showAutoplay &&
@@ -222,8 +222,8 @@ export class Menu extends React.PureComponent<any, any> {
               className={btnClasses}
               onClick={this.toggleAutoplay}
             >
-              {!this.props.autoplay && <PlayArrow />}
-              {this.props.autoplay && <Pause />}
+              {!this.props.autoplay && <PlayArrow {...iconSizes} />}
+              {this.props.autoplay && <Pause {...iconSizes} />}
             </button>
           </li>}
           {this.props.showUndo &&
@@ -231,7 +231,7 @@ export class Menu extends React.PureComponent<any, any> {
             <button
               className={btnClasses}
               onClick={this.handleUndo}
-            ><ChevronLeft />
+            ><ChevronLeft {...iconSizes} />
             </button>
           </li>}
           {this.props.showRedo &&
@@ -239,7 +239,7 @@ export class Menu extends React.PureComponent<any, any> {
             <button
               className={btnClasses}
               onClick={this.handleRedo}
-            ><ChevronRight />
+            ><ChevronRight {...iconSizes} />
             </button>
           </li>}
         </ul>
