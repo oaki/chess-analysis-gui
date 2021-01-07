@@ -1,12 +1,8 @@
 import React, {memo} from "react";
 import {connect} from "react-redux";
-import FontAwesomeIcon from "@fortawesome/react-fontawesome";
-import * as faBook from "@fortawesome/fontawesome-free-solid/faBook";
-import * as faCogs from "@fortawesome/fontawesome-free-solid/faCogs";
-import * as faInfoCircle from "@fortawesome/fontawesome-free-solid/faInfoCircle";
+import { MenuBook, Psychology, Info } from "@emotion-icons/material";
 import store from "../../store";
 import {PanelTabType, setPanelTab} from "./infoPanelReducers";
-import {IconDefinition} from "../../../node_modules/@fortawesome/fontawesome";
 import {IEvaluation, LINE_MAP} from "../../interfaces";
 import {getNodes, getScore, getTime} from "../evaluation/evaluation";
 import {IOnMove} from "../../actions";
@@ -18,9 +14,9 @@ const InfoPanel = memo((props: InfoPanelProps) => {
     return (
         <div className={'d-f'}>
             <>
-                {renderButton(PanelTabType.INFO_TAB, faInfoCircle, props.panelTab)}
-                {renderButton(PanelTabType.EVALUATION_TAB, faCogs, props.panelTab)}
-                {renderButton(PanelTabType.BOOK_TAB, faBook, props.panelTab)}
+                {renderButton(PanelTabType.INFO_TAB, Info, props.panelTab)}
+                {renderButton(PanelTabType.EVALUATION_TAB, Psychology, props.panelTab)}
+                {renderButton(PanelTabType.BOOK_TAB, MenuBook, props.panelTab)}
             </>
 
             {renderScore(props)}
@@ -33,13 +29,13 @@ function handleButton(event: any) {
     store.dispatch(setPanelTab(tabId));
 }
 
-function renderButton(id: string, icon: IconDefinition, panelTab: string) {
+function renderButton(id: string, IconComponent: typeof Info, panelTab: string) {
     const classname = classNames('btn btn-panel',{
         is_active: panelTab === id
     });
     return (
         <button onClick={handleButton} data-tab={id} className={classname}>
-            <FontAwesomeIcon className="c-white" icon={icon}/>
+            <IconComponent color={'white'} height={16} width={16}/>
         </button>
     )
 }

@@ -1,16 +1,14 @@
 import React from "react";
 import {ErrorType, IErrorProps} from "../../services/errorManager";
-import FontAwesomeIcon from "@fortawesome/react-fontawesome";
-
-import {faInfoCircle, faTimesCircle} from "@fortawesome/fontawesome-free-solid";
+import { Close, Info as InfoIcon } from "@emotion-icons/material";
 
 export function Error(props: Partial<IErrorProps>) {
     return (
         <div className={`alert alert-${props.type} p-lg pos-r`} role="alert" key="alert">
             <button onClick={props.handleOnClick} className="c-white f-r" data-identifier={props.identifier}>
-                <FontAwesomeIcon icon={faTimesCircle}/>
+                <Close width={16}/>
             </button>
-            <span className="c-white"><FontAwesomeIcon icon={faInfoCircle}/></span>
+            <span className="c-white"><InfoIcon width={16}/></span>
             <span className="m-l-sm">{props.msg}</span>
         </div>
     );

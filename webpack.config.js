@@ -6,6 +6,7 @@ var CopyPlugin = require('copy-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const WorkboxPlugin = require('workbox-webpack-plugin');
 const { BundleStatsWebpackPlugin } = require('bundle-stats-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 
 // variables
@@ -26,6 +27,7 @@ module.exports = {
     app: "./index.tsx"
   },
   output: {
+    publicPath: '/',
     path: outPath,
     filename: isProduction ? "[contenthash].js" : "[hash].js",
     chunkFilename: isProduction ? "[name].[contenthash].js" : "[name].[hash].js"
@@ -47,12 +49,22 @@ module.exports = {
       // .ts, .tsx
       {
         test: /\.tsx?$/,
+        exclude: /node_modules/,
         use: [
           !isProduction && {
             loader: "babel-loader",
-            options: {plugins: ["react-hot-loader/babel"]}
+            options: {
+              include: path.resolve(__dirname, 'src'),
+              plugins: ["react-hot-loader/babel"]
+            }
           },
-          "ts-loader"
+          {
+            loader: 'ts-loader',
+            options: {
+              transpileOnly: true,
+              configFile: "tsconfig.json"
+            },
+          },
         ].filter(Boolean)
       },
       // css
@@ -109,60 +121,61 @@ module.exports = {
       }
     ]
   },
-  // optimization: {
-    // splitChunks: {
-    //   name: true,
-    //   cacheGroups: {
-    //     commons: {
-    //       chunks: "initial",
-    //       minChunks: 2
-    //     },
-    //     vendors: {
-    //       test: /[\\/]node_modules[\\/]/,
-    //       chunks: "all",
-    //       filename: isProduction ? "vendor.[contenthash].js" : "vendor.[hash].js",
-    //       priority: -10
-    //     }
-    //   }
-    // },
-    // runtimeChunk: true
-  // },
+  optimization: {
+    usedExports: true,
+    splitChunks: {
+      chunks: 'async',
+      minSize: 20000,
+      maxSize: 0,
+      minChunks: 1,
+      maxAsyncRequests: 30,
+      maxInitialRequests: 30,
+      enforceSizeThreshold: 50000,
+      cacheGroups: {
+        defaultVendors: {
+          test: /[\\/]node_modules[\\/]/,
+          priority: -10,
+          reuseExistingChunk: true
+        },
+        default: {
+          minChunks: 2,
+          priority: -20,
+          reuseExistingChunk: true
+        }
+      }
+    }
+  },
   plugins: [
     new BundleAnalyzerPlugin(),
     new webpack.DefinePlugin({
       'process.env': JSON.stringify(dotenv.config().parsed)
     }),
+
     // new webpack.DefinePlugin({
     //   'process.env.REACT_APP_HOST': JSON.stringify(process.env.REACT_APP_HOST),
     //   'process.env.REACT_APP_SOCKET_IO_HOST': JSON.stringify(process.env.REACT_APP_SOCKET_IO_HOST),
     //   'process.env.REACT_APP_SOCKET_IO_PATH': JSON.stringify(process.env.REACT_APP_SOCKET_IO_PATH),
     //   'process.env.REACT_APP_GOOGLECLIENTID': JSON.stringify(process.env.REACT_APP_GOOGLECLIENTID),
     // }),
-    new webpack.EnvironmentPlugin({
-      NODE_ENV: "development", // use 'development' unless process.env.NODE_ENV is defined
-      DEBUG: false
-    }),
-    new CleanWebpackPlugin(),
+    // new webpack.EnvironmentPlugin({
+    //   NODE_ENV: "development", // use 'development' unless process.env.NODE_ENV is defined
+    //   DEBUG: false
+    // }),
+    // new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({
       filename: "[hash].css",
       disable: !isProduction
     }),
     new HtmlWebpackPlugin({
-      publicPath: 'https://www.chess-analysis.com',
-      // templateParameters: {
-      //   'publicPath': 'https://goog.sk'
-      // },
+      publicPath: '/',
       template: "../public/index.html",
       minify: {
-        minifyJS: true,
+        minifyJS: isProduction,
         minifyCSS: true,
-        removeComments: true,
-        useShortDoctype: true,
-        collapseWhitespace: true,
-        collapseInlineTagWhitespace: true
-      },
-      append: {
-        head: `<script src="//cdn.polyfill.io/v3/polyfill.min.js"></script>`
+        removeComments: isProduction,
+        useShortDoctype: isProduction,
+        collapseWhitespace: isProduction,
+        collapseInlineTagWhitespace: isProduction
       },
       meta: {
         title: packageJson.name,
@@ -183,13 +196,10 @@ module.exports = {
     }),
   ],
   devServer: {
-    contentBase: sourcePath,
+    contentBase: path.join(__dirname, 'public'),
     hot: true,
     inline: true,
-    historyApiFallback: {
-      disableDotRule: true
-    },
-    stats: "verbose",
+    historyApiFallback: true,
     clientLogLevel: "warning"
   },
   // https://webpack.js.org/configuration/devtool/

@@ -81,6 +81,7 @@ const Items = memo((props: ItemsProps) => {
         <>
             {props.historyList.map((historyGame: IHistoryGameResponse, index): ReactElement =>
                 <ListItem
+                    key={historyGame.id}
                     historyGame={historyGame}
                     handleLoadGame={handleLoadGame}
                     handleDeleteGame={props.handleDeleteGame}
