@@ -10,7 +10,7 @@
     padding: .2rem .5rem;
 }
 
-.games-database-explorer tbody tr:nth-child(odd) {
+.games-database-explorer tbody tr:nth-of-type(odd) {
     background: #4b4b4b;
 }
 

@@ -115,7 +115,6 @@ export const ChessApp = memo((props: ChessAppProps) => {
                       <Route path="/auth/verify-google-response" component={VerifyGoogleResponse}/>
                     </Switch>
                     </Suspense>
-                  <ErrorController/>
                 </StyledApp>}
             </BrowserRouter>
         </Provider>

@@ -20,7 +20,7 @@ var HtmlWebpackPlugin = require("html-webpack-plugin");
 var MiniCssExtractPlugin = require("mini-css-extract-plugin");
 var {CleanWebpackPlugin} = require("clean-webpack-plugin");
 
-module.exports = {
+var config = {
   // stats: "verbose",
   context: sourcePath,
   entry: {
@@ -188,12 +188,6 @@ module.exports = {
         '../public'
       ],
     }),
-    new WorkboxPlugin.GenerateSW({
-      // these options encourage the ServiceWorkers to get in there fast
-      // and not allow any straggling "old" SWs to hang around
-      clientsClaim: true,
-      skipWaiting: true,
-    }),
   ],
   devServer: {
     contentBase: path.join(__dirname, 'public'),
@@ -205,3 +199,15 @@ module.exports = {
   // https://webpack.js.org/configuration/devtool/
   devtool: isProduction ? "hidden-source-map" : "cheap-module-eval-source-map"
 };
+
+if(isProduction){
+  config.plugins.push(
+    new WorkboxPlugin.GenerateSW({
+      // these options encourage the ServiceWorkers to get in there fast
+      // and not allow any straggling "old" SWs to hang around
+      clientsClaim: true,
+      skipWaiting: true,
+    }),
+  )
+}
+module.exports = config;

@@ -1,4 +1,4 @@
-import {IAction} from "../../interfaces";
+import { IAction } from "../../interfaces";
 
 export const MENU_TOGGLE_OPEN = "MENU_TOGGLE_OPEN";
 export const MENU_OPEN_PGN_DIALOG = "MENU_OPEN_PGN_DIALOG";
@@ -7,85 +7,85 @@ export const AUTOPLAY = "AUTOPLAY";
 
 
 export function flipBoard() {
-    return {
-        type: FLIP_BOARD
-    };
+  return {
+    type: FLIP_BOARD
+  };
 }
 
 export function toggleAutoplay(isAutoplay: boolean | null = null) {
-    return {
-        payload: {isAutoplay},
-        type: AUTOPLAY
-    };
+  return {
+    payload: { isAutoplay },
+    type: AUTOPLAY
+  };
 }
 
 export function toogleOpenMenu(isOpen: boolean | null = null) {
-    return {
-        payload: {isOpen},
-        type: MENU_TOGGLE_OPEN
-    };
+  return {
+    payload: { isOpen },
+    type: MENU_TOGGLE_OPEN
+  };
 }
 
 export function openPgnDialog(isOpen: boolean = false) {
-    return {
-        payload: isOpen,
-        type: MENU_OPEN_PGN_DIALOG
-    };
+  return {
+    payload: isOpen,
+    type: MENU_OPEN_PGN_DIALOG
+  };
 }
 
 export interface IMenu {
-    isOpen: boolean;
+  isOpen: boolean;
 }
 
 
 export const flipBoardReducer = (isFlip: boolean = false, action: any) => {
-    switch (action.type) {
-        case FLIP_BOARD:
-            return !isFlip;
+  switch (action.type) {
+    case FLIP_BOARD:
+      return !isFlip;
 
-        default:
-            return isFlip;
-    }
+    default:
+      return isFlip;
+  }
 };
 
 interface IAutoplay {
-    isAutoplay: boolean
+  isAutoplay: boolean
 }
 
 export const autoplayReducer = (isAutoplay: boolean = false, action: IAction<IAutoplay>) => {
-    switch (action.type) {
-        case AUTOPLAY:
-            return action.payload.isAutoplay === null ? !isAutoplay : action.payload.isAutoplay;
+  switch (action.type) {
+    case AUTOPLAY:
+      return action.payload.isAutoplay === null ? !isAutoplay : action.payload.isAutoplay;
 
-        default:
-            return isAutoplay;
-    }
+    default:
+      return isAutoplay;
+  }
 };
 
-export const menuReducer = (menu: IMenu = {isOpen: false}, action: IAction<Partial<IMenu>>) => {
-    switch (action.type) {
-        case MENU_TOGGLE_OPEN:
-            const m = {...menu};
-            if (action.payload.isOpen) {
-                m.isOpen = action.payload.isOpen;
-            } else {
-                m.isOpen = !m.isOpen;
-            }
+export const menuReducer = (menu: IMenu = { isOpen: false }, action: IAction<Partial<IMenu>>) => {
+  switch (action.type) {
+    case MENU_TOGGLE_OPEN:
+      const m = { ...menu };
+      if (action.payload.isOpen) {
+        m.isOpen = action.payload.isOpen;
+      } else {
+        m.isOpen = !m.isOpen;
+      }
 
-            return m;
+      return m;
 
-        default:
-            return menu;
-    }
+    default:
+      return menu;
+  }
 };
 
 
 export const pgnDialogReducer = (isOpen: boolean = false, action: IAction<boolean>) => {
-    switch (action.type) {
-        case MENU_OPEN_PGN_DIALOG:
-            return action.payload;
+  switch (action.type) {
+    case MENU_OPEN_PGN_DIALOG:
+      return action.payload;
 
-        default:
-            return isOpen;
-    }
+    default:
+      return isOpen;
+  }
 };

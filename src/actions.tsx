@@ -186,40 +186,7 @@ export function checkWorkers(workerList: IWorker[]):any {
 export function addWorker(props: any):any {
     return async (dispatch: (data: any) => {}, getState: any) => {
 
-        const token = SessionManagerService.getToken();
-        dispatch(setLoading(true));
 
-        const url = `${config.apiHost}/user/workers`;
-        const formData = new FormData();
-        formData.append("name", props.name);
-        formData.append("uuid", props.uuid);
-
-        const options: RequestInit = {
-            method: "POST",
-            headers: new Headers({
-                "Authorization": `Bearer ${token}`,
-            }),
-            body: formData
-        };
-
-        try {
-            const response = await fetch(url, options);
-            if (!response.ok) {
-                throw new Error("Loading failed");
-            }
-
-            const json: any = await response.json();
-            console.log(json);
-            dispatch(loadEngines());
-
-        } catch (e) {
-
-            Flash.error({msg: "Update error", identifier: "worker"});
-            dispatch(setLoading(false));
-            console.log(e);
-        }
-
-        dispatch(setLoading(false));
     }
 
 }
