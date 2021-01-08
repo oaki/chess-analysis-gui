@@ -93,4 +93,4 @@ export const mock = [
     "s": "b6",
     "vs": []
   }
-]
+];

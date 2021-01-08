@@ -135,7 +135,7 @@ export interface IWorker {
     ready: boolean;
 }
 
-export const workerReducer = (workerList: IWorker[] = [], action: IAction<IWorker[]>) => {
+export const workerReducer = (workerList: IWorker[] = [], action: IAction<IWorker[]>):IWorker[] => {
     switch (action.type) {
         case SET_WORKER_LIST:
             return [...action.payload];
@@ -169,7 +169,7 @@ export const isOnlineReducer = (isOnline: boolean = false, action: IAction<IIsOn
 };
 
 
-export default combineReducers({
+const reducers = combineReducers({
     loading: loadingReducer,
     user: userReducer,
     fen: positionReducer,
@@ -195,6 +195,9 @@ export default combineReducers({
     socket: socketReducer,
     gameDatabase: gamesDatabaseReducer
 });
+
+export default reducers;
+export type ReduxState = typeof reducers;
 
 export function deepCopy(obj) {
     return JSON.parse(JSON.stringify(obj));

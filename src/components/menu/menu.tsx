@@ -189,13 +189,12 @@ export class Menu extends React.PureComponent<any, any> {
 
   render() {
     const btnClasses = "btn btn-link btn-block bottom-menu__font-size";
-    const iconSizes = { width: 20, height: 20 };
+    const iconSizes = { width: 30 };
     return (
       <div className="bottom-menu">
         {this.props.pgnDialog && this.renderPgnDialog()}
 
         {this.renderSubmenu()}
-
 
         <ul className="main">
           {this.props.showMainMenu &&

@@ -56,6 +56,7 @@ export const ChessboardPage = memo(() => {
             appHeight={window.innerHeight}
         >
             <SmartAwesomeChessboard/>
+
             <SmartInfoPanel/>
 
             <div ref={ref} style={{overflow: "hidden"}}>
@@ -81,7 +82,7 @@ export default ChessboardPage;
 const StyledWrapper = styled.div`
     height: ${(props: StyledWrapperProps) => (`${props.appHeight}px`)};
     display: grid;
-    grid-template-rows: ${(props: StyledWrapperProps) => (`${props.chessboardHeight}px`)} 23px auto 30px;
+    grid-template-rows: ${(props: StyledWrapperProps) => (`${props.chessboardHeight}px`)} 23px auto 45px;
 `;
 
 type StyledWrapperProps = {

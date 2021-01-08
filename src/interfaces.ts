@@ -1,4 +1,5 @@
-import {IGameDatabase} from "./components/gamesDatabaseExplorer/gamesDatabaseReducers";
+import {IGameDatabase} from "components/gamesDatabaseExplorer/gamesDatabaseReducers";
+import { IWorker, ReduxState } from "reducers";
 
 export type Nullable<T> = T | null;
 export type Undef<T> = T | undefined;
@@ -51,7 +52,7 @@ export interface IState {
     lastMoveId: number;
     lastMove: LastMove;
     menu: Menu;
-    workers: any[];
+    workers: IWorker[];
     onMove: number;
     historyList: any[];
     syzygy?: any;

@@ -1,35 +1,35 @@
-import React, {memo} from "react";
+import React, { memo } from "react";
 import styled from "@emotion/styled";
 
 interface ILoadingProps {
-    isLoading: boolean;
+  isLoading: boolean;
 }
 
 export const Loading = memo((props: ILoadingProps) => {
-    if (props.isLoading) {
-        return (
-            <div className="full-loading">
-                <div className="full-loading__img">
-                    <img src="/img/chess-analysis-logo.svg" alt="chess-analysis-logo.svg"/>
-                </div>
-            </div>
-        )
-    }
-    return null;
+  if (props.isLoading) {
+    return (
+      <div className="full-loading">
+        <div className="full-loading__img">
+          <img src="/img/chess-analysis-logo.svg" alt="chess-analysis-logo.svg" />
+        </div>
+      </div>
+    );
+  }
+  return null;
 });
 
 export const SmallLoading = memo((props: ILoadingProps) => {
-    if (props.isLoading) {
-        return (
-            <StyledLoader>
-                <svg className="circular" viewBox="25 25 50 50">
-                    <circle className="path" cx="50" cy="50" r="20" fill="none" strokeWidth="2"
-                            strokeMiterlimit="10"/>
-                </svg>
-            </StyledLoader>
-        )
-    }
-    return null;
+  if (props.isLoading) {
+    return (
+      <StyledLoader>
+        <svg className="circular" viewBox="25 25 50 50">
+          <circle className="path" cx="50" cy="50" r="20" fill="none" strokeWidth="2"
+                  strokeMiterlimit="10" />
+        </svg>
+      </StyledLoader>
+    );
+  }
+  return null;
 });
 
 const StyledLoader = styled.div`
@@ -141,4 +141,4 @@ color {  100%, 0% {
  stroke: #ffa700;
 }
 }
-`
+`;

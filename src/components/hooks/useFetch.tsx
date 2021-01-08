@@ -1,5 +1,5 @@
-import {useCallback, useEffect, useReducer, useRef} from "react";
-import {Nullable} from "../../interfaces";
+import { useCallback, useEffect, useReducer, useRef } from "react";
+import { Nullable } from "../../interfaces";
 
 /**
  * Example
@@ -29,94 +29,94 @@ interface MyResponse{
 }
 */
 export enum Action {
-    FETCH_INIT = 'FETCH_INIT',
-    FETCH_SUCCESS = 'FETCH_SUCCESS',
-    FETCH_FAILURE = 'FETCH_FAILURE',
+  FETCH_INIT = "FETCH_INIT",
+  FETCH_SUCCESS = "FETCH_SUCCESS",
+  FETCH_FAILURE = "FETCH_FAILURE",
 }
 
 export interface UseFetchState<JsonResponse> {
-    isLoading: boolean;
-    isError: boolean;
-    response: Nullable<JsonResponse>;
+  isLoading: boolean;
+  isError: boolean;
+  response: Nullable<JsonResponse>;
 }
 
 export interface UseFetchAction<JsonResponse> {
-    payload?: JsonResponse;
-    type: Action;
+  payload?: JsonResponse;
+  type: Action;
 }
 
-export type ResponseType = 'json' | 'text';
+export type ResponseType = "json" | "text";
 
 export type UseFetchCallbackFn = (url: string, requestInit?: RequestInit) => Promise<void>;
 
 function dataFetchReducer<JsonResponse>(state: UseFetchState<JsonResponse>, action: UseFetchAction<JsonResponse>): UseFetchState<JsonResponse> {
-    switch (action.type) {
-        case Action.FETCH_INIT:
-            return {
-                ...state,
-                isLoading: true,
-                isError: false,
-            };
-        case Action.FETCH_SUCCESS:
-            return {
-                ...state,
-                isLoading: false,
-                isError: false,
-                response: action.payload || null,
-            };
-        case Action.FETCH_FAILURE:
-            return {
-                ...state,
-                isLoading: false,
-                isError: true,
-            };
-        default:
-            return state;
-    }
-}
-
-export function useFetch<ResponseInterface>(responseType: ResponseType = 'json'): [UseFetchState<ResponseInterface>, UseFetchCallbackFn] {
-    const cancel = useRef(false);
-    const [state, dispatch] = useReducer(dataFetchReducer, {
+  switch (action.type) {
+    case Action.FETCH_INIT:
+      return {
+        ...state,
+        isLoading: true,
+        isError: false
+      };
+    case Action.FETCH_SUCCESS:
+      return {
+        ...state,
         isLoading: false,
         isError: false,
-        response: null,
-    });
+        response: action.payload || null
+      };
+    case Action.FETCH_FAILURE:
+      return {
+        ...state,
+        isLoading: false,
+        isError: true
+      };
+    default:
+      return state;
+  }
+}
 
-    const doFetch: UseFetchCallbackFn = useCallback(
-        async (url: string, requestInit: RequestInit = {}): Promise<void> => {
-            dispatch({type: Action.FETCH_INIT});
-            try {
-                const response: Response = await fetch(url, requestInit);
-                if (cancel.current) {
-                    return;
-                }
+export function useFetch<ResponseInterface>(responseType: ResponseType = "json"): [UseFetchState<ResponseInterface>, UseFetchCallbackFn] {
+  const cancel = useRef(false);
+  const [state, dispatch] = useReducer(dataFetchReducer, {
+    isLoading: false,
+    isError: false,
+    response: null
+  });
 
-                if (!response.ok) {
-                    throw new Error('Fetch failed response.ok === false');
-                }
+  const doFetch: UseFetchCallbackFn = useCallback(
+    async (url: string, requestInit: RequestInit = {}): Promise<void> => {
+      dispatch({ type: Action.FETCH_INIT });
+      try {
+        const response: Response = await fetch(url, requestInit);
+        if (cancel.current) {
+          return;
+        }
 
-                let result:Nullable<boolean> = null;
-                if (requestInit?.method === 'HEAD') {
-                    result = true;
-                } else {
-                    result = await response[responseType]();
-                }
+        if (!response.ok) {
+          throw new Error("Fetch failed response.ok === false");
+        }
 
-                dispatch({type: Action.FETCH_SUCCESS, payload: result});
-            } catch (err) {
-                console.error(err);
-                dispatch({type: Action.FETCH_FAILURE});
-            }
-        },
-        [dispatch, responseType],
-    );
+        let result: Nullable<boolean> = null;
+        if (requestInit?.method === "HEAD") {
+          result = true;
+        } else {
+          result = await response[responseType]();
+        }
 
-    useEffect(() => {
-        return () => {
-            cancel.current = true;
-        };
-    }, []);
-    return [{...state} as UseFetchState<ResponseInterface>, doFetch];
+        dispatch({ type: Action.FETCH_SUCCESS, payload: result });
+      } catch (err) {
+        console.error(err);
+        dispatch({ type: Action.FETCH_FAILURE });
+      }
+    },
+    [dispatch, responseType]
+  );
+
+  useEffect(() => {
+    return () => {
+      cancel.current = true;
+    };
+  }, []);
+  return [{ ...state } as UseFetchState<ResponseInterface>, doFetch];
 }
 
