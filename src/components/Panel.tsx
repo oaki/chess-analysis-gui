@@ -9,6 +9,7 @@ import { PanelTabType } from "./infoPanel/infoPanelReducers";
 import { SmartStockFish } from "./evaluation/offlineStockfishEvaluation";
 import styled from "@emotion/styled";
 import { IState } from "interfaces";
+import { WorkerEvaluation } from "components/evaluation/workerEvaluation";
 
 interface IEvaluation {
   score: string;
@@ -32,6 +33,7 @@ const Panel: FC<PanelProps> = memo(() => {
         <div>
           <SmartStockFish />
           <SmartEvaluation name={"Cloud"} />
+          <WorkerEvaluation />
         </div>
       )}
       {panelTab === PanelTabType.BOOK_TAB && (

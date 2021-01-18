@@ -1,30 +1,28 @@
 import store from "../../store";
 import React, { memo, ReactElement, useEffect } from "react";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import { batchActions } from "redux-batched-actions";
 import { setEvaluation, setPosition, setUser } from "../../actions";
 import { setSyzygyEvaluation } from "../syzygyExplorer/syzygyExplorerReducers";
-import { lastMoveId, setHistory } from "../history/historyReducers";
+import { IHistoryMove, lastMoveId, setHistory } from "../history/historyReducers";
 import { setOpeningPosition } from "../openingExplorer/openingExplorerReducers";
 import { FIRST_ID } from "../moveTree/tree";
 import { IHistoryGameResponse } from "./historyListReducers";
-import { SwipeableList } from "@sandstreamdev/react-swipeable-list";
-import "./style.scss";
-import { Undef } from "../../interfaces";
-import { ListItem } from "./listItem";
+import { IState, Undef } from "../../interfaces";
 import { useFetch } from "../hooks/useFetch";
 import { SessionManagerService } from "../../services/sessionManager";
 import config from "../../config";
 import { loadHistoryGames } from "../../layouts/historyPage";
-
-
-interface HistoryListProps {
-  historyList: IHistoryGameResponse[];
-  history: any;
-}
+import { formatDate } from "tools/formatDate";
+import { ListItem } from "components/ui/listItem";
+import { Move } from "components/historyList/move";
+import { List } from "components/ui/list";
 
 const HistoryList = memo((props: HistoryListProps) => {
   const [fetchState, doFetch] = useFetch();
+  const historyList: IHistoryGameResponse[] = useSelector<IState, IHistoryGameResponse[]>((reduxState) => {
+    return reduxState.historyList;
+  });
 
   useEffect(() => {
     if (fetchState.response) {
@@ -33,7 +31,7 @@ const HistoryList = memo((props: HistoryListProps) => {
   }, [doFetch, fetchState.response]);
 
 
-  const handleDeleteGame = (id: number) => doFetch(`${config.apiHost}/user/history/${id}`, {
+  const handleDeleteGame = (id: string) => doFetch(`${config.apiHost}/user/history/${id}`, {
     method: "DELETE",
     headers: new Headers({
       "Content-Type": "application/json",
@@ -41,24 +39,10 @@ const HistoryList = memo((props: HistoryListProps) => {
     })
   });
 
-  return (
-    <SwipeableList>
-      <Items handleDeleteGame={handleDeleteGame} historyList={props.historyList} history={props.history} />
-    </SwipeableList>
-  );
-});
-
-interface ItemsProps {
-  history: any;
-  historyList: IHistoryGameResponse[];
-  handleDeleteGame: (id: number) => void;
-}
-
-const Items = memo((props: ItemsProps) => {
   const handleLoadGame = (e: any) => {
     e.preventDefault();
     const id: number = Number(e.currentTarget.dataset.id);
-    const historyGameResponse: Undef<IHistoryGameResponse> = props.historyList.find((item: IHistoryGameResponse) => {
+    const historyGameResponse: Undef<IHistoryGameResponse> = historyList.find((item: IHistoryGameResponse) => {
       return Number(item.id) === id;
     });
 
@@ -76,19 +60,32 @@ const Items = memo((props: ItemsProps) => {
     }
     props.history.push("/");
   };
+  console.log("props.historyList", historyList);
 
   return (
-    <>
-      {props.historyList.map((historyGame: IHistoryGameResponse, index): ReactElement =>
+    <List>
+      {historyList.map((historyGame: IHistoryGameResponse): ReactElement =>
         <ListItem
           key={historyGame.id}
-          historyGame={historyGame}
-          handleLoadGame={handleLoadGame}
-          handleDeleteGame={props.handleDeleteGame}
-        />)}
-    </>
+          id={String(historyGame.id)}
+          handleClick={handleLoadGame}
+          handleDelete={handleDeleteGame}
+        >
+          <div className="fs-xs">{formatDate(historyGame.updated_at)}</div>
+          <div className="ox-a fs-xs">
+            {historyGame.moves.slice(0, 15).map((move: IHistoryMove, index) => {
+              return <Move key={move.id} move={move} index={index} />;
+            })}
+          </div>
+        </ListItem>
+      )}
+    </List>
   );
+
 });
 
-const mapStateToProps = (state) => ({ historyList: state.historyList });
-export const SmartHistoryList = connect(mapStateToProps)(HistoryList);
+type HistoryListProps = {
+  history: any;
+}
+
+export const SmartHistoryList = HistoryList;

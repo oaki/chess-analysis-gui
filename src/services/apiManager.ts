@@ -25,6 +25,22 @@ class ApiManager {
         return await this.fetch(`/user/history/${Number(id)}`, fetchData);
     }
 
+    async addWorker(token, name: string, uuid: string) {
+        const url = `${config.apiHost}/user/workers`;
+
+        const fetchData: RequestInit = {
+            method: "POST",
+            headers: new Headers({
+                "Authorization": `Bearer ${token}`
+            }),
+            body: JSON.stringify({
+                name: name,
+                uuid: uuid
+            })
+        };
+        return await this.fetch(url, fetchData);
+    }
+
     async getProfile(token) {
         const fetchData = {
             headers: new Headers({

@@ -59,7 +59,7 @@ export const ChessboardPage = memo(() => {
 
             <SmartInfoPanel/>
 
-            <div ref={ref} style={{overflow: "hidden"}}>
+            <div ref={ref} style={{overflow: "auto"}}>
                 <div style={{height}}>
                     <SmartPanel/>
                 </div>

@@ -1,5 +1,6 @@
 import {IGameDatabase} from "components/gamesDatabaseExplorer/gamesDatabaseReducers";
 import { IWorker, ReduxState } from "reducers";
+import { IHistoryGameResponse } from "components/historyList/historyListReducers";
 
 export type Nullable<T> = T | null;
 export type Undef<T> = T | undefined;
@@ -54,7 +55,7 @@ export interface IState {
     menu: Menu;
     workers: IWorker[];
     onMove: number;
-    historyList: any[];
+    historyList: IHistoryGameResponse[];
     syzygy?: any;
     promotionDialog: PromotionDialog;
     autoplay: boolean;
