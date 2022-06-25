@@ -32,7 +32,7 @@
     "informed": "^1.10.4",
     "jest": "^26.6.3",
     "jsonwebtoken": "^8.3.0",
-    "jsrsasign": "^8.0.24",
+    "jsrsasign": "^10.5.25",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.20",
     "normalize.css": "^8.0.1",
