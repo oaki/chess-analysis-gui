@@ -1,5 +1,5 @@
 export class FetchError extends Error {
-    constructor(message: any) {
-        super(message);
+    constructor(message: unknown) {
+        super(typeof message === "string" ? message : String(message));
     }
 }

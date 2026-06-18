@@ -1,8 +1,8 @@
 import React, {FC, memo} from "react";
-import { useSelector } from "react-redux";
-import { IState } from "interfaces";
+import { useSelector } from "../../libs/stateCompat";
+import { ReduxStateShape } from "reducers";
 export const WorkerEvaluation: FC<WorkerEvaluationProps> = memo(({}) => {
-    const workers = useSelector<IState>((reduxState)=>{
+    const workers = useSelector((reduxState: ReduxStateShape) => {
       return reduxState.workers;
     });
     

@@ -1,4 +1,4 @@
-import guid from "../../tools/uuid";
+import { guid } from "../../tools/uuid";
 import { IEvaluation, Nullable, Undef } from "../../interfaces";
 import get from "lodash/get";
 import { getBranchPath, getLastIndex, getPrefix } from "./treeUtils";
@@ -15,7 +15,7 @@ export enum NODE_MAP {
   evaluation = "e",
 }
 
-export interface Node {
+export type Node = {
   [NODE_MAP.id]: number;
   [NODE_MAP.fen]: string; //move number
   [NODE_MAP.move]: string;
@@ -25,9 +25,22 @@ export interface Node {
 }
 
 
-export interface NodeVariant {
+export type NodeVariant = {
   [NODE_MAP.variant]: string;
   [NODE_MAP.moves]: Node[];
+}
+
+type PathParts = {
+  prefix: string;
+  index: number;
+  moves: Node[];
+  parts: string[];
+}
+
+type ReferenceToMove = {
+  node: Nullable<Node>;
+  path: string;
+  index: number;
 }
 
 export const FIRST_ID = 0;
@@ -277,7 +290,7 @@ export class Tree {
     return ref;
   }
 
-  private findReferenceByFen(list: any[], moves: Node[], fen: string): void {
+  private findReferenceByFen(list: Node[], moves: Node[], fen: string): void {
 
     for (let i = 0; i < moves.length; i++) {
       const move: Node = moves[i];
@@ -339,17 +352,4 @@ export class Tree {
 
 }
 
-interface PathParts {
-  prefix: string;
-  index: number;
-  moves: Node[];
-  parts: string[];
-}
-
 export const treeService = new Tree();
-
-interface ReferenceToMove {
-  node: Nullable<Node>;
-  path: string;
-  index: number;
-}

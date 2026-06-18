@@ -33,12 +33,14 @@ export function openPgnDialog(isOpen: boolean = false) {
   };
 }
 
-export interface IMenu {
+export type IMenu = {
   isOpen: boolean;
 }
 
 
-export const flipBoardReducer = (isFlip: boolean = false, action: any) => {
+type FlipBoardAction = ReturnType<typeof flipBoard> | { type: string };
+
+export const flipBoardReducer = (isFlip: boolean = false, action: FlipBoardAction) => {
   switch (action.type) {
     case FLIP_BOARD:
       return !isFlip;
@@ -48,7 +50,7 @@ export const flipBoardReducer = (isFlip: boolean = false, action: any) => {
   }
 };
 
-interface IAutoplay {
+type IAutoplay = {
   isAutoplay: boolean
 }
 

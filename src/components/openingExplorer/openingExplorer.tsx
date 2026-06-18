@@ -1,12 +1,12 @@
 import React, { memo, useCallback } from "react";
-import { shallowEqual, useSelector } from "react-redux";
-import store from "../../store";
+import { shallowEqual, useSelector } from "../../libs/stateCompat";
+import { store } from "../../store";
 import { setMove } from "../history/historyReducers";
 import { treeService } from "../moveTree/tree";
 import "../../assets/css/explorerBox.css";
 import { IOpeningMove } from "./openingExplorerReducers";
 import styled from "@emotion/styled";
-import { IState } from "interfaces";
+import { ReduxStateShape } from "reducers";
 
 export const TableTr = function({ handleMove, moves }) {
 
@@ -72,8 +72,14 @@ const StyledTable = styled.table`
 `;
 const OpeningExplorer = memo(() => {
 
-  const moves = useSelector((state: IState) => state.openingMoves, shallowEqual);
-  const fen = useSelector((state: IState) => state.fen, shallowEqual);
+  const moves = useSelector(
+    (state: ReduxStateShape) => state.openingMoves,
+    shallowEqual
+  ) as IOpeningMove[];
+  const fen = useSelector(
+    (state: ReduxStateShape) => state.fen,
+    shallowEqual
+  ) as string;
 
   const handleMove = useCallback((move) => {
     store.dispatch(setMove({

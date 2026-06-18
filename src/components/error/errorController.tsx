@@ -1,13 +1,14 @@
 import React, { FC, memo, useCallback } from "react";
-import { useSelector } from "react-redux";
+import type { MouseEvent } from "react";
+import { useSelector } from "../../libs/stateCompat";
 import { Error } from "./error";
-import store from "../../store";
+import { store } from "../../store";
 import { IErrorProps, removeError } from "../../services/errorManager";
-import { IState } from "../../interfaces";
+import { ReduxStateShape } from "../../reducers";
 import styled from "@emotion/styled";
 
 export const ErrorController: FC<ErrorContainerProps> = memo((props: ErrorContainerProps) => {
-  const errors = useSelector((state: IState) => {
+  const errors = useSelector((state: ReduxStateShape) => {
     return state.errors;
   });
 
@@ -16,9 +17,12 @@ export const ErrorController: FC<ErrorContainerProps> = memo((props: ErrorContai
 
 export const Errors: FC<ErrorsProps> = memo(({ errors }) => {
 
-  const handleCloseClick = useCallback((e: any) => {
+  const handleCloseClick = useCallback((e: MouseEvent<HTMLElement>) => {
     e.preventDefault();
     const key = e.currentTarget.dataset.identifier;
+    if (!key) {
+      return;
+    }
     store.dispatch(removeError({ identifier: key }));
   }, []);
 

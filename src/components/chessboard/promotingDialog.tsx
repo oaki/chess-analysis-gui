@@ -1,4 +1,5 @@
 import React, { FC, memo } from "react";
+import { Chess, type Square } from "chess.js";
 import { IOnMove } from "../../actions";
 import { IPromotingDialogProps } from "./promotingDialogReducers";
 
@@ -41,11 +42,12 @@ export type PieceProps = {
   className: string;
 }
 
-export function isPromoting(from: string, to: string, chess: any) {
+export function isPromoting(from: string, to: string, chess: InstanceType<typeof Chess>) {
   // is it a promotion?
   const source_rank = from.substring(2, 1);
   const target_rank = to.substring(2, 1);
-  const piece = chess.get(from).type;
+  const square = chess.get(from as Square);
+  const piece = square?.type;
   return (piece === "p" &&
     ((source_rank === "7" && target_rank === "8") || (source_rank === "2" && target_rank === "1")));
 }

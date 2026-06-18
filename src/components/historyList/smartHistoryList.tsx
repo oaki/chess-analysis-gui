@@ -1,26 +1,29 @@
-import store from "../../store";
+import { store } from "../../store";
 import React, { memo, ReactElement, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { batchActions } from "redux-batched-actions";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "../../libs/stateCompat";
+import { batchActions } from "../../libs/batchActions";
 import { setEvaluation, setPosition, setUser } from "../../actions";
 import { setSyzygyEvaluation } from "../syzygyExplorer/syzygyExplorerReducers";
 import { IHistoryMove, lastMoveId, setHistory } from "../history/historyReducers";
 import { setOpeningPosition } from "../openingExplorer/openingExplorerReducers";
-import { FIRST_ID } from "../moveTree/tree";
+import { FIRST_ID, Node } from "../moveTree/tree";
 import { IHistoryGameResponse } from "./historyListReducers";
-import { IState, Undef } from "../../interfaces";
+import { Undef } from "../../interfaces";
+import { ReduxStateShape } from "../../reducers";
 import { useFetch } from "../hooks/useFetch";
 import { SessionManagerService } from "../../services/sessionManager";
-import config from "../../config";
+import { config } from "../../config";
 import { loadHistoryGames } from "../../layouts/historyPage";
 import { formatDate } from "tools/formatDate";
 import { ListItem } from "components/ui/listItem";
 import { Move } from "components/historyList/move";
 import { List } from "components/ui/list";
 
-const HistoryList = memo((props: HistoryListProps) => {
+const HistoryList = memo(() => {
+  const navigate = useNavigate();
   const [fetchState, doFetch] = useFetch();
-  const historyList: IHistoryGameResponse[] = useSelector<IState, IHistoryGameResponse[]>((reduxState) => {
+  const historyList: IHistoryGameResponse[] = useSelector((reduxState: ReduxStateShape) => {
     return reduxState.historyList;
   });
 
@@ -39,7 +42,7 @@ const HistoryList = memo((props: HistoryListProps) => {
     })
   });
 
-  const handleLoadGame = (e: any) => {
+  const handleLoadGame = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     const id: number = Number(e.currentTarget.dataset.id);
     const historyGameResponse: Undef<IHistoryGameResponse> = historyList.find((item: IHistoryGameResponse) => {
@@ -50,7 +53,7 @@ const HistoryList = memo((props: HistoryListProps) => {
       const user = store.getState()["user"];
       store.dispatch(batchActions([
         setUser(user),
-        setHistory(historyGameResponse.moves),
+        setHistory(historyGameResponse.moves as unknown as Node[]),
         lastMoveId(FIRST_ID),
         setPosition(""),
         setOpeningPosition([]),
@@ -58,9 +61,8 @@ const HistoryList = memo((props: HistoryListProps) => {
         setSyzygyEvaluation(null)
       ]));
     }
-    props.history.push("/");
+    navigate("/");
   };
-  console.log("props.historyList", historyList);
 
   return (
     <List>
@@ -83,9 +85,5 @@ const HistoryList = memo((props: HistoryListProps) => {
   );
 
 });
-
-type HistoryListProps = {
-  history: any;
-}
 
 export const SmartHistoryList = HistoryList;

@@ -6,7 +6,7 @@ import { Nullable } from "../../interfaces";
  */
 
 /*
-export const TestFetchHooks = memo((props: any) => {
+export const TestFetchHooks = memo((_props: Record<string, never>) => {
     const url = "http://localhost:8080/user/history:last";
     const [fetchState, doFetch] = useFetch<MyResponse>();
 
@@ -24,7 +24,7 @@ export const TestFetchHooks = memo((props: any) => {
     )
 });
 
-interface MyResponse{
+type MyResponse = {
     created_at:string;
 }
 */
@@ -34,13 +34,13 @@ export enum Action {
   FETCH_FAILURE = "FETCH_FAILURE",
 }
 
-export interface UseFetchState<JsonResponse> {
+export type UseFetchState<JsonResponse> = {
   isLoading: boolean;
   isError: boolean;
   response: Nullable<JsonResponse>;
 }
 
-export interface UseFetchAction<JsonResponse> {
+export type UseFetchAction<JsonResponse> = {
   payload?: JsonResponse;
   type: Action;
 }

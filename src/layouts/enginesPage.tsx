@@ -1,6 +1,6 @@
 import React, { ChangeEvent, FC, memo, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import store from "../store";
+import { useSelector } from "../libs/stateCompat";
+import { store } from "../store";
 import { deleteWorker, loadEngines, setLoading } from "actions";
 import { IWorker } from "reducers";
 import { Add, MicOff, SignalCellularAlt } from "@emotion-icons/material";
@@ -8,7 +8,7 @@ import { MenuWithRouter } from "components/menu/menu";
 import { Header } from "components/Header";
 import { SessionManagerService } from "services/sessionManager";
 import { Flash } from "services/errorManager";
-import { IState } from "interfaces";
+import { ReduxStateShape } from "reducers";
 import {
   StyledBtn,
   StyledBtnText,
@@ -24,7 +24,7 @@ import { List } from "components/ui/list";
 
 
 export function Rows() {
-  const workers = useSelector<IState, IWorker[]>((reduxState) => {
+  const workers = useSelector((reduxState: ReduxStateShape) => {
     return reduxState?.workers || [];
   });
 
@@ -69,14 +69,13 @@ export const EnginesPage: FC<EnginesPageProps> = memo(({}) => {
     store.dispatch(setLoading(true));
 
     try {
-      const response = await ApiManagerService.addWorker(SessionManagerService.getToken(), state.name, state.uuid);
-      if (!response.ok) {
-        console.log(response);
-        throw new Error("Loading failed");
+      const token = SessionManagerService.getToken();
+      if (!token) {
+        Flash.error({ msg: "Token is not valid", identifier: "worker" });
+        store.dispatch(setLoading(false));
+        return;
       }
-
-      const json: any = await response.json();
-      console.log(json);
+      await ApiManagerService.addWorker(token, state.name, state.uuid);
       store.dispatch(loadEngines());
       setState({
         name: "",
@@ -133,7 +132,6 @@ export const EnginesPage: FC<EnginesPageProps> = memo(({}) => {
   );
 });
 
-export default EnginesPage;
 export type EnginesPageProps = {}
 
 

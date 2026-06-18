@@ -1,4 +1,10 @@
-import config from "../config";
+import { config } from "../config";
+import {
+  buildApiUrl,
+  buildAuthRequest,
+  buildPublicRequest,
+  executeApiRequest,
+} from "./authenticatedApi";
 
 
 class ApiManager {
@@ -7,96 +13,59 @@ class ApiManager {
     }
 
     async getLastGame(token: string) {
-        const fetchData = {
-            headers: new Headers({
-                Authorization: `Bearer ${token}`
-            })
-        };
-
-        return await this.fetch("/user/history:last", fetchData);
+        return await executeApiRequest(buildAuthRequest(token, "/user/history:last"));
     }
 
-    async getGame(token, id: number) {
-        const fetchData = {
-            headers: new Headers({
-                Authorization: `Bearer ${token}`
-            })
-        };
-        return await this.fetch(`/user/history/${Number(id)}`, fetchData);
+    async getGame(token: string, id: number) {
+        return await executeApiRequest(buildAuthRequest(token, `/user/history/${Number(id)}`));
     }
 
-    async addWorker(token, name: string, uuid: string) {
-        const url = `${config.apiHost}/user/workers`;
-
-        const fetchData: RequestInit = {
+    async addWorker(token: string, name: string, uuid: string) {
+        return await executeApiRequest(buildAuthRequest(token, "/user/workers", {
             method: "POST",
-            headers: new Headers({
-                "Authorization": `Bearer ${token}`
-            }),
             body: JSON.stringify({
                 name: name,
                 uuid: uuid
             })
-        };
-        return await this.fetch(url, fetchData);
+        }));
     }
 
-    async getProfile(token) {
-        const fetchData = {
-            headers: new Headers({
-                Authorization: `Bearer ${token}`
-            })
-        };
-        return await this.fetch(`/user/profile/`, fetchData);
+    async getProfile(token: string) {
+        return await executeApiRequest(buildAuthRequest(token, "/user/profile/"));
     }
 
-    async saveGame(moves: any, lastGameId: number, token: string) {
-        const fetchData = {
-            headers: new Headers({
-                Authorization: `Bearer ${token}`
-            }),
+    async saveGame(moves: unknown, lastGameId: number, token: string) {
+        return await executeApiRequest(buildAuthRequest(token, `/user/history/${Number(lastGameId)}`, {
             method: "PUT",
             body: JSON.stringify({moves: moves})
-        };
-
-        return await this.fetch(`/user/history/${Number(lastGameId)}`, fetchData);
+        }));
     }
 
     async importGameFromPgn(pgn: string, token: string) {
-        const fetchData = {
-            headers: new Headers({
-                Authorization: `Bearer ${token}`
-            }),
+        return await executeApiRequest(buildAuthRequest(token, "/user/history/import-pgn", {
             method: "POST",
             body: JSON.stringify({pgn: pgn})
-        };
-
-        return await this.fetch(`/user/history/import-pgn`, fetchData);
+        }));
     }
 
     async getUserBasedOnGoogleToken(googleToken: string) {
-
-        const fetchData = {
+        return executeApiRequest(buildPublicRequest("/auth/register", {
             headers: new Headers(),
             method: "POST",
             body: JSON.stringify({
                 jwt_token: googleToken
             }),
-        };
-
-        return this.fetch("/auth/register", fetchData);
+        }));
     }
 
-    async saveLog(data: any[]) {
-        const fetchData = {
+    async saveLog(data: unknown[]) {
+        return await executeApiRequest(buildPublicRequest("/logs/save", {
             method: "POST",
             body: JSON.stringify(data)
-        };
-
-        return await this.fetch(`/logs/save`, fetchData);
+        }));
     }
 
-    async fetch(path, data) {
+    async fetch(path: string, data: RequestInit) {
         try {
             const url: string = `${this.apiHost}${path}`;
             console.log("fetch", {url, data});
@@ -120,53 +89,41 @@ class ApiManager {
 
 
     async getTemporaryToken() {
-
-        const fetchData = {
+        return await executeApiRequest(buildPublicRequest("/auth/temporary-session", {
             method: "GET",
-        };
-
-        return await this.fetch("/auth/temporary-session", fetchData);
+        }));
     }
 
-    async verifyTemporaryToken(token) {
-
-        const fetchData = {
+    async verifyTemporaryToken(token: string) {
+        return await executeApiRequest(buildPublicRequest("/auth/verify-temporary-session", {
             headers: new Headers(),
             method: "POST",
             // mode: 'no-cors',
             body: JSON.stringify({
                 token
             }),
-        };
-
-        return await this.fetch("/auth/verify-temporary-session", fetchData);
+        }));
     }
 
-    async pairGoogleTokenAndTemporaryToken(googleToken, temporaryToken) {
-
-        const fetchData = {
+    async pairGoogleTokenAndTemporaryToken(googleToken: string, temporaryToken: string) {
+        return await executeApiRequest(buildPublicRequest("/auth/pair-temporary-session", {
             headers: new Headers(),
             method: "POST",
             body: JSON.stringify({
                 google_token: googleToken,
                 temporary_token: temporaryToken
             }),
-        };
-
-        return await this.fetch("/auth/pair-temporary-session", fetchData);
+        }));
     }
 
-    async checkTemporaryToken(temporaryToken) {
-
-        const fetchData = {
+    async checkTemporaryToken(temporaryToken: string) {
+        return await executeApiRequest(buildPublicRequest("/auth/check-temporary-token", {
             headers: new Headers(),
             method: "POST",
             body: JSON.stringify({
                 temporary_token: temporaryToken
             }),
-        };
-
-        return await this.fetch("/auth/check-temporary-token", fetchData);
+        }));
     }
 
 }

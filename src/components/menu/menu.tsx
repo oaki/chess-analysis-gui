@@ -1,31 +1,49 @@
 import React from "react";
 import * as ReactDOM from "react-dom";
-import { connect } from "react-redux";
-import store from "../../store";
-import { Link, withRouter } from "react-router-dom";
+import { connect } from "../../libs/stateCompat";
+import { store } from "../../store";
+import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Menu as MenuIcon, Pause, PlayArrow, Repeat } from "@emotion-icons/material";
 import { addNewGame, IOnMove, setEvaluation, setPosition, setStatus, setWhoIsOnMove } from "../../actions";
 import { SessionManagerService } from "../../services/sessionManager";
-import { batchActions } from "redux-batched-actions";
+import { batchActions } from "../../libs/batchActions";
 import { FIRST_ID, firstNode, Node, NODE_MAP, treeService } from "../moveTree/tree";
 import { lastMoveId, setHistory } from "../history/historyReducers";
 import { loadOpeningPosition, setOpeningPosition } from "../openingExplorer/openingExplorerReducers";
 import { flipBoard, openPgnDialog, toggleAutoplay, toogleOpenMenu } from "./menuReducers";
 import { setSyzygyEvaluation } from "../syzygyExplorer/syzygyExplorerReducers";
-import PgnImportForm from "./pgnImportForm";
+import { PgnImportForm } from "./pgnImportForm";
 import { emitPosition } from "../../services/sockets/actions";
 import { loadGamesFromDatabase } from "../gamesDatabaseExplorer/gamesDatabaseReducers";
 import { VERSION } from "../../libs/version";
 import { IEvaluation, Nullable, Undef } from "../../interfaces";
 import { FIRST_POSITION } from "../../contants";
 
-const mapStateToProps = (state) => ({
+type MenuReduxSlice = {
+  menu: { isOpen: boolean };
+  autoplay: boolean;
+  pgnDialog: boolean;
+};
+
+const mapStateToProps = (state: MenuReduxSlice) => ({
   isOpen: state.menu.isOpen,
   autoplay: state.autoplay,
   pgnDialog: state.pgnDialog
 });
 
-export class Menu extends React.PureComponent<any, any> {
+export type MenuConnectedProps = ReturnType<typeof mapStateToProps>;
+
+export type MenuWithRouterOwnProps = {
+  showMainMenu?: boolean;
+  showFlip?: boolean;
+  showUndo?: boolean;
+  showRedo?: boolean;
+  showAutoplay?: boolean;
+};
+
+export type MenuProps = MenuConnectedProps & MenuWithRouterOwnProps;
+
+export class Menu extends React.PureComponent<MenuProps> {
 
   handleFlipBoard() {
     store.dispatch(flipBoard());
@@ -286,6 +304,6 @@ export class Menu extends React.PureComponent<any, any> {
   }
 }
 
-const SmartMenu: any = connect<any>(mapStateToProps)(Menu);
-export const MenuWithRouter: any = withRouter(SmartMenu);
+const SmartMenu = connect(mapStateToProps)(Menu);
+export const MenuWithRouter = SmartMenu as unknown as React.ComponentType<MenuWithRouterOwnProps>;
 

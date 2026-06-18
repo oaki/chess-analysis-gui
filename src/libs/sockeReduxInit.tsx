@@ -1,6 +1,7 @@
-import io from "socket.io-client";
-import config from "../config";
-import store from "../store";
+import { io } from "socket.io-client";
+import type { Socket } from "socket.io-client";
+import { config } from "../config";
+import { store } from "../store";
 import {Nullable} from "../interfaces";
 
 export const messageTypes = {
@@ -13,7 +14,7 @@ export const messageTypes = {
 
 export class SocketReduxMiddleware {
     private signInToken: string = '';
-    private socket: Nullable<SocketIOClient.Socket> = null;
+    private socket: Nullable<Socket> = null;
 
     constructor() {
 

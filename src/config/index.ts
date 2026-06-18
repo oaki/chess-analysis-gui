@@ -14,20 +14,20 @@
 //         path: '/socket.io',
 //     }
 // }
-const env: any = process.env;
+const env = process.env as NodeJS.ProcessEnv;
 
-const config: IConfig = {
-    apiHost: env.REACT_APP_HOST,
+export const config = {
+    apiHost: env.REACT_APP_HOST as string,
     socketIo: {
-        host: env.REACT_APP_SOCKET_IO_HOST,
-        path: env.REACT_APP_SOCKET_IO_PATH,
+        host: env.REACT_APP_SOCKET_IO_HOST as string,
+        path: env.REACT_APP_SOCKET_IO_PATH as string,
     },
     google: {
-        clientId: env.REACT_APP_GOOGLECLIENTID
+        clientId: env.REACT_APP_GOOGLECLIENTID as string
     }
 };
 
-interface IConfig {
+export type AppConfig = {
     apiHost: string;
     socketIo: {
         host: string;
@@ -35,7 +35,5 @@ interface IConfig {
     };
     google: {
         clientId: string;
-    }
-}
-
-export default config;
+    };
+};

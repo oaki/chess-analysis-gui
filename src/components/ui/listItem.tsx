@@ -1,11 +1,14 @@
-import { default as React, FC, memo, ReactChild, ReactChildren, ReactNode } from "react";
+import { default as React, FC, memo, ReactNode } from "react";
+import type { MouseEvent } from "react";
 import { ChevronRight, Delete } from "@emotion-icons/material";
 import { SwipeableListItem } from "@sandstreamdev/react-swipeable-list";
 import styled from "@emotion/styled";
 
+const SwipeableListItemCompat = SwipeableListItem as React.ComponentType<Record<string, unknown>>;
+
 export const ListItem: FC<ListItemProps> = memo(({ id, handleClick, handleDelete, children }: ListItemProps) => {
   return (
-    <SwipeableListItem
+    <SwipeableListItemCompat
       key={id}
       swipeRight={{
         content: <div className={"c-white pl-sm"}><Delete width={16} /> Delete</div>,
@@ -21,7 +24,7 @@ export const ListItem: FC<ListItemProps> = memo(({ id, handleClick, handleDelete
         </div>
       </StyledListItem>
 
-    </SwipeableListItem>
+    </SwipeableListItemCompat>
   );
 });
 
@@ -32,6 +35,6 @@ const StyledListItem = styled.div`
 type ListItemProps = {
   id: string;
   children: ReactNode;
-  handleClick: (e: any) => void;
+  handleClick: (e: MouseEvent<HTMLElement>) => void;
   handleDelete: (id: string) => void;
 }

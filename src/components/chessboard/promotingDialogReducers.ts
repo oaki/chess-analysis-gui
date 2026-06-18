@@ -1,14 +1,15 @@
+import type { MouseEvent } from "react";
 import { IOnMove, ISetMoveProps, SET_PROMOTION_DIALOG } from "../../actions";
 import { IAction } from "../../interfaces";
 
-export interface IShowPromotionDialogProps {
+export type IShowPromotionDialogProps = {
   requestedParams?: ISetMoveProps;
   isOpen: boolean;
 }
 
-export interface IPromotingDialogProps extends IShowPromotionDialogProps {
+export type IPromotingDialogProps = IShowPromotionDialogProps & {
   onMove: IOnMove;
-  handleOnClick: (e: any) => void;
+  handleOnClick: (e: MouseEvent<HTMLElement>) => void;
 }
 
 export function setPromotionDialog(props: IShowPromotionDialogProps) {

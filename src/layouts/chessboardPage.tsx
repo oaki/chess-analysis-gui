@@ -9,7 +9,7 @@ import useResizeObserver from "use-resize-observer";
 import {useScreenOrientation} from "hooks/useScreenOrientation";
 
 
-const Column = styled.div`
+const StyledColumn = styled.div`
     flex: 50%;
 `;
 
@@ -30,11 +30,11 @@ export const ChessboardPage = memo(() => {
                 ref={setWrapperRef}
                 className={"d-f"}
             >
-                <Column>
+                <StyledColumn>
                     <SmartAwesomeChessboard/>
-                </Column>
+                </StyledColumn>
 
-                <Column>
+                <StyledColumn>
                     <SmartInfoPanel/>
                     <SmartPanel/>
 
@@ -45,7 +45,7 @@ export const ChessboardPage = memo(() => {
                         showRedo={true}
                         showAutoplay={true}
                     />
-                </Column>
+                </StyledColumn>
             </div>
         );
     }
@@ -76,8 +76,6 @@ export const ChessboardPage = memo(() => {
 
     );
 });
-
-export default ChessboardPage;
 
 const StyledWrapper = styled.div`
     height: ${(props: StyledWrapperProps) => (`${props.appHeight}px`)};

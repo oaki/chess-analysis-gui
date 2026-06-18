@@ -1,15 +1,16 @@
-import React, {memo} from "react";
-import {connect} from "react-redux";
-import store from "../../store";
+import React, {memo, type ComponentType} from "react";
+import {connect} from "../../libs/stateCompat";
+import { store } from "../../store";
 import {setMove} from "../history/historyReducers";
 import {treeService} from "../moveTree/tree";
-import {IState} from "../../interfaces";
+import { ReduxStateShape } from "../../reducers";
+import type { GameDatabase } from "../../interfaces";
 import {SmallLoading} from "../Loading";
 import "./gamesDatabaseExplorer.css";
 import styled from "@emotion/styled";
 
 
-function renderRow(props) {
+function renderRow(props: Pick<GameDatabase, "response">) {
     return props.response && props.response.games.map((game, index) => {
         return (
             <tr key={index}>
@@ -34,7 +35,9 @@ const StyledGamesWrapper = styled.div`
   /* for Firefox */
   min-height: 0;
 `
-const GamesDatabaseExplorer = memo((props: any) => {
+type GamesDatabaseExplorerProps = Pick<GameDatabase, "response" | "isLoading"> & { fen: string };
+
+const GamesDatabaseExplorer = memo((props: GamesDatabaseExplorerProps) => {
     return (
 
         <StyledGamesWrapper>
@@ -60,15 +63,16 @@ const GamesDatabaseExplorer = memo((props: any) => {
     )
 });
 
-function mapStateToProps(state: IState) {
+function mapStateToProps(state: ReduxStateShape) {
+    const gameDatabase = state.gameDatabase as GameDatabase;
     return {
-        response: state.gameDatabase.response,
-        isLoading: state.gameDatabase.isLoading,
+        response: gameDatabase.response,
+        isLoading: gameDatabase.isLoading,
         fen: state.fen,
     }
 }
 
-function mapDispatchToProps(dispatch: (data: any) => {}) {
+function mapDispatchToProps(dispatch: (action: unknown) => unknown) {
     return {
         handleMove(move: string) {
             const fen = store.getState()["fen"];
@@ -83,4 +87,6 @@ function mapDispatchToProps(dispatch: (data: any) => {}) {
     };
 }
 
-export const SmartGamesDatabaseExplorer = connect(mapStateToProps, mapDispatchToProps)(GamesDatabaseExplorer);
+export const SmartGamesDatabaseExplorer = connect(mapStateToProps, mapDispatchToProps)(
+  GamesDatabaseExplorer
+) as unknown as ComponentType<Record<string, never>>;

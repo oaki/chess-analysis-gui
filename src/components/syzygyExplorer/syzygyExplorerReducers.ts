@@ -1,28 +1,6 @@
 import { IAction } from "../../interfaces";
 
-export const SET_SYZYGY_EVALUATION = "SET_SYZYGY_EVALUATION";
-
-export function setSyzygyEvaluation(syzygy: ISyzygy | null) {
-  return {
-    payload: syzygy,
-    type: SET_SYZYGY_EVALUATION
-  };
-}
-
-// export const userReducer = (user: IUser = SessionManagerService.getUser(), action: IAction<IUser>) => {
-
-export const syzygyReducer = (syzygy: ISyzygy | null = null, action: IAction<ISyzygy>) => {
-  switch (action.type) {
-    case SET_SYZYGY_EVALUATION:
-      return action.payload;
-
-    default:
-      return syzygy;
-  }
-};
-
-
-export interface ISyzygyMove {
+export type ISyzygyMove = {
   uci: string;
   san: string;
   zeroing: boolean;
@@ -33,10 +11,10 @@ export interface ISyzygyMove {
   insufficient_material: boolean;
   wdl: number;
   dtz: number;
-  dtm?: any;
+  dtm?: unknown;
 }
 
-export interface ISyzygy {
+export type ISyzygy = {
   checkmate: boolean;
   stalemate: boolean;
   variant_win: boolean;
@@ -44,6 +22,25 @@ export interface ISyzygy {
   insufficient_material: boolean;
   wdl: number;
   dtz: number;
-  dtm?: any;
+  dtm?: unknown;
   moves: ISyzygyMove[];
 }
+
+export const SET_SYZYGY_EVALUATION = "SET_SYZYGY_EVALUATION";
+
+export function setSyzygyEvaluation(syzygy: ISyzygy | null) {
+  return {
+    payload: syzygy,
+    type: SET_SYZYGY_EVALUATION
+  };
+}
+
+export const syzygyReducer = (syzygy: ISyzygy | null = null, action: IAction<ISyzygy>) => {
+  switch (action.type) {
+    case SET_SYZYGY_EVALUATION:
+      return action.payload;
+
+    default:
+      return syzygy;
+  }
+};

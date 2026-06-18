@@ -1,20 +1,29 @@
 import React from "react";
 import { ApiManagerService } from "../../services/apiManager";
 import { Log } from "../../libs/logger";
-import * as queryString from "querystring";
 import { ChevronLeft } from "@emotion-icons/material";
 
-export function VerifyGoogleResponse(props: any) {
+type ParsedHash = Record<string, string | undefined>;
 
-  const response: any = queryString.parse(window.location.hash);
+export function VerifyGoogleResponse(_props: Record<string, never>) {
+
+  const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+  const response: ParsedHash = Object.fromEntries(hashParams.entries());
   Log.info("VerifyGoogleResponse", response);
-
-  const state = JSON.parse(response["#state"]);
-  const temporaryToken = state.token;
-
-  ApiManagerService.pairGoogleTokenAndTemporaryToken(response.id_token, temporaryToken).then((response) => {
-    window.close();
-  });
+  const stateRaw = response["state"];
+  const idTokenRaw = response.id_token;
+  if (typeof stateRaw === "string" && typeof idTokenRaw === "string") {
+    const state = JSON.parse(stateRaw) as { token?: string };
+    if (state.token) {
+      ApiManagerService.pairGoogleTokenAndTemporaryToken(idTokenRaw, state.token).then(() => {
+        if (window.opener) {
+          window.close();
+          return;
+        }
+        window.location.href = "/auth/sign-in";
+      });
+    }
+  }
 
   const styles = {
     backgroundColor: "black",
@@ -34,5 +43,3 @@ export function VerifyGoogleResponse(props: any) {
     </div>
   );
 }
-
-export default VerifyGoogleResponse;

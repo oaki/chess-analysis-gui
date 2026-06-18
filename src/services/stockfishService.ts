@@ -1,3 +1,5 @@
+import { isWasmSupported } from "../libs/wasmSupport";
+
 class StockfishEngineInterface {
     private config = {
         threads: 1,
@@ -6,7 +8,7 @@ class StockfishEngineInterface {
         multiPv: 1
     }
 
-    private instance: any;
+    private instance!: Worker;
     private lastFen: string = '';
     private onResultCallback: (data: string, fen: string) => void = ()=>{};
     private isInicialized = false;
@@ -16,7 +18,7 @@ class StockfishEngineInterface {
     }
 
     init() {
-        const wasmSupported = typeof (window as any).WebAssembly === "object" && (window as any).WebAssembly.validate(Uint8Array.of(0x0, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00));
+        const wasmSupported = isWasmSupported();
         const path: string = "/engines/";
 
         if(!window.Worker){
@@ -47,7 +49,7 @@ class StockfishEngineInterface {
         this.instance.postMessage(msg);
     }
 
-    onResult(callback) {
+    onResult(callback: (data: string, fen: string) => void) {
         this.onResultCallback = callback;
     }
 

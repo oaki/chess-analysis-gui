@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import styled from "@emotion/styled";
 
-interface ILoadingProps {
+type ILoadingProps = {
   isLoading: boolean;
 }
 

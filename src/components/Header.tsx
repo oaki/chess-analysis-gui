@@ -3,7 +3,7 @@ import { ChevronLeft } from "@emotion-icons/material";
 
 import { Link } from "react-router-dom";
 
-interface IHeaderProps {
+type IHeaderProps = {
   title: string;
 
 }

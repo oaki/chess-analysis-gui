@@ -1,7 +1,7 @@
 import {IEvaluation, LINE_MAP} from "../interfaces";
 import {countPieces} from "../tools/countPieces";
 
-export interface CheckEvaluationOptions {
+export type CheckEvaluationOptions = {
     useScore: boolean;
 }
 

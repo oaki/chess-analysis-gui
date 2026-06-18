@@ -1,6 +1,8 @@
 import React, { ReactNode } from "react";
-import { ISwipeableListProps, SwipeableList } from "@sandstreamdev/react-swipeable-list";
+import { SwipeableList } from "@sandstreamdev/react-swipeable-list";
 import styled from "@emotion/styled";
+
+const SwipeableListCompat = SwipeableList as React.ComponentType<{ children?: ReactNode }>;
 
 export const StyledList = styled.div`
   .SwipeableList_swipeableList__1FACG {
@@ -64,7 +66,7 @@ export const StyledList = styled.div`
 export const List = (props: { children: ReactNode} ) => {
   return (
     <StyledList>
-      <SwipeableList>{props.children}</SwipeableList>
+      <SwipeableListCompat>{props.children}</SwipeableListCompat>
     </StyledList>
   );
 };

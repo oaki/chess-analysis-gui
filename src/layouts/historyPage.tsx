@@ -1,18 +1,17 @@
 import React, { FC, memo, useEffect } from "react";
 import { MenuWithRouter } from "../components/menu/menu";
 import { setLoading } from "../actions";
-import store from "../store";
-import config from "../config";
+import { store } from "../store";
+import { config } from "../config";
 import { Header } from "../components/Header";
 import { SmartHistoryList } from "../components/historyList/smartHistoryList";
 import { setHistoryGameList } from "../components/historyList/historyListReducers";
 import { Flash } from "../services/errorManager";
+import { isHistoryGameResponseList } from "../libs/typeGuards";
 import { SessionManagerService } from "../services/sessionManager";
 import { StyledContentWrapper, StyledWrapperWithHeader } from "components/ui/styledWrapperWithHeader";
-import { css } from "@emotion/react";
-import styled from "@emotion/styled";
 
-export const HistoryPage: FC<HistoryPageProps> = memo(({ history }) => {
+export const HistoryPage: FC = memo(() => {
 
   useEffect(() => {
     loadHistoryGames();
@@ -22,7 +21,7 @@ export const HistoryPage: FC<HistoryPageProps> = memo(({ history }) => {
     <StyledWrapperWithHeader>
       <Header title="History" />
       <StyledContentWrapper>
-          <SmartHistoryList history={history} />
+          <SmartHistoryList />
       </StyledContentWrapper>
       <MenuWithRouter showMainMenu={true} />
     </StyledWrapperWithHeader>
@@ -49,9 +48,8 @@ export async function loadHistoryGames() {
       throw new Error("Loading failed");
     }
 
-    const games: any = await response.json();
-    console.log(games);
-    store.dispatch(setHistoryGameList(games));
+    const games: unknown = await response.json();
+    store.dispatch(setHistoryGameList(isHistoryGameResponseList(games) ? games : []));
 
   } catch (e) {
     Flash.error({ msg: "Fetching history failed", identifier: "history" });
@@ -59,10 +57,4 @@ export async function loadHistoryGames() {
   }
 
   store.dispatch(setLoading(false));
-}
-
-export default HistoryPage;
-
-export type HistoryPageProps = {
-  history: any;
 }

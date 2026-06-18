@@ -1,18 +1,27 @@
-import io from "socket.io-client";
+import { io, type Socket } from "socket.io-client";
 import { setEvaluation } from "../actions";
 import { ISyzygy, setSyzygyEvaluation } from "../components/syzygyExplorer/syzygyExplorerReducers";
-import config from "../config";
+import { config } from "../config";
 import { IEvaluation, IWorkerResponse, LINE_MAP } from "../interfaces";
 import { Flash } from "./errorManager";
-import store from "../store";
+import { store } from "../store";
 import { socketConnect } from "./sockets/actions";
-import { NODE_MAP, treeService } from "../components/moveTree/tree";
+import { NODE_MAP, treeService, type Node } from "../components/moveTree/tree";
+import {
+  parseWorkerEvaluation,
+  shouldUseLocalEvaluation,
+  withReducedNodes,
+} from "./evaluationPipeline";
 
-export default class SocketManager {
-  private socket;
-  private signInToken;
-  private dispatchResults;
-  private stockfishEngineInterface;
+type StockfishEngineInterface = {
+  go: (fen: string) => void;
+};
+
+export class SocketManager {
+  private socket: Socket | undefined;
+  private signInToken: string | undefined;
+  private dispatchResults: unknown;
+  private stockfishEngineInterface: StockfishEngineInterface | undefined;
   private config: SocketIoConfig;
 
   constructor(config: SocketIoConfig) {
@@ -37,20 +46,19 @@ export default class SocketManager {
   // }
 
   handleResult = (result: string) => {
-
-    const arr = JSON.parse(result);
-    // for now we are expecting only one result, no more
-    // ignore others @todo disable others results
     const fen = store.getState()["fen"];
-    const results = arr.filter((data) => data.fen === fen).map((data) => this.prepareEvaluation(data));
-    if (results && results.length > 0) {
+    const pipelineResult = parseWorkerEvaluation(result, fen);
+    if (pipelineResult && pipelineResult.results.length > 0) {
 
-      const refs = treeService.findReferencesByFen(fen);
-      const move: any = refs[0];
-      move[NODE_MAP.evaluation] = results;
+      const refs = treeService.findReferencesByFen(fen) as Node[];
+      const move = refs[0];
+      if (!move) {
+        return;
+      }
+      move[NODE_MAP.evaluation] = pipelineResult.results;
 
       // find in history move and add this result to the move
-      store.dispatch(setEvaluation(results));
+      store.dispatch(setEvaluation(pipelineResult.results));
     }
   };
 
@@ -61,7 +69,7 @@ export default class SocketManager {
 
   handleOfflineWorker = (fen: string) => {
     console.log("handleOfflineWorker", fen);
-    this.stockfishEngineInterface.go(fen);
+    this.stockfishEngineInterface?.go(fen);
     // store.dispatch(setSyzygyEvaluation(result))
   };
 
@@ -80,7 +88,7 @@ export default class SocketManager {
     this.socket = io(this.config.socketIo.host, {
       path: config.socketIo.path,
       query: {
-        token: this.signInToken,
+        token: this.signInToken ?? "",
         type: "user"
       },
       reconnection: true,
@@ -126,17 +134,8 @@ export default class SocketManager {
       //check if current evaluation is sufficient if yes use it and sent it to redux
       // otherwise sent it to server
       // debugger;
-      if (evaluation) {
-        const nodes: number = evaluation[LINE_MAP.nodes] || 0;
-        const score: number = parseInt(evaluation[LINE_MAP.score]) || 0;
-        const nodesConst = 50 * 1000 * 1000;
-        if (nodes > nodesConst && score > 3.5 && evaluation[LINE_MAP.pv].length > 8) {
-          store.dispatch(setEvaluation([{
-            fen,
-            ...evaluation,
-            [LINE_MAP.nodes]: nodes - nodesConst
-          }]));
-        }
+      if (shouldUseLocalEvaluation(evaluation)) {
+        store.dispatch(setEvaluation([withReducedNodes(fen, evaluation as IEvaluation)]));
       } else {
         this.emit("setNewPosition", {
           move,
@@ -146,12 +145,12 @@ export default class SocketManager {
       }
 
     } else {
-      this.stockfishEngineInterface.go(fen);
+      this.stockfishEngineInterface?.go(fen);
     }
 
   }
 
-  private emit(name: string, props: any) {
+  private emit(name: string, props: Record<string, unknown>) {
     if (this.socket) {
       this.socket.emit(name, props);
     } else {
@@ -159,22 +158,12 @@ export default class SocketManager {
     }
   }
 
-  private prepareEvaluation(data: IWorkerResponse) {
-    if (!data[LINE_MAP.pv]) {
-      return data;
-    }
-
-    return { ...data };
-  }
-
 }
 
-
-interface SocketIoConfig {
+type SocketIoConfig = {
   socketIo: {
     host: string;
     path: string;
-  }
-}
-
+  };
+};
 

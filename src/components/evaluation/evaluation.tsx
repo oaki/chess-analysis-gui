@@ -1,19 +1,20 @@
 import React, { FC, memo } from "react";
-import { IEvaluation, IState, LINE_MAP } from "../../interfaces";
-import { shallowEqual, useSelector } from "react-redux";
+import { IEvaluation, LINE_MAP } from "../../interfaces";
+import { ReduxStateShape } from "../../reducers";
+import { shallowEqual, useSelector } from "../../libs/stateCompat";
 
-import * as Chess from "chess.js";
+import { Chess } from "chess.js";
 
 const ChessInstance = new Chess();
 
-export interface Evaluation {
+export type Evaluation = {
   score: string;
   pv: string;
   mate: string;
   nodes: string;
 }
 
-interface EvalHeaderProps {
+type EvalHeaderProps = {
   name: string;
   evaluation: IEvaluation;
 }
@@ -37,7 +38,7 @@ export const EvalHeader = memo((props: EvalHeaderProps) => {
   );
 });
 
-interface EvalLineProps {
+type EvalLineProps = {
   evaluation: IEvaluation;
   fen: string;
 }
@@ -62,15 +63,15 @@ const EvalLine = memo((props: EvalLineProps) => {
   );
 });
 
-interface SmartEvaluationProps {
+type SmartEvaluationProps = {
   name: string;
 }
 
 export const SmartEvaluation = memo((props: SmartEvaluationProps) => {
-    const { fen, evaluations } = useSelector((state: IState) => ({
+    const { fen, evaluations } = useSelector((state: ReduxStateShape) => ({
       fen: state.fen,
       evaluations: state.evaluation
-    }), shallowEqual);
+    }), shallowEqual) as { fen: string; evaluations: IEvaluation[] };
     return <Eval evaluations={evaluations} fen={fen} name={props.name} />;
   }
 );
@@ -163,11 +164,14 @@ function prepareEvaluation(pv: string, fen: string) {
 
   const moves = splitPv(pv);
 
-  const newMoves: any = [];
+  const newMoves: string[] = [];
   if (moves && moves.length > 0) {
     for (let i = 0; i < moves.length; i++) {
       const move = moves[i];
-      const newMove = ChessInstance.move(move, { sloppy: true });
+      const from = move.substring(0, 2);
+      const to = move.substring(2, 4);
+      const promotion = move.length > 4 ? move[4] : undefined;
+      const newMove = ChessInstance.move({ from, to, ...(promotion && { promotion }) });
       if (!newMove) {
         console.log("Move doesn't exist", { move, fen });
         break;

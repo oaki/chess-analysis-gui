@@ -1,7 +1,8 @@
 import React, { FC, memo, useState } from "react";
+import type { ChangeEvent } from "react";
 import { useStockFishWorker } from "./useStockFish";
-import { shallowEqual, useSelector } from "react-redux";
-import { IState } from "../../interfaces";
+import { shallowEqual, useSelector } from "../../libs/stateCompat";
+import { ReduxStateShape } from "../../reducers";
 import { treeService } from "../moveTree/tree";
 import { Eval } from "./evaluation";
 import styled from "@emotion/styled";
@@ -32,10 +33,10 @@ export const SmartStockFish = memo((props: ControllerProps) => {
     multiPv: 2
   });
 
-  const { lastFen, lastMoveId } = useSelector((state: IState) => ({
+  const { lastFen, lastMoveId } = useSelector((state: ReduxStateShape) => ({
     lastFen: state.fen,
     lastMoveId: state.lastMoveId
-  }), shallowEqual);
+  }), shallowEqual) as { lastFen: string; lastMoveId: number };
 
   const onSubmit = (newEngineState: EngineState) => {
     console.log("onSubmit-> newEngineState", newEngineState);
@@ -79,14 +80,14 @@ export const SmartStockFish = memo((props: ControllerProps) => {
 
 
 type StockFishModalProps = {
-  handleCloseModal: any;
+  handleCloseModal: () => void;
   engineState: EngineState;
   onSubmit: (engineState: EngineState) => void;
 }
 
 const StockFishModal: FC<StockFishModalProps> = memo(({ handleCloseModal, engineState, onSubmit }) => {
   const [state, setState] = useState<EngineState>(engineState);
-  const onChange = (name) => (e) => {
+  const onChange = (name: keyof EngineState) => (e: ChangeEvent<HTMLInputElement>) => {
     const newValue = Number(e.target.value);
     setState((prevState) => ({
       ...prevState,

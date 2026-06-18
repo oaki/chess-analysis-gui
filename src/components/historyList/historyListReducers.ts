@@ -11,7 +11,7 @@ export const historyListReducer = (games: IHistoryGameResponse[] = [], action: I
   }
 };
 
-export interface IHistoryGameResponse {
+export type IHistoryGameResponse = {
   id: number;
   user_id: number;
   moves: IHistoryMove[];
@@ -21,7 +21,7 @@ export interface IHistoryGameResponse {
 
 export const SET_HISTORY_GAME_LIST = "SET_HISTORY_GAME_LIST";
 
-export function setHistoryGameList(games: any[]) {
+export function setHistoryGameList(games: IHistoryGameResponse[]) {
   return {
     payload: games,
     type: SET_HISTORY_GAME_LIST

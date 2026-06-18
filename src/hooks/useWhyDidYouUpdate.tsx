@@ -1,17 +1,17 @@
 import {MutableRefObject, useEffect, useRef} from "react";
 import {Nullable} from "../interfaces";
 
-export function useWhyDidYouUpdate(name: string, props: Nullable<any>) {
+export function useWhyDidYouUpdate(name: string, props: Nullable<Record<string, unknown>>) {
     // Get a mutable ref object where we can store props ...
     // ... for comparison next time this hook runs.
-    const previousProps: MutableRefObject<any> = useRef(null);
+    const previousProps: MutableRefObject<Nullable<Record<string, unknown>>> = useRef(null);
 
     useEffect(() => {
-        if (previousProps.current) {
+        if (previousProps.current && props) {
             // Get all keys from previous and current props
-            const allKeys = Object.keys({...previousProps.current, ...props});
+            const allKeys = Object.keys({ ...previousProps.current, ...props });
             // Use this object to keep track of changed props
-            const changesObj: any = {};
+            const changesObj: Record<string, { from: unknown; to: unknown }> = {};
             // Iterate through keys
             allKeys.forEach((key) => {
                 // If previous is different from current

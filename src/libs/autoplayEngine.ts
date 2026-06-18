@@ -1,4 +1,4 @@
-import store from "../store";
+import { store } from "../store";
 import {IOnMove} from "../actions";
 import {IOpeningMove} from "../components/openingExplorer/openingExplorerReducers";
 import {treeService} from "../components/moveTree/tree";
@@ -7,6 +7,8 @@ import {IEvaluation, LINE_MAP} from "../interfaces";
 import {splitPv} from "../components/evaluation/evaluation";
 import {getMoveFen} from "./moveFen";
 import debounce from 'lodash/debounce';
+import type { ReduxStateShape } from "../reducers";
+import { isIEvaluation } from "./typeGuards";
 
 
 export class AutoplayService {
@@ -19,7 +21,7 @@ export class AutoplayService {
     }
 
     private storeListener = () => {
-        const state: any = this.store.getState();
+        const state = this.store.getState() as ReduxStateShape;
 
         // check if autoplay is enabled
         if (state.autoplay && state.loading === false) {
@@ -28,9 +30,12 @@ export class AutoplayService {
                 const openingMove = this.getOpeningMove(state.openingMoves);
                 if (openingMove) {
                     this.dispatchOpeningMove(openingMove, state.fen);
-                } else if (state.evaluation.length > 0) {
-                    console.log("check engine evaluation");
-                    this.dispatchEngineMove(state.evaluation[0], state.fen);
+                } else if (Array.isArray(state.evaluation) && state.evaluation.length > 0) {
+                    const first = state.evaluation[0];
+                    if (isIEvaluation(first)) {
+                        console.log("check engine evaluation");
+                        this.dispatchEngineMove(first, state.fen);
+                    }
                 }
 
             }
@@ -137,11 +142,11 @@ export class AutoplayService {
             return null;
         }
 
-        const sumWeight: Number = openingMoves.reduce((sum: number, move: IOpeningMove) => {
+        const sumWeight: number = openingMoves.reduce((sum: number, move: IOpeningMove) => {
             return sum + move.weight;
         }, 0);
 
-        const average: Number = Math.ceil(Number(sumWeight) / openingMoves.length);
+        const average: number = Math.ceil(sumWeight / openingMoves.length);
 
         const possibleMoves = openingMoves.filter((move: IOpeningMove) => move.weight >= average);
         const selectedMove = this.randomItem(possibleMoves);
@@ -150,11 +155,11 @@ export class AutoplayService {
 
     }
 
-    private randomItem(items: any[]) {
+    private randomItem<T>(items: T[]): T {
         return items[Math.floor(Math.random() * items.length)];
     }
 
-    static isAiOnMove(state): boolean {
+    static isAiOnMove(state: Pick<ReduxStateShape, "onMove" | "isFlip">): boolean {
         if ((state.onMove === IOnMove.WHITE && state.isFlip)
             ||
             (state.onMove === IOnMove.BLACK && !state.isFlip)

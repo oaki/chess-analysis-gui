@@ -1,14 +1,26 @@
 import React, { memo } from "react";
-import { connect } from "react-redux";
+import type { MouseEvent } from "react";
+import { connect } from "../../libs/stateCompat";
 import { Info, MenuBook, Psychology } from "@emotion-icons/material";
-import store from "../../store";
+import { store } from "../../store";
 import { PanelTabType, setPanelTab } from "./infoPanelReducers";
 import { IEvaluation, LINE_MAP } from "../../interfaces";
 import { getNodes, getScore, getTime } from "../evaluation/evaluation";
 import { IOnMove } from "../../actions";
+import { ReduxStateShape } from "../../reducers";
 import styled from "@emotion/styled";
 
-const classNames = require("classnames");
+import classNames from "classnames";
+
+type InfoPanelProps = {
+  fen: string;
+  evaluation: IEvaluation[];
+  isFlip: boolean;
+  onMove: IOnMove;
+  isOnline: boolean;
+  panelTab: string;
+  settings: unknown;
+}
 
 const InfoPanel = memo((props: InfoPanelProps) => {
   return (
@@ -24,9 +36,14 @@ const InfoPanel = memo((props: InfoPanelProps) => {
   );
 });
 
-function handleButton(event: any) {
+function handleButton(event: MouseEvent<HTMLButtonElement>) {
   const tabId = event.currentTarget.dataset.tab;
-  store.dispatch(setPanelTab(tabId));
+  if (!tabId) {
+    return;
+  }
+  if (tabId === PanelTabType.INFO_TAB || tabId === PanelTabType.EVALUATION_TAB || tabId === PanelTabType.BOOK_TAB) {
+    store.dispatch(setPanelTab(tabId));
+  }
 }
 
 function renderButton(id: string, IconComponent: typeof Info, panelTab: string) {
@@ -40,11 +57,11 @@ function renderButton(id: string, IconComponent: typeof Info, panelTab: string) 
   );
 }
 
-const Container = styled.div`
+const StyledScoreLayout = styled.div`
   padding: .2rem .4rem;
 `;
 
-const Column = styled.span`
+const StyledScoreCol = styled.span`
   display: inline-block;
   padding: 0 .5rem;
 `;
@@ -56,31 +73,21 @@ function renderScore(props: InfoPanelProps) {
   const evaluation: IEvaluation = props.evaluation[0];
 
   return (
-    <Container>
-      <Column>
+    <StyledScoreLayout>
+      <StyledScoreCol>
         {getScore(evaluation)}
         {!evaluation[LINE_MAP.mate] &&
         <span className="fs-xs fw-r">/{evaluation[LINE_MAP.depth]}</span>}
-      </Column>
-      <Column>n: {getNodes(evaluation)}</Column>
-      <Column>t: {getTime(evaluation)}</Column>
+      </StyledScoreCol>
+      <StyledScoreCol>n: {getNodes(evaluation)}</StyledScoreCol>
+      <StyledScoreCol>t: {getTime(evaluation)}</StyledScoreCol>
 
-    </Container>
+    </StyledScoreLayout>
   );
 
 }
 
-interface InfoPanelProps {
-  fen: string;
-  evaluation: IEvaluation[];
-  isFlip: boolean;
-  onMove: IOnMove;
-  isOnline: boolean;
-  panelTab: string;
-  settings: string;
-}
-
-export const SmartInfoPanel = connect((state: any) => ({
+export const SmartInfoPanel = connect((state: ReduxStateShape) => ({
   fen: state.fen,
   evaluation: state.evaluation,
   onMove: state.onMove,
@@ -88,4 +95,4 @@ export const SmartInfoPanel = connect((state: any) => ({
   isOnline: state.isOnline,
   panelTab: state.panelTab,
   settings: state.settings
-}))(InfoPanel);
+}))(InfoPanel) as unknown as React.ComponentType<Record<string, never>>;

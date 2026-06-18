@@ -1,15 +1,15 @@
-import * as Chess from "chess.js";
+import { Chess } from "chess.js";
 
 export function getMoveFen(previousFen: string, move: string) {
 
-    const promotion = move.length > 4 && move.substring(4, 5);
+    const promotion = move.length > 4 ? move.substring(4, 5) : undefined;
     const from = move.substring(0, 2);
     const to = move.substring(2, 4);
     const chess = new Chess(previousFen);
     const isMove = chess.move({
         from,
         to,
-        promotion
+        ...(promotion && { promotion })
     });
 
     if (!isMove) {
