@@ -1,5 +1,7 @@
 import {IGameDatabase} from "components/gamesDatabaseExplorer/gamesDatabaseReducers";
-import { IWorker, ReduxState } from "reducers";
+import { IWorker } from "reducers";
+import { IHistoryGameResponse } from "components/historyList/historyListReducers";
+import type { IErrorProps } from "./services/errorManager";
 
 export type Nullable<T> = T | null;
 export type Undef<T> = T | undefined;
@@ -17,11 +19,7 @@ export enum LINE_MAP {
     fen = "f",
 }
 
-export interface IWorkerResponse extends IEvaluation {
-    fen: string;
-}
-
-export interface IEvaluation {
+export type IEvaluation = {
     [LINE_MAP.score]: string;
     [LINE_MAP.depth]: number;
     [LINE_MAP.pv]: string;
@@ -34,18 +32,22 @@ export interface IEvaluation {
     [LINE_MAP.mate]?: boolean;
 }
 
+export type IWorkerResponse = IEvaluation & {
+    fen: string;
+}
+
 export type IAction<TPayload> = {
     type: string;
     payload: TPayload;
 }
 
-export interface IState {
+export type IState = {
     loading: boolean;
     user: User;
     fen: string;
-    evaluation: any[];
+    evaluation: unknown[];
     openingMoves: OpeningMove[];
-    errors: any[];
+    errors: IErrorProps[];
     history: History[];
     status: string;
     isFlip: boolean;
@@ -54,8 +56,8 @@ export interface IState {
     menu: Menu;
     workers: IWorker[];
     onMove: number;
-    historyList: any[];
-    syzygy?: any;
+    historyList: IHistoryGameResponse[];
+    syzygy?: unknown;
     promotionDialog: PromotionDialog;
     autoplay: boolean;
     isOnline: boolean;
@@ -67,13 +69,13 @@ export interface IState {
 }
 
 
-export interface GameDatabase {
+export type GameDatabase = {
     response: IGameDatabase | null;
     isLoading: boolean;
 }
 
 
-export interface User {
+export type User = {
     isLoggedIn: boolean;
     id: number;
     google_user_id: string;
@@ -85,47 +87,43 @@ export interface User {
     locale: string;
     created_at: Date;
     updated_at: Date;
-    deleted_at?: any;
+    deleted_at?: unknown;
     lastGameId: number;
 }
 
-export interface OpeningMove {
+export type OpeningMove = {
     fen: string;
     move: string;
     weight: number;
     san: string;
 }
 
-export interface History {
+export type History = {
     id: number;
     f: string;
     m: string;
     s: string;
-    vs: any[];
+    vs: unknown[];
 }
 
-export interface LastMove {
+export type LastMove = {
     from: string;
     to: string;
 }
 
-export interface Menu {
+export type Menu = {
     isOpen: boolean;
 }
 
-export interface PromotionDialog {
+export type PromotionDialog = {
     isOpen: boolean;
 }
 
-export interface Settings {
+export type Settings = {
     showEvaluation: boolean;
 }
 
-export interface Socket {
+export type Socket = {
     isConnecting: boolean;
     isConnected: boolean;
 }
-
-
-
-

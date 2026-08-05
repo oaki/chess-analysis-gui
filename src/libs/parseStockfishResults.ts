@@ -1,6 +1,6 @@
-import { IEvaluation, LINE_MAP } from "../interfaces";
+import { IEvaluation, IWorkerResponse, LINE_MAP } from "../interfaces";
 
-export function parseResult(result: string, fen: string): IEvaluation[] {
+export function parseResult(result: string, fen: string): IWorkerResponse[] {
   if (result.indexOf("info") === -1) {
     return [];
   }
@@ -10,12 +10,14 @@ export function parseResult(result: string, fen: string): IEvaluation[] {
     return [];
   }
 
-  const output: IEvaluation[] = [];
+  const output: IWorkerResponse[] = [];
 
   lines.forEach((line) => {
-    const r: any = parseLine(line);
-    r.fen = fen;
-    output[parseInt(r[LINE_MAP.multipv]) - 1] = r;
+    const parsed = parseLine(line);
+    const r: IWorkerResponse = { ...parsed, fen };
+    const multipv = r[LINE_MAP.multipv];
+    const index = multipv !== undefined ? parseInt(multipv, 10) - 1 : 0;
+    output[index] = r;
   });
   return output;
 }
@@ -49,7 +51,7 @@ export function pairValues(name: string, str: string): string {
   return tmp[namePosition + 1];
 }
 
-export function parseLine(lineStr): IEvaluation {
+export function parseLine(lineStr: string): IEvaluation {
   const score = String(parseFloat(pairValues("cp", lineStr)) / 100);
   const mate = lineStr.indexOf('mate')!==-1;
   const obj: IEvaluation = {

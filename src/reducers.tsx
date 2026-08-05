@@ -1,5 +1,3 @@
-import {combineReducers} from "redux";
-
 import {
     IOnMove,
     ON_MOVE,
@@ -18,31 +16,35 @@ import {syzygyReducer} from "./components/syzygyExplorer/syzygyExplorerReducers"
 import {IAction, IWorkerResponse} from "./interfaces";
 
 import {historyReducer} from "./components/history/historyReducers";
-import {autoplayReducer, flipBoardReducer, menuReducer, pgnDialogReducer} from "./components/menu/menuReducers";
+import {autoplayReducer, flipBoardReducer, menuReducer, pgnDialogReducer, type IMenu} from "./components/menu/menuReducers";
 import {promotionDialogReducer} from "./components/chessboard/promotingDialogReducers";
 import {errorReducers} from "./services/errorManager";
 import {IIsOnline} from "./services/onlineIndicator";
-import {settingsReducer} from "./layouts/settingPage";
+import {settingsReducer, type SettingsState} from "./layouts/settingPageReducers";
 import {panelTabReducer} from "./components/infoPanel/infoPanelReducers";
 import {socketReducer} from "./services/socketService";
 import {gamesDatabaseReducer} from "./components/gamesDatabaseExplorer/gamesDatabaseReducers";
 import {FIRST_ID} from "./components/moveTree/tree";
 import {FIRST_POSITION} from "contants";
+import type { IHistoryGameResponse } from "./components/historyList/historyListReducers";
+import type { IErrorProps } from "./services/errorManager";
 
-export const loadingReducer = (isLoading: boolean = false, action: any) => {
+export type UnknownAction = { type: string } & Record<string, unknown>;
+
+export const loadingReducer = (isLoading: boolean = false, action: UnknownAction) => {
     switch (action.type) {
         case UPDATE_LOADING:
-            return action.isLoading;
+            return action.isLoading as boolean;
 
         default:
             return isLoading;
     }
 };
 
-export const positionReducer = (fen: string = FIRST_POSITION, action: any) => {
+export const positionReducer = (fen: string = FIRST_POSITION, action: UnknownAction) => {
     switch (action.type) {
         case SET_POSITION:
-            return action.fen;
+            return action.fen as string;
 
         default:
             return fen;
@@ -50,10 +52,10 @@ export const positionReducer = (fen: string = FIRST_POSITION, action: any) => {
 };
 
 
-export const statusReducer = (status: string = "", action: any) => {
+export const statusReducer = (status: string = "", action: UnknownAction) => {
     switch (action.type) {
         case SET_STATUS:
-            return action.status;
+            return action.status as string;
 
         default:
             return status;
@@ -71,10 +73,10 @@ export const statusReducer = (status: string = "", action: any) => {
 //     [LINE_MAP.tbhits]: '',
 //     [LINE_MAP.import]: '',
 // };
-export const evaluationReducer = (evaluation: IWorkerResponse | IOpeningMove[] = [], action: any): IWorkerResponse | IOpeningMove[] => {
+export const evaluationReducer = (evaluation: IWorkerResponse | IOpeningMove[] = [], action: UnknownAction): IWorkerResponse | IOpeningMove[] => {
         switch (action.type) {
             case SET_EVALUATION:
-                return action.evaluation;
+                return action.evaluation as IWorkerResponse | IOpeningMove[];
 
             default:
                 return evaluation;
@@ -83,10 +85,10 @@ export const evaluationReducer = (evaluation: IWorkerResponse | IOpeningMove[] =
 ;
 
 
-export const lastMoveIdReducer = (lastMoveId: number = FIRST_ID, action: any) => {
+export const lastMoveIdReducer = (lastMoveId: number = FIRST_ID, action: UnknownAction) => {
     switch (action.type) {
         case SET_LAST_MOVE_ID:
-            return action.id;
+            return action.id as number;
 
         default:
             return lastMoveId;
@@ -104,11 +106,11 @@ export const lastMoveReducer = (state: ILastMove = {from: "", to: ""}, action: I
     }
 };
 
-export interface ILastMove {
+export type ILastMove = {
     from: string,
     to: string
 }
-export interface IUser {
+export type IUser = {
     isLoggedIn: boolean;
     email?: string;
     name?: string;
@@ -127,7 +129,7 @@ export const userReducer = (user: IUser = {isLoggedIn: false}, action: IAction<I
     }
 };
 
-export interface IWorker {
+export type IWorker = {
     name: string;
     uuid: string;
     user_id: number;
@@ -169,7 +171,34 @@ export const isOnlineReducer = (isOnline: boolean = false, action: IAction<IIsOn
 };
 
 
-const reducers = combineReducers({
+export type ReduxStateShape = {
+    loading: boolean;
+    user: IUser;
+    fen: string;
+    evaluation: IWorkerResponse | IOpeningMove[];
+    openingMoves: IOpeningMove[];
+    errors: IErrorProps[];
+    history: unknown[];
+    status: string;
+    isFlip: boolean;
+    lastMoveId: number;
+    lastMove: ILastMove;
+    menu: IMenu;
+    workers: IWorker[];
+    onMove: IOnMove;
+    historyList: IHistoryGameResponse[];
+    syzygy: unknown;
+    promotionDialog: unknown;
+    autoplay: boolean;
+    isOnline: boolean;
+    settings: SettingsState;
+    pgnDialog: boolean;
+    panelTab: string;
+    socket: unknown;
+    gameDatabase: unknown;
+}
+
+export const reducerMap: Record<string, (state: unknown, action: UnknownAction) => unknown> = {
     loading: loadingReducer,
     user: userReducer,
     fen: positionReducer,
@@ -194,10 +223,19 @@ const reducers = combineReducers({
     panelTab: panelTabReducer,
     socket: socketReducer,
     gameDatabase: gamesDatabaseReducer
-});
+};
 
-export default reducers;
-export type ReduxState = typeof reducers;
+export function applyReducerMap(state: ReduxStateShape, action: UnknownAction): ReduxStateShape {
+    const nextState = {} as ReduxStateShape;
+    Object.keys(reducerMap).forEach((key) => {
+        const sliceKey = key as keyof ReduxStateShape;
+        (nextState as Record<keyof ReduxStateShape, unknown>)[sliceKey] = reducerMap[key](
+            (state as Record<keyof ReduxStateShape, unknown>)[sliceKey],
+            action
+        ) as ReduxStateShape[typeof sliceKey];
+    });
+    return nextState;
+}
 
 export function deepCopy(obj) {
     return JSON.parse(JSON.stringify(obj));

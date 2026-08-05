@@ -1,43 +1,24 @@
-import config from "../config";
+import { buildAuthRequest, buildPublicRequest } from "../services/authenticatedApi";
 
 export function userProfileApi(token): Api {
-    return {
-        ...getAuthoritationHeaders(token),
-        url: `${config.apiHost}/user/profile/`
-    }
+  return buildAuthRequest(token, "/user/profile/");
 }
 
 export function userHistoryApi(token): Api {
-    return {
-        ...getAuthoritationHeaders(token),
-        url: `${config.apiHost}/user/history:last`
-    }
+  return buildAuthRequest(token, "/user/history:last");
 }
 
 export function authRegisterApi(googleToken:string): Api {
-    return {
-        requestInit: {
-            headers: new Headers(),
-            method: "POST",
-            body: JSON.stringify({
-                jwt_token: googleToken
-            })
-        },
-        url: `${config.apiHost}/auth/register`
-    }
+  return buildPublicRequest("/auth/register", {
+    headers: new Headers(),
+    method: "POST",
+    body: JSON.stringify({
+      jwt_token: googleToken
+    })
+  });
 }
 
-function getAuthoritationHeaders(token): { requestInit: RequestInit } {
-    return {
-        requestInit: {
-            headers: new Headers({
-                Authorization: `Bearer ${token}`
-            })
-        }
-    }
-}
-
-export interface Api {
+export type Api = {
     url: string;
     requestInit?: RequestInit;
 }

@@ -1,21 +1,21 @@
 import React, { FC, memo, useState } from "react";
 import { openPgnDialog } from "./menuReducers";
-import store from "../../store";
+import { store } from "../../store";
 import { ApiManagerService } from "../../services/apiManager";
 import { SessionManagerService } from "../../services/sessionManager";
 import { setEvaluation, setPosition } from "../../actions";
-import { batchActions } from "redux-batched-actions";
+import { batchActions } from "../../libs/batchActions";
 import { lastMoveId, setHistory } from "../history/historyReducers";
 import { setSyzygyEvaluation } from "../syzygyExplorer/syzygyExplorerReducers";
 import { loadOpeningPosition, setOpeningPosition } from "../openingExplorer/openingExplorerReducers";
 import { SmallLoading } from "../Loading";
 import { emitPosition } from "../../services/sockets/actions";
 import { loadGamesFromDatabase } from "../gamesDatabaseExplorer/gamesDatabaseReducers";
-import { FIRST_ID } from "../moveTree/tree";
+import { FIRST_ID, Node } from "../moveTree/tree";
 import { FIRST_POSITION } from "../../contants";
 import styled from "@emotion/styled";
 
-const PgnImportForm: FC<PgnImportFormProps> = memo(({}) => {
+export const PgnImportForm: FC<PgnImportFormProps> = memo(({}) => {
 
   const [state, setState] = useState({
     value: "", isLoading: false, errorMsg: ""
@@ -25,7 +25,7 @@ const PgnImportForm: FC<PgnImportFormProps> = memo(({}) => {
     store.dispatch(openPgnDialog(false));
   };
 
-  const handleSubmit = async function(event) {
+  const handleSubmit = async function(event: React.FormEvent<HTMLFormElement>) {
     const pgn = state.value;
     event.preventDefault();
 
@@ -38,13 +38,13 @@ const PgnImportForm: FC<PgnImportFormProps> = memo(({}) => {
         return;
       }
 
-      const result: any = await ApiManagerService.importGameFromPgn(pgn, token);
+      const result = (await ApiManagerService.importGameFromPgn(pgn, token)) as { moves: string };
 
       setState((prevState) => ({ ...prevState, isLoading: false }));
 
       store.dispatch(openPgnDialog(false));
 
-      const moves = JSON.parse(result.moves);
+      const moves = JSON.parse(result.moves) as Node[];
       store.dispatch(batchActions([
         setHistory(moves),
         lastMoveId(FIRST_ID),
@@ -113,5 +113,3 @@ const StyledErrorMsg = styled.div`
 `;
 
 export type PgnImportFormProps = {}
-
-export default PgnImportForm;

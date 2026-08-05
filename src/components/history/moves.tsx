@@ -3,25 +3,27 @@ import React, { memo } from "react";
 import { MoveNumber } from "./moveNumber";
 import { FIRST_POSITION } from "../../contants";
 
-interface IVariants {
+import type { CSSProperties, MouseEvent, ReactNode } from "react";
+
+type IVariants = {
   variants: NodeVariant[];
   counter: number;
   level: number;
   lastMoveId: number;
-  handleMoveClick: (e: any) => void;
+  handleMoveClick: (e: MouseEvent<HTMLElement>) => void;
 }
 
-export interface IMoves {
+export type IMoves = {
   counter: number;
   showBracket: boolean;
   moves: Node[];
   level: number;
-  handleMoveClick: (e: any) => void;
+  handleMoveClick: (e: MouseEvent<HTMLElement>) => void;
   lastMoveId: number;
 }
 
 export function Variants(props: IVariants) {
-  const variants: any = props.variants.map((variant: NodeVariant, index: number) => {
+  const variants: ReactNode[] = props.variants.map((variant: NodeVariant, index: number) => {
     // @ts-ignore
     const moves = <Moves
       key={index}
@@ -32,9 +34,7 @@ export function Variants(props: IVariants) {
       showBracket={true}
       lastMoveId={props.lastMoveId}
     />;
-    return [
-      moves
-    ];
+    return moves;
   });
 
   if (props.variants.length > 1) {
@@ -42,7 +42,7 @@ export function Variants(props: IVariants) {
       <div>{variants}</div>
     );
   } else {
-    return variants;
+    return <>{variants}</>;
   }
 }
 
@@ -72,7 +72,7 @@ export const Moves = memo((props: IMoves) => {
 
         counter++;
 
-        const style: any = {};
+        const style: CSSProperties = {};
 
         if (move[NODE_MAP.id] === props.lastMoveId) {
           style.color = "#99ff98";

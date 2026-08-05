@@ -1,38 +1,47 @@
 import React, { memo, useEffect } from "react";
-import { shallowEqual, useSelector } from "react-redux";
-import store from "../../store";
-import * as Chess from "chess.js";
+import type { MouseEvent } from "react";
+import type { Api } from "chessground/api";
+import { shallowEqual, useSelector } from "../../libs/stateCompat";
+import { store } from "../../store";
+import { Chess } from "chess.js";
 import { toColor, toDests } from "../../libs/chessboardUtils";
 import { OnMoveIndication } from "./onMoveIndication";
 import { PromotingDialog } from "./promotingDialog";
+import { ISetMoveProps, IOnMove, setStatus, setWhoIsOnMove } from "../../actions";
 import { setMove } from "../history/historyReducers";
 import { setPromotionDialog } from "./promotingDialogReducers";
-import { IOnMove, setStatus, setWhoIsOnMove } from "../../actions";
 import { useBoard } from "./board";
-import { IState } from "../../interfaces";
+import { ReduxStateShape } from "../../reducers";
 import { Key } from "chessground/types";
 
-const handlePromotePiece = (e: any) => {
+type ChessgroundSetConfig = Parameters<Api["set"]>[0];
+
+const handlePromotePiece = (e: MouseEvent<HTMLButtonElement>) => {
   e.preventDefault();
-  const propsSetMove: any = { ...store.getState()["promotionDialog"]["requestedParams"] };
-  propsSetMove.promotion = e.currentTarget.dataset.piece;
+  const promotionDialog = (store.getState() as ReduxStateShape).promotionDialog as { requestedParams?: ISetMoveProps };
+  const requested = promotionDialog.requestedParams;
+  if (!requested) {
+    return;
+  }
+  const promotion = e.currentTarget.dataset.piece;
+  if (!promotion) {
+    return;
+  }
+  const propsSetMove: ISetMoveProps = { ...requested, promotion };
   store.dispatch(setPromotionDialog({ isOpen: false }));
   store.dispatch(setMove(propsSetMove));
 };
 
-function updateStatus(chess) {
+function updateStatus(chess: InstanceType<typeof Chess>) {
   const moveColor = chess.turn() === "b" ? "Black" : "White";
 
   let status = "";
-  // checkmate?
-  if (chess.in_checkmate() === true) {
+  if (chess.isCheckmate()) {
     status = "Game over, " + moveColor + " is in checkmate.";
-  } else if (chess.in_draw() === true) { // draw?
+  } else if (chess.isDraw()) {
     status = "Game over, drawn position";
-  } else { // game still on
-    // status = moveColor + ' to move';
-    // check?
-    if (chess.in_check() === true) {
+  } else {
+    if (chess.isCheck()) {
       status += moveColor + " is in check";
     }
   }
@@ -48,7 +57,7 @@ function isBoardKey(key: string): key is Key {
 }
 
 export const SmartAwesomeChessboard = memo((props: IChessboardProps) => {
-  const reduxState = useSelector((state: IState) => {
+  const reduxState = useSelector((state: ReduxStateShape) => {
     return {
       fen: state.fen,
       onMove: state.onMove,
@@ -59,7 +68,16 @@ export const SmartAwesomeChessboard = memo((props: IChessboardProps) => {
       promotionDialog: state.promotionDialog,
       evaluation: state.evaluation
     };
-  }, shallowEqual);
+  }, shallowEqual) as {
+    fen: string;
+    onMove: IOnMove;
+    history: unknown[];
+    isFlip: boolean;
+    lastMoveId: number;
+    lastMove: { from: string; to: string };
+    promotionDialog: { isOpen: boolean; requestedParams?: ISetMoveProps };
+    evaluation: Array<{ p?: string }>;
+  };
   const { isFlip, fen, lastMove, evaluation, promotionDialog, onMove } = reduxState;
   const { from, to } = lastMove;
   const [setRef, board] = useBoard();
@@ -75,8 +93,8 @@ export const SmartAwesomeChessboard = memo((props: IChessboardProps) => {
 
     if (board) {
       const chess = new Chess(fen);
-      const options: any = {
-        check: chess.in_check(),
+      const options = {
+        check: chess.isCheck(),
         turnColor: toColor(chess),
         highlight: {
           check: true,
@@ -88,9 +106,9 @@ export const SmartAwesomeChessboard = memo((props: IChessboardProps) => {
           dests: toDests(chess)
         },
         fen
-      };
+      } as ChessgroundSetConfig;
 
-      if (from && to) {
+      if (from && to && isBoardKey(from) && isBoardKey(to)) {
         options.lastMove = [from, to];
       }
       board.set(options);
@@ -135,6 +153,4 @@ export const SmartAwesomeChessboard = memo((props: IChessboardProps) => {
 });
 
 
-export interface IChessboardProps {
-
-}
+export type IChessboardProps = Record<string, never>

@@ -2,6 +2,15 @@ import { NODE_MAP } from "../moveTree/tree";
 import React, { memo } from "react";
 import { IHistoryMove } from "../history/historyReducers";
 
+type MoveProps = {
+  move: IHistoryMove;
+  index: number;
+}
+
+type MoveNumberProps = {
+  index: number;
+}
+
 export const Move = memo(({ move, index }: MoveProps) => {
   return (
     <span><MoveNumber index={index} /> {move[NODE_MAP.shortNotation]} </span>
@@ -20,12 +29,3 @@ export const MoveNumber = memo(({ index }: MoveNumberProps) => {
     <span className="fs-xs">{num}. </span>
   );
 });
-
-interface MoveProps {
-  move: IHistoryMove;
-  index: number;
-}
-
-interface MoveNumberProps {
-  index: number;
-}

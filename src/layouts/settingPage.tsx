@@ -1,12 +1,13 @@
 import React, {memo} from "react";
-import {connect} from "react-redux";
+import {connect} from "../libs/stateCompat";
 import {MenuWithRouter} from "../components/menu/menu";
 import {Header} from "../components/Header";
 import Toggle from "react-toggle"
-import {IAction} from "../interfaces";
-import store from "../store";
+import { store } from "../store";
+import { toggleShowEvaluation, type SettingsState } from "./settingPageReducers";
+import type { ReduxStateShape } from "../reducers";
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: ReduxStateShape) => ({
     settings: state.settings
 });
 
@@ -14,7 +15,9 @@ function handleToggleShowEvaluation() {
     store.dispatch(toggleShowEvaluation());
 }
 
-const Sp = memo((props: any) => {
+type SettingPageInnerProps = { settings: SettingsState };
+
+const Sp = memo((props: SettingPageInnerProps) => {
     return (
         <div className="container">
             <div className="row">
@@ -42,31 +45,6 @@ const Sp = memo((props: any) => {
     );
 });
 
-interface ISettings {
-    showEvaluation: boolean;
-}
-
-export const TOGGLE_EVALUATION = "settings/showEvaluation";
-
-export function toggleShowEvaluation() {
-    return {
-        type: TOGGLE_EVALUATION
-    };
-}
-
-export const settingsReducer = (settings: ISettings = {
-    showEvaluation: true
-}, action: IAction<ISettings>) => {
-
-    switch (action.type) {
-        case TOGGLE_EVALUATION:
-            console.log("actionactionaction", action);
-            return {...settings, showEvaluation: !settings.showEvaluation};
-
-        default:
-            return settings;
-    }
-};
+export { TOGGLE_EVALUATION, toggleShowEvaluation, settingsReducer } from "./settingPageReducers";
 
 export const SettingPage = connect(mapStateToProps)(Sp);
-export default SettingPage;

@@ -1,10 +1,11 @@
 import {IEvaluation, IWorkerResponse} from "./interfaces";
-import config from "./config";
-import {IUser, IWorker} from "./reducers";
+import { config } from "./config";
+import {IUser, IWorker, type ReduxStateShape} from "./reducers";
 import {Flash} from "./services/errorManager";
 import {SessionManagerService} from "./services/sessionManager";
-import {ThunkAction} from "redux-thunk";
-import {Action} from "redux";
+
+type ThunkDispatch = (action: unknown) => unknown;
+type ThunkGetState = () => unknown;
 
 export const UPDATE_LOADING = "UPDATE_LOADING";
 export const GAME_DATABASE_UPDATE_LOADING = "GAME_DATABASE_UPDATE_LOADING";
@@ -65,7 +66,7 @@ export function setEvaluation(evaluation: IWorkerResponse[]) {
 }
 
 
-export function setWorkerList(workerList: any[]) {
+export function setWorkerList(workerList: IWorker[]) {
     return {
         payload: workerList,
         type: SET_WORKER_LIST
@@ -73,7 +74,7 @@ export function setWorkerList(workerList: any[]) {
 }
 
 
-export interface ISetMoveProps {
+export type ISetMoveProps = {
     from: string;
     to: string;
     id: number;
@@ -106,8 +107,8 @@ export function setUser(user: IUser) {
 // }
 
 
-export function loadEngines():any {
-    return async (dispatch: (data: any) => {}, getState: any) => {
+export function loadEngines() {
+    return async (dispatch: ThunkDispatch, _getState: ThunkGetState): Promise<void> => {
         const token = SessionManagerService.getToken();
         dispatch(setLoading(true));
 
@@ -126,7 +127,7 @@ export function loadEngines():any {
                 throw new Error("Loading failed");
             }
 
-            const workerList: any = await response.json();
+            const workerList = (await response.json()) as IWorker[];
             console.log(workerList);
             dispatch(setWorkerList(workerList));
 
@@ -146,8 +147,8 @@ export function loadEngines():any {
 
 }
 
-export function checkWorkers(workerList: IWorker[]):any {
-    return async (dispatch: (data: any) => {}, getState: any) => {
+export function checkWorkers(workerList: IWorker[]) {
+    return async (dispatch: ThunkDispatch, _getState: ThunkGetState): Promise<void> => {
         dispatch(setLoading(true));
 
 
@@ -168,9 +169,7 @@ export function checkWorkers(workerList: IWorker[]):any {
                 throw new Error("Loading failed");
             }
 
-            const json: any = await response.json();
-            console.log(json);
-
+            await response.json();
 
         } catch (e) {
             Flash.error({msg: "Fetch error", identifier: "workers"});
@@ -183,16 +182,25 @@ export function checkWorkers(workerList: IWorker[]):any {
     }
 }
 
-export function addWorker(props: any):any {
-    return async (dispatch: (data: any) => {}, getState: any) => {
+export type AddWorkerProps = {
+    name: string;
+    uuid: string;
+}
+
+export function addWorker(_props: AddWorkerProps) {
+    return async (_dispatch: ThunkDispatch, _getState: ThunkGetState): Promise<void> => {
 
 
     }
 
 }
 
-export function deleteWorker(props: any):any {
-    return async (dispatch: (data: any) => {}, getState: any) => {
+export type DeleteWorkerProps = {
+    id: number;
+}
+
+export function deleteWorker(props: DeleteWorkerProps) {
+    return async (dispatch: ThunkDispatch, _getState: ThunkGetState): Promise<void> => {
 
         const token = SessionManagerService.getToken();
         dispatch(setLoading(true));
@@ -212,8 +220,7 @@ export function deleteWorker(props: any):any {
                 throw new Error("Loading failed");
             }
 
-            const json: any = await response.json();
-            console.log(json);
+            await response.json();
             dispatch(loadEngines());
 
         } catch (e) {
@@ -228,10 +235,10 @@ export function deleteWorker(props: any):any {
 }
 
 
-export function addNewGame(callback):any {
-    return async (dispatch: (data: any) => {}, getState: any) => {
+export function addNewGame(callback: (gameId: number) => void) {
+    return async (dispatch: ThunkDispatch, getState: ThunkGetState): Promise<void> => {
 
-        const user = getState()["user"];
+        const user = (getState() as ReduxStateShape).user;
         const token = SessionManagerService.getToken();
         dispatch(setLoading(true));
 
@@ -250,7 +257,7 @@ export function addNewGame(callback):any {
                 throw new Error("Loading failed");
             }
 
-            const game: any = await response.json();
+            const game = (await response.json()) as { id: number };
 
             dispatch(setUser({...user, lastGameId: game.id}));
             callback(game.id);

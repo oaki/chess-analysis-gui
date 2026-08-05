@@ -1,5 +1,5 @@
-import SocketManager from "./socketManager";
-import config from "../config";
+import { SocketManager } from "./socketManager";
+import { config } from "../config";
 import {IAction} from "../interfaces";
 import {EMIT_POSITION, IS_CONNECTED, IS_CONNECTING} from "./sockets/actions";
 
@@ -7,7 +7,7 @@ export const SocketManagerService = new SocketManager(config);
 
 const defaults = {};
 
-interface ISocket {
+type ISocket = {
     isConnected: boolean;
     isConnecting: boolean;
 }

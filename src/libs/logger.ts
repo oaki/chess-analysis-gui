@@ -1,7 +1,7 @@
-import guid from "../tools/uuid";
+import { guid } from "../tools/uuid";
 import {ApiManagerService} from "../services/apiManager";
 
-const StackTrace = require("stacktrace-js");
+import StackTrace from "stacktrace-js";
 
 export enum Level {
     "INFO" = "info",
@@ -11,7 +11,7 @@ export enum Level {
 
 class Logger {
     private uuid;
-    private logs: any[] = [];
+    private logs: unknown[] = [];
     private interval;
 
     constructor() {

@@ -1,11 +1,11 @@
 import { GAME_DATABASE_UPDATE_LOADING, gameDatabaseSetLoading } from "../../actions";
-import config from "../../config";
+import { config } from "../../config";
 import { Flash } from "../../services/errorManager";
 import { GameDatabase, IAction } from "../../interfaces";
 
 import debounce from "lodash/debounce";
 
-export interface IGames {
+export type IGames = {
   id: string;
   white: string;
   black: string;
@@ -16,22 +16,24 @@ export interface IGames {
   fewNextMove: string[];
 }
 
-export interface IGameDatabase {
+export type IGameDatabase = {
   id: number;
   fen: string;
-  data: any;
+  data: unknown;
   games: IGames[];
 }
 
-export interface IGamesDatabaseProps {
+export type IGamesDatabaseProps = {
   response: IGameDatabase;
   fen: string;
   isLoading: boolean;
-  handleMove: (move: string, fen: string) => {}
+  handleMove: (move: string, fen: string) => void;
 }
 
 
-const loadGamesFromDatabaseDebounce = debounce(async (dispatch: (data: any) => {}, fen) => {
+type ThunkDispatch = (action: unknown) => unknown;
+
+const loadGamesFromDatabaseDebounce = debounce(async (dispatch: ThunkDispatch, fen: string) => {
 
   const url = `${config.apiHost}/games-database?fen=${fen}`;
   const headers: RequestInit = {
@@ -62,8 +64,8 @@ const loadGamesFromDatabaseDebounce = debounce(async (dispatch: (data: any) => {
   dispatch(gameDatabaseSetLoading(false));
 }, 1000);
 
-export function loadGamesFromDatabase(fen: string): any {
-  return async (dispatch: (data: any) => {}) => {
+export function loadGamesFromDatabase(fen: string) {
+  return async (dispatch: ThunkDispatch) => {
     console.log("try to load");
     dispatch(gameDatabaseSetLoading(true));
     return loadGamesFromDatabaseDebounce(dispatch, fen);
@@ -82,7 +84,7 @@ export function setGamesDatabase(response: IGameDatabase | null) {
 
 export const SET_GAMES = "SET_GAMES";
 
-export interface IGamesDatabaseAction {
+export type IGamesDatabaseAction = {
   response: IGameDatabase;
   isLoading: IGameDatabase;
 }

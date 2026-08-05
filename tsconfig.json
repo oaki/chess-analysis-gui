@@ -1,31 +1,29 @@
 {
   "compilerOptions": {
-    "sourceMap": true,
-    "target": "es5",
-    "jsx": "react",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "experimentalDecorators": false,
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "jsx": "react-jsx",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "strict": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "strictNullChecks": true,
-    "noImplicitThis": false,
-    "resolveJsonModule": true,
-    "declaration": false,
-    "removeComments": true,
     "noImplicitReturns": false,
-
-    "strict": false,
-    "outDir": "./build",
-    "lib": ["es6", "es7", "dom"],
+    "experimentalDecorators": false,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "baseUrl": ".",
     "paths": {
-      "*": [
-        "src/*"
-      ]
-    },
-    "allowSyntheticDefaultImports": true
+      "*": ["src/*"]
+    }
   },
-  "exclude": ["build", "node_modules"],
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "vite.config.ts"],
+  "exclude": ["build", "node_modules", "e2e"]
 }

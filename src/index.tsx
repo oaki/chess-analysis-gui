@@ -1,7 +1,7 @@
 import React from "react";
-import * as ReactDOM from "react-dom";
-// import * as Sentry from '@sentry/browser';
-import registerServiceWorker from "./registerServiceWorker";
+import { createRoot } from "react-dom/client";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import { register as registerServiceWorker } from "./registerServiceWorker";
 import "normalize.css";
 import "functional-css-framework/dist/functional-css.min.css";
 import './assets/css/bootstrap/bootstrap-custom-modal.css';
@@ -22,11 +22,9 @@ import './assets/css/fullLoading.css';
 import './assets/css/infoPanel.css';
 import './assets/css/app.css';
 
-import onlineIndicator from "./services/onlineIndicator";
-import {ChessApp} from "app";
-
-console.log("process.env", process.env);
-// Sentry.init({dsn: "https://319a79476069422db64e50c354eb4682@sentry.io/1836755"});
+import { onlineIndicator } from "./services/onlineIndicator";
+import { ChessApp } from "app";
+import { config } from "./config";
 
 onlineIndicator();
 
@@ -34,6 +32,12 @@ const appEl = document.getElementById("root");
 if (!appEl) {
     throw new Error("Root element is missing");
 }
-ReactDOM.render(<ChessApp/>, appEl);
+
+const root = createRoot(appEl);
+root.render(
+    <GoogleOAuthProvider clientId={config.google.clientId}>
+        <ChessApp />
+    </GoogleOAuthProvider>
+);
 
 registerServiceWorker();

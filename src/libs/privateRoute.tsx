@@ -1,29 +1,18 @@
-import * as React from "react"
-import {Redirect, Route} from "react-router-dom"
-import store from "../store";
+import React from "react";
+import { Navigate, useLocation } from "react-router-dom";
+import { store } from "../store";
 
-export const PrivateRoute = ({component: Component, ...rest}) => {
+type PrivateRouteProps = {
+  children: React.ReactNode;
+};
 
-    const state = store.getState();
-    const isLoggedIn = state.user.isLoggedIn;
-    const renderComponent = (props) => {
+export const PrivateRoute = ({ children }: PrivateRouteProps) => {
+  const location = useLocation();
+  const isLoggedIn = store.getState().user.isLoggedIn;
 
-        if (isLoggedIn) {
-            return <Component {...props} />;
-        }
+  if (!isLoggedIn) {
+    return <Navigate to="/auth/sign-in" state={{ from: location }} replace />;
+  }
 
-        const redirectProps = {
-            pathname: "/auth/sign-in",
-            state: {from: props.location}
-        };
-
-
-        return (
-            <Redirect to={redirectProps}/>
-        )
-    };
-
-    return (
-        <Route {...rest} render={renderComponent}/>
-    );
+  return <>{children}</>;
 };

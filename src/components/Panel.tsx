@@ -1,5 +1,5 @@
 import React, { FC, memo } from "react";
-import { shallowEqual, useSelector } from "react-redux";
+import { shallowEqual, useSelector } from "../libs/stateCompat";
 import { SmartOpeningExplorer } from "./openingExplorer/openingExplorer";
 import { SmartEvaluation } from "./evaluation/evaluation";
 import { SyzygyExplorerSmart } from "./syzygyExplorer/syzygyExplorer";
@@ -8,19 +8,12 @@ import { History } from "./history/history";
 import { PanelTabType } from "./infoPanel/infoPanelReducers";
 import { SmartStockFish } from "./evaluation/offlineStockfishEvaluation";
 import styled from "@emotion/styled";
-import { IState } from "interfaces";
-
-interface IEvaluation {
-  score: string;
-  pv: string;
-  mate: string;
-  nodes: string;
-}
-
+import { ReduxStateShape } from "reducers";
+import { WorkerEvaluation } from "components/evaluation/workerEvaluation";
 
 type PanelProps = {}
 const Panel: FC<PanelProps> = memo(() => {
-  const panelTab = useSelector((state: IState) => {
+  const panelTab = useSelector((state: ReduxStateShape) => {
     return state.panelTab;
   }, shallowEqual);
 
@@ -32,16 +25,17 @@ const Panel: FC<PanelProps> = memo(() => {
         <div>
           <SmartStockFish />
           <SmartEvaluation name={"Cloud"} />
+          <WorkerEvaluation />
         </div>
       )}
       {panelTab === PanelTabType.BOOK_TAB && (
-        <Wrapper>
+        <StyledPanelSection>
           <div className="section">
             <SmartOpeningExplorer />
             <SmartGamesDatabaseExplorer />
             <SyzygyExplorerSmart />
           </div>
-        </Wrapper>
+        </StyledPanelSection>
       )}
 
 
@@ -55,7 +49,7 @@ const Panel: FC<PanelProps> = memo(() => {
     </React.Fragment>
   );
 });
-const Wrapper = styled.div`
+const StyledPanelSection = styled.div`
   width: 100%;
   height: 100%;
 

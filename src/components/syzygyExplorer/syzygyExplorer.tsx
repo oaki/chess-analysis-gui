@@ -1,12 +1,14 @@
 import React, { memo } from "react";
-import { connect } from "react-redux";
+import type { MouseEvent } from "react";
+import { connect } from "../../libs/stateCompat";
 import "../../assets/css/explorerBox.css";
-import store from "../../store";
+import { store } from "../../store";
 import { setMove } from "./../history/historyReducers";
 import { treeService } from "./../moveTree/tree";
-import { ISyzygyMove } from "./syzygyExplorerReducers";
+import { ISyzygy, ISyzygyMove } from "./syzygyExplorerReducers";
+import { ReduxStateShape } from "../../reducers";
 
-function renderMoves(move: ISyzygyMove, handleClickMove) {
+function renderMoves(move: ISyzygyMove, handleClickMove: (e: MouseEvent<HTMLButtonElement>) => void) {
   return (
     <button onClick={handleClickMove} data-move={move.uci} className="btn btn-syzygy">
       {move.san}
@@ -14,7 +16,12 @@ function renderMoves(move: ISyzygyMove, handleClickMove) {
   );
 }
 
-const SyzygyExplorer = memo((props: any) => {
+export type SyzygyExplorerProps = {
+  syzygy: ISyzygy | null;
+  handleClickMove: (e: MouseEvent<HTMLButtonElement>) => void;
+};
+
+export const SyzygyExplorer = memo((props: SyzygyExplorerProps) => {
   if (props.syzygy === null) {
     return null;
   }
@@ -65,17 +72,20 @@ const SyzygyExplorer = memo((props: any) => {
   );
 });
 
-function mapStateToProps(state: any) {
+function mapStateToProps(state: ReduxStateShape) {
   return {
-    syzygy: state.syzygy || null
+    syzygy: (state.syzygy as ISyzygy | null) || null
   };
 }
 
-function mapDispatchToProps(dispatch: (data: any) => {}) {
+function mapDispatchToProps(dispatch: (action: unknown) => unknown) {
   return {
-    handleClickMove(e) {
-      const move = e.currentTarget.dataset.move;
-      const fen = store.getState()["fen"];
+    handleClickMove(e: MouseEvent<HTMLButtonElement>) {
+      const move = e.currentTarget.dataset.move ?? "";
+      if (!move) {
+        return;
+      }
+      const fen = store.getState()["fen"] as string;
 
       let promotion = "q";
 
@@ -94,4 +104,7 @@ function mapDispatchToProps(dispatch: (data: any) => {}) {
   };
 }
 
-export const SyzygyExplorerSmart = connect(mapStateToProps, mapDispatchToProps)(SyzygyExplorer);
+export const SyzygyExplorerSmart = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(SyzygyExplorer) as unknown as React.ComponentType<Record<string, never>>;

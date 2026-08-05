@@ -1,10 +1,10 @@
-import React, { memo } from "react";
-import { connect } from "react-redux";
+import React, { memo, type ComponentType } from "react";
+import { connect } from "../../libs/stateCompat";
 import { setEvaluation, setPosition } from "../../actions";
-import store from "../../store";
-import { batchActions } from "redux-batched-actions";
+import { store } from "../../store";
+import { batchActions } from "../../libs/batchActions";
 import { setSyzygyEvaluation } from "../syzygyExplorer/syzygyExplorerReducers";
-import { NODE_MAP, treeService } from "../moveTree/tree";
+import { Node, NODE_MAP, treeService } from "../moveTree/tree";
 import { Moves } from "./moves";
 import { loadOpeningPosition, setOpeningPosition } from "../openingExplorer/openingExplorerReducers";
 import { lastMoveId } from "./historyReducers";
@@ -12,9 +12,15 @@ import { emitPosition } from "../../services/sockets/actions";
 import { loadGamesFromDatabase } from "../gamesDatabaseExplorer/gamesDatabaseReducers";
 import { IEvaluation, Nullable } from "../../interfaces";
 import styled from "@emotion/styled";
+import type { MouseEvent } from "react";
+import type { ReduxStateShape } from "../../reducers";
 
+type HistoryContainerProps = {
+  history: Node[];
+  lastMoveId: number;
+};
 
-const HistoryContainer = memo((props: any) => {
+const HistoryContainer = memo((props: HistoryContainerProps) => {
 
   // @ts-ignore
   const moves = <Moves
@@ -25,13 +31,13 @@ const HistoryContainer = memo((props: any) => {
     showBracket={false} />;
 
   return (
-    <HistoryWrapper>
+    <StyledHistoryWrapper>
       {props.history.length > 1 && moves}
-    </HistoryWrapper>
+    </StyledHistoryWrapper>
   );
 });
 
-const HistoryWrapper = styled.div`
+const StyledHistoryWrapper = styled.div`
   font-size: 1.3rem;
   color: white;
   background-color: #4b4b4b;
@@ -80,7 +86,7 @@ const HistoryWrapper = styled.div`
 `;
 
 
-function handleMoveClick(e: any) {
+function handleMoveClick(e: MouseEvent<HTMLElement>) {
   e.preventDefault();
   const id: number = Number(e.currentTarget.dataset.id);
 
@@ -120,11 +126,11 @@ function handleMoveClick(e: any) {
   }
 }
 
-function mapStateToProps(state: any) {
+function mapStateToProps(state: ReduxStateShape) {
   return {
-    history: state.history,
+    history: state.history as Node[],
     lastMoveId: state.lastMoveId
   };
 }
 
-export const History = connect(mapStateToProps)(HistoryContainer);
+export const History = connect(mapStateToProps)(HistoryContainer) as unknown as ComponentType<Record<string, never>>;

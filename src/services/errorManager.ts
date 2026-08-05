@@ -1,11 +1,12 @@
+import type { MouseEvent } from "react";
 import {IAction} from "../interfaces";
 import dotProp from "dot-prop-immutable";
-import store from "../store";
+import { store } from "../store";
 
 export const ADD_ERROR = "ADD_ERROR";
 export const REMOVE_ERROR = "REMOVE_ERROR";
 
-interface IRemoveErrorProps {
+type IRemoveErrorProps = {
     identifier: string;
 }
 
@@ -14,13 +15,13 @@ export enum ErrorType {
     ERROR = "error",
 }
 
-export interface IErrorProps {
+export type IErrorProps = {
     msg: string;
     identifier?: string;
     type?: ErrorType;
     delay: number;
     expireTime?: number;
-    handleOnClick: (e: any) => void
+    handleOnClick: (e: MouseEvent<HTMLElement>) => void
 }
 export function addError(props: Partial<IErrorProps>) {
 
@@ -100,12 +101,16 @@ export class ErrorManager {
     }
 
     handler = () => {
-        const errors = store.getState()["errors"];
+        const errors = store.getState()["errors"] as IErrorProps[];
         const timestamp = ErrorManager.getNow();
         if (errors) {
-            errors.forEach(error => {
-                if (error.expireTime < timestamp) {
-                    store.dispatch(removeError({identifier: error.identifier}));
+            errors.forEach((error) => {
+                if (
+                    error.expireTime !== undefined &&
+                    error.expireTime < timestamp &&
+                    error.identifier !== undefined
+                ) {
+                    store.dispatch(removeError({ identifier: error.identifier }));
                 }
             })
 

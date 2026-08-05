@@ -1,30 +1,31 @@
-import store from "../../store";
+import { store } from "../../store";
 import React, { memo, ReactElement, useEffect } from "react";
-import { connect } from "react-redux";
-import { batchActions } from "redux-batched-actions";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "../../libs/stateCompat";
+import { batchActions } from "../../libs/batchActions";
 import { setEvaluation, setPosition, setUser } from "../../actions";
 import { setSyzygyEvaluation } from "../syzygyExplorer/syzygyExplorerReducers";
-import { lastMoveId, setHistory } from "../history/historyReducers";
+import { IHistoryMove, lastMoveId, setHistory } from "../history/historyReducers";
 import { setOpeningPosition } from "../openingExplorer/openingExplorerReducers";
-import { FIRST_ID } from "../moveTree/tree";
+import { FIRST_ID, Node } from "../moveTree/tree";
 import { IHistoryGameResponse } from "./historyListReducers";
-import { SwipeableList } from "@sandstreamdev/react-swipeable-list";
-import "./style.scss";
 import { Undef } from "../../interfaces";
-import { ListItem } from "./listItem";
+import { ReduxStateShape } from "../../reducers";
 import { useFetch } from "../hooks/useFetch";
 import { SessionManagerService } from "../../services/sessionManager";
-import config from "../../config";
+import { config } from "../../config";
 import { loadHistoryGames } from "../../layouts/historyPage";
+import { formatDate } from "tools/formatDate";
+import { ListItem } from "components/ui/listItem";
+import { Move } from "components/historyList/move";
+import { List } from "components/ui/list";
 
-
-interface HistoryListProps {
-  historyList: IHistoryGameResponse[];
-  history: any;
-}
-
-const HistoryList = memo((props: HistoryListProps) => {
+const HistoryList = memo(() => {
+  const navigate = useNavigate();
   const [fetchState, doFetch] = useFetch();
+  const historyList: IHistoryGameResponse[] = useSelector((reduxState: ReduxStateShape) => {
+    return reduxState.historyList;
+  });
 
   useEffect(() => {
     if (fetchState.response) {
@@ -33,7 +34,7 @@ const HistoryList = memo((props: HistoryListProps) => {
   }, [doFetch, fetchState.response]);
 
 
-  const handleDeleteGame = (id: number) => doFetch(`${config.apiHost}/user/history/${id}`, {
+  const handleDeleteGame = (id: string) => doFetch(`${config.apiHost}/user/history/${id}`, {
     method: "DELETE",
     headers: new Headers({
       "Content-Type": "application/json",
@@ -41,24 +42,10 @@ const HistoryList = memo((props: HistoryListProps) => {
     })
   });
 
-  return (
-    <SwipeableList>
-      <Items handleDeleteGame={handleDeleteGame} historyList={props.historyList} history={props.history} />
-    </SwipeableList>
-  );
-});
-
-interface ItemsProps {
-  history: any;
-  historyList: IHistoryGameResponse[];
-  handleDeleteGame: (id: number) => void;
-}
-
-const Items = memo((props: ItemsProps) => {
-  const handleLoadGame = (e: any) => {
+  const handleLoadGame = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     const id: number = Number(e.currentTarget.dataset.id);
-    const historyGameResponse: Undef<IHistoryGameResponse> = props.historyList.find((item: IHistoryGameResponse) => {
+    const historyGameResponse: Undef<IHistoryGameResponse> = historyList.find((item: IHistoryGameResponse) => {
       return Number(item.id) === id;
     });
 
@@ -66,7 +53,7 @@ const Items = memo((props: ItemsProps) => {
       const user = store.getState()["user"];
       store.dispatch(batchActions([
         setUser(user),
-        setHistory(historyGameResponse.moves),
+        setHistory(historyGameResponse.moves as unknown as Node[]),
         lastMoveId(FIRST_ID),
         setPosition(""),
         setOpeningPosition([]),
@@ -74,21 +61,29 @@ const Items = memo((props: ItemsProps) => {
         setSyzygyEvaluation(null)
       ]));
     }
-    props.history.push("/");
+    navigate("/");
   };
 
   return (
-    <>
-      {props.historyList.map((historyGame: IHistoryGameResponse, index): ReactElement =>
+    <List>
+      {historyList.map((historyGame: IHistoryGameResponse): ReactElement =>
         <ListItem
           key={historyGame.id}
-          historyGame={historyGame}
-          handleLoadGame={handleLoadGame}
-          handleDeleteGame={props.handleDeleteGame}
-        />)}
-    </>
+          id={String(historyGame.id)}
+          handleClick={handleLoadGame}
+          handleDelete={handleDeleteGame}
+        >
+          <div className="fs-xs">{formatDate(historyGame.updated_at)}</div>
+          <div className="ox-a fs-xs">
+            {historyGame.moves.slice(0, 15).map((move: IHistoryMove, index) => {
+              return <Move key={move.id} move={move} index={index} />;
+            })}
+          </div>
+        </ListItem>
+      )}
+    </List>
   );
+
 });
 
-const mapStateToProps = (state) => ({ historyList: state.historyList });
-export const SmartHistoryList = connect(mapStateToProps)(HistoryList);
+export const SmartHistoryList = HistoryList;

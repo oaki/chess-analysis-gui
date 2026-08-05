@@ -11,18 +11,17 @@ import {
     setEvaluation,
     setPosition
 } from "../../actions";
-import { batchActions } from "redux-batched-actions";
-import store from "../../store";
+import { batchActions } from "../../libs/batchActions";
+import { store } from "../../store";
 import { IAction, IEvaluation, LINE_MAP } from "../../interfaces";
-import * as Chess from "chess.js";
+import { Chess } from "chess.js";
 import { setSyzygyEvaluation } from "../syzygyExplorer/syzygyExplorerReducers";
 import { setPromotionDialog } from "../chessboard/promotingDialogReducers";
 import { emitPosition } from "../../services/sockets/actions";
 import { loadGamesFromDatabase } from "../gamesDatabaseExplorer/gamesDatabaseReducers";
 import maxBy from "lodash/maxBy";
 
-
-export interface IHistoryMove {
+export type IHistoryMove = {
   id: number;
   parentId: number;
   fen: string;
@@ -30,14 +29,16 @@ export interface IHistoryMove {
   shortNotation: string;
 }
 
-export const historyReducer = (state: Node[] = [], action: IAction<IHistoryMove | any>) => {
+export const historyReducer = (state: Node[] = [], action: IAction<IHistoryMove> | IAction<Node[]>) => {
   switch (action.type) {
     case SET_HISTORY_MOVE:
       return treeService.toJson();
 
-    case SET_HISTORY:
-      treeService.setNodes(action.payload);
-      return action.payload;
+    case SET_HISTORY: {
+      const payload = (action as IAction<Node[]>).payload;
+      treeService.setNodes(payload);
+      return payload;
+    }
 
     default:
       return state;
@@ -66,13 +67,17 @@ export function setMove(props: ISetMoveProps) {
       })
     );
   } else {
-    const newMove: any = chess.move({ from, to, promotion });
+    const newMove = chess.move({ from, to, promotion });
+    if (!newMove) {
+      console.warn("Illegal move", { from, to, promotion, fen });
+      return batchActions([]);
+    }
     const newFen: string = chess.fen();
     const previousId: number = reduxState.lastMoveId;
     //check if FEN is not exist already like next move
     const nextMoveId = treeService.getNextMoveId(previousId, newFen);
 
-    const actions: any = [
+    const actions: unknown[] = [
       setOpeningPosition([]),
       setEvaluation([]),
       setPosition(newFen),
@@ -136,7 +141,7 @@ export function setHistoryMove(payload: IHistoryMove) {
   };
 }
 
-export function setHistory(payload: any) {
+export function setHistory(payload: Node[]) {
   return {
     payload,
     type: SET_HISTORY

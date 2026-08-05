@@ -146,7 +146,10 @@ var config = {
     }
   },
   plugins: [
-    new BundleAnalyzerPlugin(),
+    new BundleAnalyzerPlugin({
+      analyzerMode: process.env.ANALYZE === "true" ? "server" : "disabled",
+      openAnalyzer: process.env.ANALYZE === "true",
+    }),
     new webpack.DefinePlugin({
       'process.env': JSON.stringify(dotenv.config().parsed)
     }),

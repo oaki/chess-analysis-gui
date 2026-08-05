@@ -1,15 +1,14 @@
-import React, { ChangeEvent, FC, memo, useState } from "react";
-import { useSelector } from "react-redux";
-import store from "../store";
+import React, { ChangeEvent, FC, memo, useEffect, useState } from "react";
+import { useSelector } from "../libs/stateCompat";
+import { store } from "../store";
 import { deleteWorker, loadEngines, setLoading } from "actions";
 import { IWorker } from "reducers";
-import { Add, Delete, MicOff, SignalCellularAlt } from "@emotion-icons/material";
+import { Add, MicOff, SignalCellularAlt } from "@emotion-icons/material";
 import { MenuWithRouter } from "components/menu/menu";
 import { Header } from "components/Header";
 import { SessionManagerService } from "services/sessionManager";
-import config from "config";
 import { Flash } from "services/errorManager";
-import { IState } from "interfaces";
+import { ReduxStateShape } from "reducers";
 import {
   StyledBtn,
   StyledBtnText,
@@ -18,32 +17,33 @@ import {
   StyledLabel,
   StyledPairsWrapper
 } from "components/ui/formComponents";
+import { ApiManagerService } from "services/apiManager";
+import { ListItem } from "components/ui/listItem";
+import { StyledContentWrapper, StyledWrapperWithHeader } from "components/ui/styledWrapperWithHeader";
+import { List } from "components/ui/list";
 
-const Button = (index, worker) => {
-  const handleDelete = () => {
+
+export function Rows() {
+  const workers = useSelector((reduxState: ReduxStateShape) => {
+    return reduxState?.workers || [];
+  });
+
+  const handleDelete = (id) => {
     store.dispatch(deleteWorker({
-      id: worker.id
+      id
     }));
   };
 
   return (
-    <button className="btn btn-danger f-r" onClick={handleDelete}>
-      <Delete />
-    </button>
-  );
-};
+    <List>
+      {workers.map((worker: IWorker) => (
+        <ListItem
+          key={worker.id}
+          id={String(worker.id)}
+          handleClick={() => {
+          }}
+          handleDelete={handleDelete}>
 
-
-export function Rows() {
-  const workers = useSelector<IState, IWorker[]>((reduxState) => {
-    return reduxState?.workers || [];
-  });
-
-  return (
-    <ul>
-      {workers.map((worker: IWorker, index: number) => (
-        <li key={index} className="d-b p-t-md p-b-md list__bottom-line">
-          {Button(index, worker)}
           <div className="f-l">
             {worker.ready && <span className="c-green"><SignalCellularAlt /></span>}
             {!worker.ready && <span><MicOff /></span>}
@@ -52,41 +52,30 @@ export function Rows() {
             <div className="fs-5">{worker.name}</div>
             <div className="fs-xs">{worker.uuid}</div>
           </div>
-        </li>
+        </ListItem>
       ))}
-    </ul>
+    </List>
   );
 }
 
 export const EnginesPage: FC<EnginesPageProps> = memo(({}) => {
   const [state, setState] = useState({ name: "", uuid: "", errorMsg: "" });
 
+  useEffect(() => {
+    store.dispatch(loadEngines());
+  });
   const handleSubmit = async () => {
 
-    const token = SessionManagerService.getToken();
     store.dispatch(setLoading(true));
 
-    const url = `${config.apiHost}/user/workers`;
-    const formData = new FormData();
-    formData.append("name", state.name);
-    formData.append("uuid", state.uuid);
-
-    const options: RequestInit = {
-      method: "POST",
-      headers: new Headers({
-        "Authorization": `Bearer ${token}`
-      }),
-      body: formData
-    };
-
     try {
-      const response = await fetch(url, options);
-      if (!response.ok) {
-        throw new Error("Loading failed");
+      const token = SessionManagerService.getToken();
+      if (!token) {
+        Flash.error({ msg: "Token is not valid", identifier: "worker" });
+        store.dispatch(setLoading(false));
+        return;
       }
-
-      const json: any = await response.json();
-      console.log(json);
+      await ApiManagerService.addWorker(token, state.name, state.uuid);
       store.dispatch(loadEngines());
       setState({
         name: "",
@@ -113,38 +102,37 @@ export const EnginesPage: FC<EnginesPageProps> = memo(({}) => {
     setState((prevState) => ({ ...prevState, uuid: value }));
   };
   return (
-    <div className="container">
-      <div className="row">
-        <div className="col-md-12">
-          <Header title="Your chess engines" />
+    <StyledWrapperWithHeader>
+      <Header title="Your chess engines" />
 
-          <StyledFormWrapper>
-            <StyledPairsWrapper>
-              <StyledLabel>Name</StyledLabel>
-              <StyledInput onChange={onChangeName} type="text" value={state.name} />
-            </StyledPairsWrapper>
-            <StyledPairsWrapper>
-              <StyledLabel>Uuid</StyledLabel>
-              <StyledInput onChange={onChangeUuid} type="text" value={state.uuid} />
-            </StyledPairsWrapper>
+      <StyledContentWrapper>
+        <StyledFormWrapper>
+          <StyledPairsWrapper>
+            <StyledLabel>Name</StyledLabel>
+            <StyledInput onChange={onChangeName} type="text" value={state.name} />
+          </StyledPairsWrapper>
+          <StyledPairsWrapper>
+            <StyledLabel>Uuid</StyledLabel>
+            <StyledInput onChange={onChangeUuid} type="text" value={state.uuid} />
+          </StyledPairsWrapper>
 
-            <StyledBtn onClick={handleSubmit}>
-              <Add width={18} />
-              <StyledBtnText>Add</StyledBtnText>
+          <StyledBtn onClick={handleSubmit}>
+            <Add width={18} />
+            <StyledBtnText>Add</StyledBtnText>
 
-            </StyledBtn>
+          </StyledBtn>
 
-          </StyledFormWrapper>
+        </StyledFormWrapper>
 
-          <Rows />
-        </div>
+        <Rows />
+      </StyledContentWrapper>
 
-        <MenuWithRouter showMainMenu={true} />
-      </div>
-    </div>
+      <MenuWithRouter showMainMenu={true} />
+    </StyledWrapperWithHeader>
   );
 });
 
-export default EnginesPage;
 export type EnginesPageProps = {}
+
+
 

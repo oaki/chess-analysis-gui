@@ -3,9 +3,9 @@ import { useCallback, useEffect, useState } from "react";
 import { Chessground } from "chessground";
 import { toDests } from "../../libs/chessboardUtils";
 import { AutoplayService } from "../../libs/autoplayEngine";
-import * as Chess from "chess.js";
+import { Chess } from "chess.js";
 import { Api } from "chessground/api";
-import store from "../../store";
+import { store } from "../../store";
 import { setMove } from "../history/historyReducers";
 import { treeService } from "../moveTree/tree";
 import { IUser } from "../../reducers";
@@ -21,7 +21,7 @@ const playOtherSide = (cg: Api) => {
       from: orig,
       to: dest,
       id: treeService.getCounter(),
-      fen: (cg.state as any).fen
+      fen: cg.getFen()
     }));
   };
 };

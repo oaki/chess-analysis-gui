@@ -1,9 +1,10 @@
 import { setLoading } from "../../actions";
-import config from "../../config";
+import { config } from "../../config";
+import { isOpeningMoveArray } from "../../libs/typeGuards";
 import { Flash } from "../../services/errorManager";
 
 
-export interface IOpeningMove {
+export type IOpeningMove = {
   move: string;
   weight: number;
   fen: string;
@@ -11,8 +12,10 @@ export interface IOpeningMove {
 }
 
 
-export function loadOpeningPosition(fen: string): any {
-  return async (dispatch: (data: any) => {}) => {
+type ThunkDispatch = (action: unknown) => unknown;
+
+export function loadOpeningPosition(fen: string) {
+  return async (dispatch: ThunkDispatch) => {
     console.log("loadOpeningPosition", fen);
 
     dispatch(setLoading(true));
@@ -28,8 +31,9 @@ export function loadOpeningPosition(fen: string): any {
     try {
       const response = await fetch(url, headers);
       if (response.ok) {
-        const moves: any = await response.json();
-        console.log(moves);
+        const body: unknown = await response.json();
+        console.log(body);
+        const moves = isOpeningMoveArray(body) ? body : [];
         dispatch(setOpeningPosition(moves));
       } else {
         dispatch(setOpeningPosition([]));
@@ -54,11 +58,12 @@ export function setOpeningPosition(moves: IOpeningMove[]) {
 
 export const SET_OPENING_POSITION = "SET_OPENING_POSITION";
 
-export function openingMovesReducer(moves: IOpeningMove[] = [], action: any) {
+type OpeningMovesAction = ReturnType<typeof setOpeningPosition> | { type: string };
 
+export function openingMovesReducer(moves: IOpeningMove[] = [], action: OpeningMovesAction) {
   switch (action.type) {
     case SET_OPENING_POSITION:
-      return action.moves;
+      return (action as ReturnType<typeof setOpeningPosition>).moves;
 
     default:
       return moves;

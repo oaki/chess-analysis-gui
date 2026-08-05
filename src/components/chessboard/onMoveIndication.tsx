@@ -1,9 +1,9 @@
 import React from "react";
 import { IOnMove } from "../../actions";
-import * as classnames from "classnames";
+import classnames from "classnames";
 import { isYourMove } from "../../tools/isYourMove";
 
-interface OnMoveIndicationProps {
+type OnMoveIndicationProps = {
   isFlip: boolean;
   onMove: IOnMove
 }

@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback, useEffect, useState, type ReactNode} from 'react';
 import debounce from 'lodash/debounce';
 import {Nullable} from "interfaces";
 
@@ -48,9 +48,9 @@ export function ContainerSizes(props: ContainerSizesProps) {
 
 export type UseElementResize = [{width: number; height: number}, () => void];
 
-type ContainerSizesChildren = (props: {width: number; height: number}) => any;
+type ContainerSizesChildren = (props: {width: number; height: number}) => ReactNode;
 
-export interface ContainerSizesProps {
+export type ContainerSizesProps = {
     element: Element;
     delay?: number;
     children: ContainerSizesChildren;
